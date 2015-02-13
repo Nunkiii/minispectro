@@ -44,12 +44,14 @@ var videocap_templates = {
 				ui_opts : { label : true, root_classes : ["col-md-8"], type : "edit" },
 				type : "bool",
 				tip : "Accumulate frames to reduce noise",
+				value : true,
 				elements : {
 				    nframes : {
 					type : "double",
 					name : "Number of frames to accumulate",
 					ui_opts : { type : "edit", label : true, root_classes : ["inline"] },
 					step : 1,
+					value : 5,
 					min : 2,
 					max : 100
 				    }
@@ -99,7 +101,8 @@ var videocap_templates = {
 		subtitle : "One dimensional spectra (R,G,B)",
 		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-6"], child_classes : ["container-fluid"], item_classes : []},
 		type : "template",
-		template_name : "vector"
+		template_name : "vector",
+		y_range : [0, 255]
 	    }
 	}
     }
@@ -122,6 +125,9 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var start=controls.elements.start;
     var stop=controls.elements.stop;
 
+    var integ=controls.elements.integrate;
+    var integ_nf=controls.elements.integrate.elements.nframes;
+    
     var video_container=cc("div",controls.ui_root);
     video_container.className="col-md-4";
     var video_node=cc("video",video_container);
@@ -129,7 +135,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     video_node.setAttribute("autoplay",true);
     video_node.style.display="none";
     //var img_node=cc("img",video.ui_root);
-    var canvas=cc("canvas",controls.ui_root);
+    var canvas=cc("canvas",video_container);
     //canvas.style.display="none";
     //video_node.style.width=640;
     //video_node.style.height=640;
@@ -183,21 +189,17 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		video_node.src = window.URL.createObjectURL(stream_in);
 		stream=stream_in;
 		
-		console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
-
-		iv_cap=setInterval(function(){
-		    if (stream) {
-			ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
-			ctx.drawImage(video_node, 0, 0);
+		//console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
+		var iv_delay=integ.value? 100 : 100;
+		if (stream) {
+		    iv_cap=setInterval(function(){
 			// "image/webp" works in Chrome.
 			// Other browsers will fall back to image/png.
 			//img_node.src = canvas.toDataURL('image/webp');
 			draw_spectrum();
-			
-		    }
+		    }, iv_delay );
 		    
-		    //snap.trigger("click");
-		}, 1000 );
+		}
 		
 		start.disable(true);
 		stop.disable(false);
@@ -210,61 +212,127 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	}
     });
 
+    var buf_data=[];
+    var seq=0;
+    var bx,by,bw,bh;
+    var spec_data={r : [], g: [], b : [], t : [] };
+
+
+    
+    var pr=spectro_view.context.append("path");
+    var pg=spectro_view.context.append("path");
+    var pb=spectro_view.context.append("path");
+
+    var pt=spectro_view.context.append("path");
+    
+    
+    function draw_spectrum_box(){
+
+	
+	bx=spectro_box.x.value;
+	by=spectro_box.y.value;
+	bw=spectro_box.w.value;
+	bh=spectro_box.h.value;
+
+	//console.log("Spectrum box %d %d %d %d",bx,by,bw,bh );
+	
+	ctx.beginPath();
+	ctx.strokeStyle="red";
+	ctx.rect(bx,by,bw,bh);
+	ctx.stroke();
+	ctx.closePath();
+    }
     
     function draw_spectrum(){
 
 	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
-	var x=spectro_box.x.value;
-	var y=spectro_box.y.value;
-	var w=spectro_box.w.value;
-	var h=spectro_box.h.value;
 
-	console.log("Spectrum box %d %d %d %d",x,y,w,h );
+	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
+	ctx.drawImage(video_node, 0, 0);
 
-	ctx.beginPath();
-	ctx.strokeStyle="red";
-	ctx.rect(x,y,w,h);
-	ctx.stroke();
-	ctx.closePath();
+	var inf=integ_nf.value*1.0;
 	
-	var spec_data={r : [], g: [], b : [] };
-	
-	for(var i=0;i<h;i++){
-	    //spec_data[i]=0;
-	    for(var j=0;j<w;j++){
-		var idx=(i+y)*canvas.width*4 + (j+x)*4;
-		spec_data.r[i]= buf.data[ idx ];
-		spec_data.g[i]= buf.data[ idx+1 ];
-		spec_data.b[i]= buf.data[ idx+2 ];
+	if(integ.value){
+
+	    if(seq>=inf){
+		for(var i=0;i<buf_data.length;i++) buf_data[i]/=inf;
+		seq=0;
+	    }else{
+		if(seq===0){
+		    buf_data=[];
+		    for(var i=0;i<buf.data.length;i++) buf_data[i]=buf.data[i];
+		}else
+		    for(var i=0;i<buf.data.length;i++) buf_data[i]+=buf.data[i];
+		//console.log("Integ " + seq + "/" + integ_nf.value);
+		seq++;
+		draw_spectrum_box();
+		return;
 	    }
+	    
+	}else{
+	    buf_data=buf.data;
 	}
+
+	draw_spectrum_box();
+
+	for(var i=0;i<bh;i++){
+	    spec_data.r[i]=0;
+	    spec_data.g[i]=0;
+	    spec_data.b[i]=0;
+	    for(var j=0;j<bw;j++){
+		var idx=((i+by)*canvas.width + (j+bx))*4;
+		spec_data.r[i]+= buf_data[ idx ];
+		spec_data.g[i]+= buf_data[ idx+1 ];
+		spec_data.b[i]+= buf_data[ idx+2 ];
+		// if(i===0 && j===0)
+		//     console.log(buf_data[ idx ] + ", " + buf_data[ idx+1 ]+ ", " +buf_data[ idx+2 ]);
+	    }
+	    spec_data.r[i]/=bw*1.0;
+	    spec_data.g[i]/=bw*1.0;
+	    spec_data.b[i]/=bw*1.0;
+
+	    spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
+	}
+
+	
+	
+	spectro_view.elements.range.set_value([0,bh]);
+
+	//console.log(JSON.stringify(spec_data, null, 5));
 	
 	//var step=spectro_view.step=1.0;
 	//var start=spectro_view.start=0;
 
-	spectro_view.set_value(spec_data.r);
-	spectro_view.redraw();
+	//spectro_view.set_value(spec_data.r);
+	
 
 	// var line=d3.svg.line()
 	//     .x(function(d,i) { return x(tpl_item.start + i*tpl_item.step); })
 	//     .y1(function(d) { return y(d); });
 	//     .interpolate("linear");
 
-	var pathsvg=spectro_view.context.append("path")
-	    .datum(spec_data.g)
+	//spectro_view.elements.range.set_value();
+	
+	
+	pr.datum(spec_data.r)
+	    .attr("class", "line_red")
+	    .attr("d", spectro_view.line);
+	pg.datum(spec_data.g)
 	    .attr("class", "line_green")
 	    .attr("d", spectro_view.line);
-
-	var pathsvg=spectro_view.context.append("path")
-	    .datum(spec_data.b)
+	pb.datum(spec_data.b)
 	    .attr("class", "line_blue")
 	    .attr("d", spectro_view.line);
+
+	pt.datum(spec_data.t)
+	    .attr("class", "line_black")
+	    .attr("d", spectro_view.line);
+
 	
+	
+	//spectro_view.redraw();
     }
 
-
-
-    
     return vc.ui;
 };
 
