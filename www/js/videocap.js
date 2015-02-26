@@ -228,6 +228,11 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var pb=spectro_view.add_plot_linear(spec_data.b,0,1);
     var pt=spectro_view.add_plot_linear(spec_data.t,0,1);
     
+    pr.set_opts({ stroke : "red", label : "Red"});
+    pg.set_opts({ stroke : "green", label : "Green"});
+    pb.set_opts({ stroke : "blue", label : "Blue"});
+    pt.set_opts({ stroke : "orange", stroke_width : "3px", label : "(R+G+B)/3"});
+
     
     function draw_spectrum_box(){
 
@@ -244,6 +249,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	ctx.stroke();
 	ctx.closePath();
     }
+
+    var frid=0;
     
     function draw_spectrum(){
 	//console.log("Canvas w,h %d %d" ,canvas.width,canvas.height);
@@ -296,47 +303,9 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 	    spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
 	}
-
-	
-	
-	//spectro_view.elements.range.set_value([0,bh]);
-
-	//console.log(JSON.stringify(spec_data, null, 5));
-	
-	//var step=spectro_view.step=1.0;
-	//var start=spectro_view.start=0;
-
-	//spectro_view.set_value(spec_data.r);
-	
-
-	// var line=d3.svg.line()
-	//     .x(function(d,i) { return x(tpl_item.start + i*tpl_item.step); })
-	//     .y1(function(d) { return y(d); });
-	//     .interpolate("linear");
-
-	//spectro_view.elements.range.set_value();
+	//if(frid===0)
 	spectro_view.config_range();
-	//spectro_view.redraw();
-	// pr.redraw();
-	// pg.redraw();
-	// pb.redraw();
-	// pt.redraw();
-	
-	// pr.datum(spec_data.r)
-	//     .attr("class", "line_red")
-	//     .attr("d", spectro_view.line);
-	// pg.datum(spec_data.g)
-	//     .attr("class", "line_green")
-	//     .attr("d", spectro_view.line);
-	// pb.datum(spec_data.b)
-	//     .attr("class", "line_blue")
-	//     .attr("d", spectro_view.line);
-
-	// pt.datum(spec_data.t)
-	//     .attr("class", "line_black")
-	//     .attr("d", spectro_view.line);
-
-	
+	frid++;
 	
 	//spectro_view.redraw();
     }
