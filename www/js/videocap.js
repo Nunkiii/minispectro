@@ -129,7 +129,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var integ_nf=controls.elements.integrate.elements.nframes;
     
     var video_container=cc("div",controls.ui_root);
-    video_container.className="col-md-4";
+    video_container.className="col-md-12";
     var video_node=cc("video",video_container);
     video_node.style.width=200;
     video_node.setAttribute("autoplay",true);
@@ -144,18 +144,22 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     var ctx = canvas.getContext('2d');
 
-    //	<canvas style="display:none;"></canvas>
-	
     
     var errorCallback = function(e) {
 	console.log('capture error ' + e);
     };
 
     video_node.addEventListener("loadeddata", function(){
-	//console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
-		
-	canvas.width=video_node.videoWidth;
-	canvas.height=video_node.videoHeight;
+	
+	var iv=setInterval(function(){
+	    if(video_node.videoWidth!==0){
+		canvas.width= video_node.videoWidth;
+		canvas.height=video_node.videoHeight;
+		console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
+		clearInterval(iv);
+	    }
+	    
+	}, 100);
 
     });
 
@@ -219,16 +223,14 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 
     
-    var pr=spectro_view.context.append("path");
-    var pg=spectro_view.context.append("path");
-    var pb=spectro_view.context.append("path");
-
-    var pt=spectro_view.context.append("path");
+    var pr=spectro_view.add_plot_linear(spec_data.r,0,1);
+    var pg=spectro_view.add_plot_linear(spec_data.g,0,1);
+    var pb=spectro_view.add_plot_linear(spec_data.b,0,1);
+    var pt=spectro_view.add_plot_linear(spec_data.t,0,1);
     
     
     function draw_spectrum_box(){
 
-	
 	bx=spectro_box.x.value;
 	by=spectro_box.y.value;
 	bw=spectro_box.w.value;
@@ -244,7 +246,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
     }
     
     function draw_spectrum(){
-
+	//console.log("Canvas w,h %d %d" ,canvas.width,canvas.height);
+	
 	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
 
 	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
@@ -296,7 +299,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 	
 	
-	spectro_view.elements.range.set_value([0,bh]);
+	//spectro_view.elements.range.set_value([0,bh]);
 
 	//console.log(JSON.stringify(spec_data, null, 5));
 	
@@ -312,21 +315,26 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	//     .interpolate("linear");
 
 	//spectro_view.elements.range.set_value();
+	spectro_view.config_range();
+	//spectro_view.redraw();
+	// pr.redraw();
+	// pg.redraw();
+	// pb.redraw();
+	// pt.redraw();
 	
-	
-	pr.datum(spec_data.r)
-	    .attr("class", "line_red")
-	    .attr("d", spectro_view.line);
-	pg.datum(spec_data.g)
-	    .attr("class", "line_green")
-	    .attr("d", spectro_view.line);
-	pb.datum(spec_data.b)
-	    .attr("class", "line_blue")
-	    .attr("d", spectro_view.line);
+	// pr.datum(spec_data.r)
+	//     .attr("class", "line_red")
+	//     .attr("d", spectro_view.line);
+	// pg.datum(spec_data.g)
+	//     .attr("class", "line_green")
+	//     .attr("d", spectro_view.line);
+	// pb.datum(spec_data.b)
+	//     .attr("class", "line_blue")
+	//     .attr("d", spectro_view.line);
 
-	pt.datum(spec_data.t)
-	    .attr("class", "line_black")
-	    .attr("d", spectro_view.line);
+	// pt.datum(spec_data.t)
+	//     .attr("class", "line_black")
+	//     .attr("d", spectro_view.line);
 
 	
 	
