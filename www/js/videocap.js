@@ -1,9 +1,7 @@
-
 function hasGetUserMedia() {
     return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
 	      navigator.mozGetUserMedia || navigator.msGetUserMedia);
 }
-
 
 navigator.getUserMedia  = navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
@@ -17,38 +15,48 @@ var videocap_templates = {
 	name : "Minispectro",
 	subtitle : "A web/home experiment to discover spectroscopy",
 	type : "videocap",
-	ui_opts : { child_classes : ["row"], name_classes : ["page-header"]},
+	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : ["page-header"]},
 	
 	elements : {
 	    video : {
 		//name : "Spectro webcam capture",
 		//intro : "Click start to start capture",
-		ui_opts : { root_classes : ["col-md-6"],child_classes : ["container-fluid"]},
+		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-5"],child_classes : ["container-fluid"]},
 		elements : {
 		    controls : {
-			ui_opts :  {fa_icon : "play",root_classes : ["col-md-12"],child_classes : ["row"]},
+			name : "Controls",
+			ui_opts :  {fa_icon : "play",root_classes : ["col-md-12"],child_classes : ["btn-group"], render_name : false},
 			elements : {
 			    start : {
-				name : "start",
+				name : "Start webcam",
 				type : "action",
-				ui_opts :  {fa_icon : "play",root_classes : ["col-md-2"]}
+				ui_opts :  {fa_icon : "play",root_classes : [""]}
 			    },
 			    stop : {
-				name : "stop",
+				name : "Stop",
 				type : "action",
-				ui_opts :  { fa_icon : "stop",root_classes : ["col-md-2"] }
+				ui_opts :  { fa_icon : "stop",root_classes : [""] }
 			    },
-		
+			}
+		    },
+		    options : {
+			name : "options",
+			ui_opts : {child_view_type : "pills", render_name : false},
+			elements : {
 			    integrate : {
-				name  : "Accumulate pixels",
-				ui_opts : { label : true, root_classes : ["col-md-8"], type : "edit" },
-				type : "bool",
-				tip : "Accumulate frames to reduce noise",
-				value : true,
+				name  : "Average frames",
+				ui_opts : { label : false, root_classes : [""] },
+				intro : "Sum up frames to reduce noise",
 				elements : {
+				    enable : {
+					name : "Enable",
+					ui_opts : { label : true, root_classes : [], type : "edit" },
+					type : "bool",
+					value : true
+				    },
 				    nframes : {
 					type : "double",
-					name : "Number of frames to accumulate",
+					name : "Number of images to accumulate",
 					ui_opts : { type : "edit", label : true, root_classes : ["inline"] },
 					step : 1,
 					value : 5,
@@ -56,50 +64,48 @@ var videocap_templates = {
 					max : 100
 				    }
 				}
+			    },
+			    box : {
+				name : "Spectrum region",
+				subtitle : "Adjust the spectrum area within image",
+				ui_opts :  {fa_icon : "wrench",root_classes : ["col-md-12"],child_classes : ["container"]},
+				
+				elements : {
+				    x : {
+					name: "x",
+					type: "double",
+					value : 300,
+					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+				    },
+				    y : {
+					name: "y",
+					type: "double",
+					value : 50,
+					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+				    },
+				    w : {
+					name: "width",
+					type: "double",
+					value : 30,
+					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+				    },
+				    h : {
+					name: "height",
+					type: "double",
+					value : 300,
+					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+				    }
+				}
 			    }
-			    
 			}
 		    },
-		    box : {
-			name : "Spectrum region",
-			subtitle : "Adjust the spectrum area within image",
-			ui_opts :  {fa_icon : "wrench",root_classes : ["col-md-12"],child_classes : ["container"]},
-			
-			elements : {
-			    x : {
-				name: "x",
-				type: "double",
-				value : 300,
-				ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
-			    },
-			    y : {
-				name: "y",
-				type: "double",
-				value : 50,
-				ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
-			    },
-			    w : {
-				name: "width",
-				type: "double",
-				value : 30,
-				ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
-			    },
-			    h : {
-				name: "height",
-				type: "double",
-				value : 300,
-				ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
-			    }
-			}
-			
-		    }
-
+		    
 		}
 	    },
 	    spectrum : {
 		name : "Spectrum view",
 		subtitle : "One dimensional spectra (R,G,B)",
-		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-6"], child_classes : ["container-fluid"], item_classes : []},
+		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-7"], child_classes : ["container-fluid"], item_classes : []},
 		type : "template",
 		template_name : "vector",
 		y_range : [0, 255]
@@ -120,15 +126,16 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     var controls=video.elements.controls;
     var spectro_view=spectrum;
-    var spectro_box=video.elements.box.elements;
+    var options=video.elements.options;
+    var spectro_box=options.elements.box.elements;
 
     var start=controls.elements.start;
     var stop=controls.elements.stop;
 
-    var integ=controls.elements.integrate;
-    var integ_nf=controls.elements.integrate.elements.nframes;
+    var integ=options.elements.integrate.elements.enable;
+    var integ_nf=options.elements.integrate.elements.nframes;
     
-    var video_container=cc("div",controls.ui_root);
+    var video_container=cc("div",video.ui_root);
     video_container.className="col-md-12";
     var video_node=cc("video",video_container);
     video_node.style.width=200;
