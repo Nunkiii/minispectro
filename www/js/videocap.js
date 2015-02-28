@@ -21,7 +21,7 @@ var videocap_templates = {
 	    video : {
 		//name : "Spectro webcam capture",
 		//intro : "Click start to start capture",
-		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-5"],child_classes : ["container-fluid"]},
+		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-6"],child_classes : ["row"]},
 		elements : {
 		    controls : {
 			name : "Controls",
@@ -41,23 +41,23 @@ var videocap_templates = {
 		    },
 		    options : {
 			name : "options",
-			ui_opts : {child_view_type : "pills", render_name : false},
+			ui_opts : {child_view_type : "pills", root_classes : ["col-md-12" ], render_name : false, child_classes : ["container-fluid"]},
 			elements : {
 			    integrate : {
 				name  : "Average frames",
-				ui_opts : { label : false, root_classes : [""] },
+				ui_opts : { label : false, root_classes : ["container-fluid"], child_classes : ["row"] },
 				intro : "Sum up frames to reduce noise",
 				elements : {
 				    enable : {
 					name : "Enable",
-					ui_opts : { label : true, root_classes : [], type : "edit" },
+					ui_opts : { label : true, root_classes : ["col-md-3"], type : "edit" },
 					type : "bool",
 					value : true
 				    },
 				    nframes : {
 					type : "double",
 					name : "Number of images to accumulate",
-					ui_opts : { type : "edit", label : true, root_classes : ["inline"] },
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-9"] },
 					step : 1,
 					value : 5,
 					min : 2,
@@ -68,32 +68,32 @@ var videocap_templates = {
 			    box : {
 				name : "Spectrum region",
 				subtitle : "Adjust the spectrum area within image",
-				ui_opts :  {fa_icon : "wrench",root_classes : ["col-md-12"],child_classes : ["container"]},
+				ui_opts :  {fa_icon : "wrench",root_classes : ["container-fluid"],child_classes : ["row"]},
 				
 				elements : {
 				    x : {
 					name: "x",
 					type: "double",
 					value : 300,
-					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
 				    },
 				    y : {
 					name: "y",
 					type: "double",
 					value : 50,
-					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
 				    },
 				    w : {
 					name: "width",
 					type: "double",
 					value : 30,
-					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
 				    },
 				    h : {
 					name: "height",
 					type: "double",
 					value : 300,
-					ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
 				    }
 				}
 			    }
@@ -105,7 +105,9 @@ var videocap_templates = {
 	    spectrum : {
 		name : "Spectrum view",
 		subtitle : "One dimensional spectra (R,G,B)",
-		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-7"], child_classes : ["container-fluid"], item_classes : []},
+		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-6"], child_classes : ["container-fluid"], item_classes : [],
+			    panel :false
+			  },
 		type : "template",
 		template_name : "vector",
 		y_range : [0, 255]
@@ -136,8 +138,17 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var integ_nf=options.elements.integrate.elements.nframes;
     
     var video_container=cc("div",video.ui_root);
-    video_container.className="col-md-12";
-    var video_node=cc("video",video_container);
+    video_container.className="panel panel-default";
+    var phead=cc("div",video_container); phead.className="panel-heading"; phead.innerHTML="";
+    var pcontent=cc("div",video_container); pcontent.className="panel-content";
+    var video_node=cc("video",pcontent);
+    var btns=cc("div",phead); btns.className="btn-group btn-group-sm";
+    btns.appendChild(start.ui);
+    btns.appendChild(stop.ui);
+
+    //vc.cnt.appendChild(spectrum.ui_root);
+
+    video.className="center-block";
     video_node.style.width=200;
     video_node.setAttribute("autoplay",true);
     video_node.style.display="none";
