@@ -14,8 +14,9 @@ var videocap_templates = {
     videocap : {
 	name : "Minispectro",
 	subtitle : "A web/home experiment to discover spectroscopy",
+	intro : "<p>Instructions to build the inexpensive spectrograph can be found <a href=''>here<a>.</p>",
 	type : "videocap",
-	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : ["page-header"]},
+	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : []},
 	
 	elements : {
 	    video : {
@@ -41,23 +42,23 @@ var videocap_templates = {
 		    },
 		    options : {
 			name : "options",
-			ui_opts : {child_view_type : "pills", root_classes : ["col-md-12" ], render_name : false, child_classes : ["container-fluid"]},
+			ui_opts : {child_view_type : "pills", root_classes : [], render_name : false, child_classes : ["container-fluid"]},
 			elements : {
 			    integrate : {
 				name  : "Average frames",
 				ui_opts : { label : false, root_classes : ["container-fluid"], child_classes : ["row"] },
-				intro : "Sum up frames to reduce noise",
+				subtitle : "Sum up frames to reduce noise",
 				elements : {
 				    enable : {
 					name : "Enable",
-					ui_opts : { label : true, root_classes : ["col-md-3"], type : "edit" },
+					ui_opts : { label : true, root_classes : ["col-md-2 col-sm-1"], type : "edit" },
 					type : "bool",
 					value : true
 				    },
 				    nframes : {
 					type : "double",
 					name : "Number of images to accumulate",
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-9"] },
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-8 col-sm-10"] },
 					step : 1,
 					value : 5,
 					min : 2,
@@ -68,7 +69,7 @@ var videocap_templates = {
 			    box : {
 				name : "Spectrum region",
 				subtitle : "Adjust the spectrum area within image",
-				ui_opts :  {fa_icon : "wrench",root_classes : ["container-fluid"],child_classes : ["row"]},
+				ui_opts :  {fa_icon : "wrench",root_classes : [],child_classes : ["row"]},
 				
 				elements : {
 				    x : {
