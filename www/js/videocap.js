@@ -14,7 +14,7 @@ var videocap_templates = {
     videocap : {
 	name : "Minispectro",
 	subtitle : "A web/home experiment to discover spectroscopy",
-	intro : "<p>Instructions to build the inexpensive spectrograph can be found <a href=''>here<a>.</p>",
+	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry.</p>",
 	type : "videocap",
 	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : []},
 	
@@ -22,7 +22,7 @@ var videocap_templates = {
 	    video : {
 		//name : "Spectro webcam capture",
 		//intro : "Click start to start capture",
-		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-6"],child_classes : ["row"]},
+		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-6 "],child_classes : ["row"]},
 		elements : {
 		    controls : {
 			name : "Controls",
@@ -41,7 +41,7 @@ var videocap_templates = {
 			}
 		    },
 		    options : {
-			name : "options",
+			name : "Setup",
 			ui_opts : {child_view_type : "pills", root_classes : [], render_name : false, child_classes : ["container-fluid"]},
 			elements : {
 			    integrate : {
@@ -65,6 +65,9 @@ var videocap_templates = {
 					max : 100
 				    }
 				}
+			    },
+			    dir : {
+				name : "Orientation"
 			    },
 			    box : {
 				name : "Spectrum region",
@@ -97,6 +100,12 @@ var videocap_templates = {
 					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
 				    }
 				}
+			    },
+			    wlc : {
+				name : "Wavelength calibration"
+			    },
+			    flxc : {
+				name : "Flux calibration"
 			    }
 			}
 		    },
