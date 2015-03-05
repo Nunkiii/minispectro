@@ -31,12 +31,12 @@ var videocap_templates = {
 			    start : {
 				name : "Start webcam",
 				type : "action",
-				ui_opts :  {fa_icon : "play",root_classes : [""]}
+				ui_opts :  {fa_icon : "play",item_classes : ["btn btn-primary"]}
 			    },
 			    stop : {
 				name : "Stop",
 				type : "action",
-				ui_opts :  { fa_icon : "stop",root_classes : [""] }
+				ui_opts :  { fa_icon : "stop",item_classes : ["btn btn-primary"] }
 			    },
 			}
 		    },
@@ -149,17 +149,17 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var stop=controls.elements.stop;
     var integ=options.elements.integrate.elements.enable;
     var integ_nf=options.elements.integrate.elements.nframes;
-    var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-sm";    
+    //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
     var video_container=cc("div",video.ui_root);
     video_container.style.position="relative";
-    //video_container.className="panel panel-default";
+    video_container.className="panel panel-default";
     //var phead=cc("div",video_container); //phead.className="panel-heading"; phead.innerHTML="";
    // var pcontent=cc("div",video_container);// pcontent.className="panel-content";
     var video_node=cc("video",video.ui_root);
     //video_node.style.position="relative";
 
-    btns.appendChild(start.ui);
-    btns.appendChild(stop.ui);
+    //btns.appendChild(start.ui);
+    //btns.appendChild(stop.ui);
 
     //vc.cnt.appendChild(spectrum.ui_root);
 
@@ -188,7 +188,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    if(video_node.videoWidth!==0){
 		canvas.width= video_node.videoWidth;
 		canvas.height=video_node.videoHeight;
-		console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
+		//console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
 		clearInterval(iv);
 	    }
 	    
@@ -227,7 +227,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		stream=stream_in;
 		
 		//console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
-		var iv_delay=200; //integ.value? 100 : 100;
+		var iv_delay=100; //integ.value? 100 : 100;
 		if (stream) {
 		    iv_cap=setInterval(function(){
 			// "image/webp" works in Chrome.
@@ -307,8 +307,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
 		//buf_data=[];
 		//spec_data={r : [], g: [], b : [], t : [] };
-		
-		
 		
 		spectro_box.x.set_value(sz.x);
 		spectro_box.y.set_value(sz.y);
