@@ -296,7 +296,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 	if(ù(w)){
 	    w=new widget();
-
 	    w.widget_div.style.position="absolute";
 	    set_box_size();
 	    
@@ -305,9 +304,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    dir.listen("change",function(){slice_arrays();});
 	    
 	    w.listen("resize", function(sz){
-		console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+		//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
 		//buf_data=[];
-		
 		//spec_data={r : [], g: [], b : [], t : [] };
 		
 		
