@@ -1,12 +1,4 @@
-function hasGetUserMedia() {
-    return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
-	      navigator.mozGetUserMedia || navigator.msGetUserMedia);
-}
-
-navigator.getUserMedia  = navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia ||
-    navigator.msGetUserMedia;
+navigator.getUserMedia  = (navigator.getUserMedia ||navigator.webkitGetUserMedia ||navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
 
 var videocap_templates = {
@@ -22,7 +14,7 @@ var videocap_templates = {
 	    video : {
 		//name : "Spectro webcam capture",
 		//intro : "Click start to start capture",
-		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-6 col-xs-6"],child_classes : ["row"]},
+		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-4 col-xs-4"],child_classes : ["row"]},
 		elements : {
 		    controls : {
 			name : "Controls",
@@ -118,7 +110,7 @@ var videocap_templates = {
 	    spectrum : {
 		name : "Spectrum view",
 		subtitle : "One dimensional spectra (R,G,B)",
-		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-6 col-xs-6"], child_classes : ["container-fluid"], item_classes : [],
+		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-8 col-xs-8"], child_classes : ["container-fluid"], item_classes : [],
 			    panel :false
 			  },
 		type : "template",
@@ -149,9 +141,17 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var stop=controls.elements.stop;
     var integ=options.elements.integrate.elements.enable;
     var integ_nf=options.elements.integrate.elements.nframes;
+
+
+    
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
-    var video_container=cc("div",video.ui_root);
+
+    var video_container=cc("div",video.ui_root, true);
+    
+
     video_container.style.position="relative";
+
+    
     video_container.className="panel panel-default";
     //var phead=cc("div",video_container); //phead.className="panel-heading"; phead.innerHTML="";
    // var pcontent=cc("div",video_container);// pcontent.className="panel-content";
@@ -214,13 +214,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     });
 
     start.listen("click",function(){
-	// Not showing vendor prefixes.
-	if (hasGetUserMedia()) {
-	    // Good to go!
-	} else {
-	    alert('getUserMedia() is not supported in your browser');
-	    return vc.ui;
-	}
+
 	if (navigator.getUserMedia) {
 	    navigator.getUserMedia({audio: false, video: true}, function(stream_in) {
 		video_node.src = window.URL.createObjectURL(stream_in);
@@ -244,9 +238,9 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		
 	    }, errorCallback);
 	} else {
+	    alert('getUserMedia() is not supported in your browser');
 	    console.log("Nu getUserMedia !!!");
 	    return vc.ui;
-	    vc.ui.src = 'somevideo.webm'; // fallback.
 	}
     });
 
@@ -255,6 +249,11 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var bx,by,bw,bh;
 
     function slice_arrays(){
+	bx=spectro_box.x.value;
+	by=spectro_box.y.value;
+	bw=spectro_box.w.value;
+	bh=spectro_box.h.value;
+
 	var ddir=dir.ui.selectedIndex;
 	var ddim= ddir? bw:bh;
 	
@@ -265,73 +264,74 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    pt.data=spec_data.t=spec_data.t.slice(0, ddim);
 	    
 	    //console.log("Resized !!" + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
-	    spectro_view.redraw();
 	}
+	if(seq==0)set_box_size();
     }
-
+    
     function set_box_size(){
+	var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
+	
+	//console.log("Canvas  " + canvas.clientWidth);
 
-	w.widget_div.style.left=bx+"px";
-	w.widget_div.style.top=by+"px";
-	w.widget_div.style.width=bw+"px";
-	w.widget_div.style.height=bh+"px";
+	//w.widget_div.style.transform="scale("+scale[0]+","+scale[1]+")";
+
+	w.widget_div.style.left=scale[0]*bx+"px";
+	w.widget_div.style.top=scale[1]*by+"px";
+	w.widget_div.style.width=scale[0]*bw+"px";
+	w.widget_div.style.height=scale[1]*bh+"px";
 
     }
 
     
     for(var be in spectro_box){
 	spectro_box[be].listen("change",function(){
-	    draw_spectrum_box();
+	    //draw_spectrum_box();
 	    slice_arrays();
 	    set_box_size();
+	    //spectro_view.redraw();	    
 	});
     };
     
-    function draw_spectrum_box(){
+    // function draw_spectrum_box(){
 	
-	bx=spectro_box.x.value;
-	by=spectro_box.y.value;
-	bw=spectro_box.w.value;
-	bh=spectro_box.h.value;
 
-	if(ù(w)){
-	    w=new widget();
-	    w.widget_div.style.position="absolute";
-	    set_box_size();
-	    
-	    video_container.appendChild(w.widget_div);
-
-	    dir.listen("change",function(){slice_arrays();});
-	    
-	    w.listen("resize", function(sz){
-		//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
-		//buf_data=[];
-		//spec_data={r : [], g: [], b : [], t : [] };
-		
-		spectro_box.x.set_value(sz.x);
-		spectro_box.y.set_value(sz.y);
-		spectro_box.w.set_value(sz.w);
-		spectro_box.h.set_value(sz.h);
-
-		slice_arrays();
-		//create_plots();
-		
-	    });
-	}
-
+    // 	if(ù(w)){
+    var c5=canvas.width/5.0;
+    w=new widget({ x: 2*c5, y: 5, w : c5, h : canvas.height-5});
+    w.widget_div.style.position="absolute";
+    video_container.appendChild(w.widget_div);
+    set_box_size();
+    
+    dir.listen("change",function(){slice_arrays();});
+    
+    w.listen("resize", function(sz){
+	//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+	//buf_data=[];
+	//spec_data={r : [], g: [], b : [], t : [] };
+	var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
 	
+	spectro_box.x.set_value(Math.ceil(sz.x/scale[0]));
+	spectro_box.y.set_value(Math.ceil(sz.y/scale[1]));
+	spectro_box.w.set_value(Math.ceil(sz.w/scale[0]));
+	spectro_box.h.set_value(Math.ceil(sz.h/scale[1]));
+	
+	slice_arrays();
+	//create_plots();
+	
+    });
+    //	}
 
 	//console.log("Spectrum box %d %d %d %d",bx,by,bw,bh );
 
 	/*
 	ctx.beginPath();
-	ctx.strokeStyle="red";
+	ctx.strokeStyle="orange";
 	ctx.rect(bx,by,bw,bh);
 	ctx.stroke();
 	ctx.closePath();
-	*/
+*/
 
-    }
+//    }
 
     var spec_data={r : [], g: [], b : [], t : [] };
     var pr,pg,pb,pt;
@@ -343,15 +343,15 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	pb=spectro_view.add_plot_linear(spec_data.b,0,1);
 	pt=spectro_view.add_plot_linear(spec_data.t,0,1);
 	
-	pr.set_opts({ stroke : "red", label : "Red"});
-	pg.set_opts({ stroke : "green", label : "Green"});
-	pb.set_opts({ stroke : "blue", label : "Blue"});
-	pt.set_opts({ stroke : "orange", stroke_width : "3px", label : "(R+G+B)/3"});
+	pr.set_opts({ stroke : "red", stroke_width : ".5px", label : "Red"});
+	pg.set_opts({ stroke : "green", stroke_width : ".5px", label : "Green"});
+	pb.set_opts({ stroke : "blue", stroke_width : ".5px", label : "Blue"});
+	pt.set_opts({ stroke : "purple", stroke_width : "1px", label : "(R+G+B)/3"});
     }	
     //vc.ui_root.style.position="relative";
 
     create_plots();
-    
+    //set_box_size();    
     var w;
     
     
@@ -380,7 +380,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		    for(var i=0;i<buf.data.length;i++) buf_data[i]+=buf.data[i];
 		//console.log("Integ " + seq + "/" + integ_nf.value);
 		seq++;
-		draw_spectrum_box();
+		//draw_spectrum_box();
 		return;
 	    }
 	    
@@ -388,8 +388,11 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    buf_data=buf.data;
 	}
 
-	draw_spectrum_box();
+	//draw_spectrum_box();
 
+	if(!w.moving)
+	    set_box_size();
+	
 	var ddir=dir.ui.selectedIndex;
 
 	if(ddir){
@@ -416,11 +419,12 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		spec_data.r[i]=0;
 		spec_data.g[i]=0;
 		spec_data.b[i]=0;
+
 		for(var j=0;j<bw;j++){
-		    var idx=((i+by)*canvas.width + (j+bx))*4;
-		    spec_data.r[i]+= buf_data[ idx ];
-		    spec_data.g[i]+= buf_data[ idx+1 ];
-		    spec_data.b[i]+= buf_data[ idx+2 ];
+		    var idx=Math.floor(((i+by)*canvas.width + (j+bx))*4);
+		    spec_data.r[i]+= buf_data[idx];
+		    spec_data.g[i]+= buf_data[idx+1];
+		    spec_data.b[i]+= buf_data[idx+2];
 		    // if(i===0 && j===0)
 		    //     console.log(buf_data[ idx ] + ", " + buf_data[ idx+1 ]+ ", " +buf_data[ idx+2 ]);
 		}
@@ -431,6 +435,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
 	    }
 
+	    //console.log("SPEC["+JSON.stringify(spec_data.r)+"]");
+	    
 	}
 	//if(frid===0)
 	spectro_view.config_range();
