@@ -23,13 +23,17 @@ var videocap_templates = {
 			},
 			elements : {
 			    device : {
-				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-3 col-sm-3 col-xs-3"]},
+				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-4 col-sm-4 col-xs-6"],
+					   fa_icon : "camera-retro"
+					  },
 				name : "Device",
 				type : "combo"
 			    },
 			    resolution : {
 				name : "Resolution",
-				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-3 col-sm-3 col-xs-3"]},
+				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-4 col-sm-4 col-xs-6"],
+					   fa_icon : "qrcode"
+					  },
 				type : "combo",
 				options : ["VGA", "HD"]
 			    },
@@ -38,25 +42,42 @@ var videocap_templates = {
 			    // 	elements : {
 			    // 	}
 			    // },
-			    start : {
-				name : "Start",
-				type : "action",
-				ui_opts :  {fa_icon : "play",item_classes : ["btn btn-primary"], root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
-			    },
-			    stop : {
-				name : "Stop",
-				type : "action",
-				ui_opts :  { fa_icon : "stop",item_classes : ["btn btn-primary"], root_classes : ["col-md-3 col-sm-3 col-xs-3"] }
-			    },
+			    butts : {
+				name : "Start/Stop capture :",
+				ui_opts :  {
+				    //fa_icon : "play",
+				    root_classes : ["col-sm-4 col-md-4 col-xs-12"], label : true
+				},
+				elements : {
+				    start : {
+					name : "Start",
+					type : "action",
+					ui_opts :  {fa_icon : "play",item_classes : ["form-control btn btn-primary"],
+						    root_classes : ["form-group"] //["col-md-2 col-sm-2 col-xs-3"]
+						   }
+				    },
+				    stop : {
+					name : "Stop",
+					type : "action",
+					ui_opts :  { fa_icon : "stop",item_classes : ["form-control btn btn-primary"],
+						     root_classes : ["form-group"] //["col-md-2 col-sm-2 col-xs-3"]
+						   }
+				    }
+				}
+			    }
 			}
 		    },
 		    options : {
 			name : "Setup",
-			ui_opts : {child_view_type : "pills", root_classes : [], render_name : false, child_classes : ["container-fluid"]},
+			ui_opts : {child_view_type : "pills", root_classes : [], render_name : false, child_classes : ["container-fluid"],
+				   fa_icon : "wrench"
+				  },
 			elements : {
 			    integrate : {
 				name  : "Average frames",
-				ui_opts : { label : false, root_classes : ["container-fluid"], child_classes : ["row"] },
+				ui_opts : { label : false, root_classes : ["container-fluid"], child_classes : ["row"],
+					    fa_icon : "sort-by-attributes"
+					  },
 				subtitle : "Sum up frames to reduce noise",
 				elements : {
 				    enable : {
@@ -78,6 +99,7 @@ var videocap_templates = {
 			    },
 			    dir : {
 				name : "Orientation",
+				fa_icon : "repeat",
 				type : "combo",
 				options : ["Vertical", "Horizontal"],
 				subtitle : "Set wavelength direction depending on your setup"
@@ -85,7 +107,7 @@ var videocap_templates = {
 			    box : {
 				name : "Spectrum region",
 				subtitle : "Adjust the spectrum area within image",
-				ui_opts :  {fa_icon : "wrench",root_classes : [],child_classes : ["row"]},
+				ui_opts :  {fa_icon : "screenshot",root_classes : [],child_classes : ["row"]},
 				
 				elements : {
 				    x : {
@@ -154,9 +176,9 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var options=video.elements.options;
     var spectro_box=options.elements.box.elements;
     var dir=options.elements.dir;
-
-    var start=controls.elements.start;
-    var stop=controls.elements.stop;
+    var butts=controls.elements.butts.elements;
+    var start=butts.start;
+    var stop=butts.stop;
     var integ=options.elements.integrate.elements.enable;
     var integ_nf=options.elements.integrate.elements.nframes;
 
@@ -237,6 +259,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    stream.stop();
 	}
 	device.disable(false);
+	resolution.disable(false);
 	start.disable(false);
 	stop.disable(true);
     });
@@ -336,6 +359,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		
 	    }
 	    device.disable(true);
+	    resolution.disable(true);
 	    start.disable(true);
 	    stop.disable(false);
 		
