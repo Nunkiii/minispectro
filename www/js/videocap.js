@@ -6,7 +6,7 @@ var videocap_templates = {
     videocap : {
 	name : "Minispectro",
 	subtitle : "A web/home experiment to discover spectroscopy",
-	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry.</p>",
+	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	type : "videocap",
 	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : []},
 	
@@ -14,21 +14,39 @@ var videocap_templates = {
 	    video : {
 		//name : "Spectro webcam capture",
 		//intro : "Click start to start capture",
-		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-4 col-xs-4"],child_classes : ["row"]},
+		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-4 col-xs-12"],child_classes : ["row"]},
 		elements : {
 		    controls : {
-			name : "Controls",
-			ui_opts :  {fa_icon : "play",root_classes : ["col-md-12"],child_classes : ["btn-group"], render_name : false},
+			name : "Video control",
+			ui_opts :  {
+			    fa_icon : "play",root_classes : ["col-md-12"],child_classes : ["row"], render_name : false
+			},
 			elements : {
+			    device : {
+				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-3 col-sm-3 col-xs-3"]},
+				name : "Device",
+				type : "combo"
+			    },
+			    resolution : {
+				name : "Resolution",
+				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-3 col-sm-3 col-xs-3"]},
+				type : "combo",
+				options : ["VGA", "HD"]
+			    },
+			    // source : {
+			    // 	name : "Video device configuration", //subtitle : "Configure video acquisition",
+			    // 	elements : {
+			    // 	}
+			    // },
 			    start : {
-				name : "Start webcam",
+				name : "Start",
 				type : "action",
-				ui_opts :  {fa_icon : "play",item_classes : ["btn btn-primary"]}
+				ui_opts :  {fa_icon : "play",item_classes : ["btn btn-primary"], root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
 			    },
 			    stop : {
 				name : "Stop",
 				type : "action",
-				ui_opts :  { fa_icon : "stop",item_classes : ["btn btn-primary"] }
+				ui_opts :  { fa_icon : "stop",item_classes : ["btn btn-primary"], root_classes : ["col-md-3 col-sm-3 col-xs-3"] }
 			    },
 			}
 		    },
@@ -74,25 +92,25 @@ var videocap_templates = {
 					name: "x",
 					type: "double",
 					value : 300,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
 				    },
 				    y : {
 					name: "y",
 					type: "double",
 					value : 50,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
 				    },
 				    w : {
 					name: "width",
 					type: "double",
 					value : 30,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
 				    },
 				    h : {
 					name: "height",
 					type: "double",
 					value : 300,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
 				    }
 				}
 			    },
@@ -110,8 +128,8 @@ var videocap_templates = {
 	    spectrum : {
 		name : "Spectrum view",
 		subtitle : "One dimensional spectra (R,G,B)",
-		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-8 col-xs-8"], child_classes : ["container-fluid"], item_classes : [],
-			    panel :false
+		ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-8 col-xs-12"], child_classes : [""], item_classes : ["panel panel-default"],
+			    panel :false, name_node : "h3"
 			  },
 		type : "template",
 		template_name : "vector",
@@ -142,7 +160,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var integ=options.elements.integrate.elements.enable;
     var integ_nf=options.elements.integrate.elements.nframes;
 
-
+    var device=controls.elements.device;
+    var resolution=controls.elements.resolution;
     
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
 
@@ -177,9 +196,16 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     var ctx = canvas.getContext('2d');
 
+    var per=null;
+    function video_error(title,msg){
+	if(!per) per=ce("p");controls.ui_root.appendChild(per);
+	per.innerHTML='<p class="alert alert-danger"> <strong>'+title+'</strong>'+msg+'</p>';
+	
+    }
+    
     
     var errorCallback = function(e) {
-	console.log('capture error ' + e);
+	video_error('Capture error ', e);
     };
 
     video_node.addEventListener("loadeddata", function(){
@@ -197,8 +223,10 @@ template_ui_builders.videocap=function(ui_opts, vc){
     });
 
     var iv_cap;
-
+    var videoSource = null;
+    
     stop.disable(true);
+    start.disable(true);
     
     stop.listen("click",function(){
 	if(iv_cap){
@@ -208,42 +236,112 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	if (stream) {
 	    stream.stop();
 	}
-
+	device.disable(false);
 	start.disable(false);
 	stop.disable(true);
     });
 
+    
+    if (!navigator.getUserMedia) {
+	video_error("Oh No!", "It seems your browser doesn't support HTML5 getUserMedia.");
+    }else{
+
+	if (typeof MediaStreamTrack === 'undefined' ||
+	    typeof MediaStreamTrack.getSources === 'undefined') {
+	    video_error("Oh No!", "This browser does not support MediaStreamTrack. Try Chrome.");
+	} else {
+	    start.disable(false);
+	    
+	    MediaStreamTrack.getSources(function(sourceInfos) {
+		var audioSource = null;
+		
+
+		var source_options=[];
+		var vi=0;
+		for (var i = 0; i != sourceInfos.length; ++i) {
+		    var sourceInfo = sourceInfos[i];
+		    if (sourceInfo.kind === 'audio') {
+			//console.log(sourceInfo.id, sourceInfo.label || 'microphone');
+			//audioSource = sourceInfo.id;
+		    } else if (sourceInfo.kind === 'video') {
+			vi++;
+			//console.log("VIDEO : " + JSON.stringify(sourceInfo));
+			//console.log(sourceInfo.id, sourceInfo.label || 'camera');
+			source_options.push({ label : sourceInfo.label || ('Camera ' +vi) , value : sourceInfo.id});
+			if(vi===1)videoSource = sourceInfo.id;
+			
+		    } else {
+			console.log('Some other kind of source: ', sourceInfo);
+		    }
+		}
+		device.set_options(source_options);
+		//sourceSelected(audioSource, videoSource);
+
+		device.listen("change", function(id){
+		    videoSource=device.value.value;
+		    
+		});
+		
+	    });
+	}
+    }
+    
     start.listen("click",function(){
 
-	if (navigator.getUserMedia) {
-	    navigator.getUserMedia({audio: false, video: true}, function(stream_in) {
-		video_node.src = window.URL.createObjectURL(stream_in);
-		stream=stream_in;
-		
-		//console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
-		var iv_delay=100; //integ.value? 100 : 100;
-		if (stream) {
-		    iv_cap=setInterval(function(){
-			// "image/webp" works in Chrome.
-			// Other browsers will fall back to image/png.
-			//img_node.src = canvas.toDataURL('image/webp');
-			
-			draw_spectrum();
-		    }, iv_delay );
-		    
-		}
-		
-		start.disable(true);
-		stop.disable(false);
-		
-	    }, errorCallback);
-	} else {
-	    alert('getUserMedia() is not supported in your browser');
-	    console.log("Nu getUserMedia !!!");
-	    return vc.ui;
-	}
-    });
 
+	var hd_constraints = {
+	    audio: false,
+	    video: {
+		optional: [{
+		    sourceId: videoSource
+		}],
+		mandatory: {
+		    minWidth: 1280,
+		    minHeight: 720,
+		}
+	    }
+	};
+
+	var vga_constraints = {
+	    audio: false,
+	    video: {
+		optional: [{
+		    sourceId: videoSource
+		}],
+		mandatory: {
+		    minWidth: 640,
+		    minHeight: 480,
+		}
+	    }
+	};
+
+	var constraints = resolution.value==="HD" ? hd_constraints : vga_constraints;
+	
+	console.log("Start video source... ("+resolution.value+")" + JSON.stringify(constraints));
+	
+	navigator.getUserMedia(constraints, function(stream_in) {
+	    video_node.src = window.URL.createObjectURL(stream_in);
+	    stream=stream_in;
+	    
+	    //console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
+	    var iv_delay=100; //integ.value? 100 : 100;
+	    if (stream) {
+		iv_cap=setInterval(function(){
+			// "image/webp" works in Chrome.
+		    // Other browsers will fall back to image/png.
+		    //img_node.src = canvas.toDataURL('image/webp');
+			
+		    draw_spectrum();
+		}, iv_delay );
+		
+	    }
+	    device.disable(true);
+	    start.disable(true);
+	    stop.disable(false);
+		
+	}, errorCallback);
+    });
+    
     var buf_data=[];
     var seq=0;
     var bx,by,bw,bh;
