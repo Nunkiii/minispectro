@@ -8,7 +8,9 @@ var videocap_templates = {
 	subtitle : "A web/home experiment to discover spectroscopy",
 	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	type : "videocap",
-	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : []},
+	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : [],
+		    icon : "/minispectro/ico/Prism-rainbow.svg"
+		  },
 	
 	elements : {
 	    video : {
@@ -17,13 +19,13 @@ var videocap_templates = {
 		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-4 col-xs-12"],child_classes : ["row"]},
 		elements : {
 		    controls : {
-			name : "Video control",
+			name : "Video setup",
 			ui_opts :  {
-			    fa_icon : "play",root_classes : ["col-md-12"],child_classes : ["row"], render_name : false
+			    fa_icon : "camera",root_classes : ["col-md-12"],child_classes : ["row"], render_name : false
 			},
 			elements : {
 			    device : {
-				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-4 col-sm-4 col-xs-6"],
+				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-6 col-sm-6 col-xs-6"],
 					   fa_icon : "camera-retro"
 					  },
 				name : "Device",
@@ -31,7 +33,7 @@ var videocap_templates = {
 			    },
 			    resolution : {
 				name : "Resolution",
-				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-4 col-sm-4 col-xs-6"],
+				ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-6 col-sm-6 col-xs-6"],
 					   fa_icon : "qrcode"
 					  },
 				type : "combo",
@@ -46,7 +48,7 @@ var videocap_templates = {
 				name : "Start/Stop capture :",
 				ui_opts :  {
 				    //fa_icon : "play",
-				    root_classes : ["col-sm-4 col-md-4 col-xs-12"], label : true
+				    root_classes : ["col-sm-12 col-md-12 col-xs-12"], label : true
 				},
 				elements : {
 				    start : {
@@ -68,7 +70,7 @@ var videocap_templates = {
 			}
 		    },
 		    options : {
-			name : "Setup",
+			name : "Spectro setup",
 			ui_opts : {child_view_type : "pills", root_classes : [], render_name : false, child_classes : ["container-fluid"],
 				   fa_icon : "wrench"
 				  },
@@ -107,32 +109,32 @@ var videocap_templates = {
 			    box : {
 				name : "Spectrum region",
 				subtitle : "Adjust the spectrum area within image",
-				ui_opts :  {fa_icon : "screenshot",root_classes : [],child_classes : ["row"]},
+				ui_opts :  {fa_icon : "screenshot",root_classes : ["container-fluid"],child_classes : ["row"]},
 				
 				elements : {
 				    x : {
 					name: "x",
 					type: "double",
 					value : 300,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-6"]}
 				    },
 				    y : {
 					name: "y",
 					type: "double",
 					value : 50,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-6"]}
 				    },
 				    w : {
 					name: "width",
 					type: "double",
 					value : 30,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-6"]}
 				    },
 				    h : {
 					name: "height",
 					type: "double",
 					value : 300,
-					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-3"]}
+					ui_opts : { type : "edit", label : true, root_classes : ["col-md-3 col-sm-3 col-xs-6"]}
 				    }
 				}
 			    },
@@ -188,7 +190,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
 
     var video_container=cc("div",video.ui_root, true);
-    
+    video_container.style.display="none";
 
     video_container.style.position="relative";
 
@@ -310,7 +312,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     }
     
     start.listen("click",function(){
-
+	video_container.style.display="";
 
 	var hd_constraints = {
 	    audio: false,
@@ -575,6 +577,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	console.log("adding videocap templates");
 	//    window.addEventListener("load",function(){
 	tmaster.add_templates(videocap_templates);
+
     });
 })();
 
