@@ -73,20 +73,19 @@ var videocap_templates = {
 		    
 		    options : {
 			name : "Setup",
-			ui_opts : {child_view_type : "pills", root_classes : [], render_name : false, child_classes : ["container-fluid"],
+			ui_opts : {child_view_type : "pills", root_classes : ["container-fluid"], render_name : false, child_classes : ["row"],
 				   fa_icon : "reorder"
 				  },
 			elements : {
 			    controls : {
 				name : "Video control",
 				ui_opts :  {
-				    fa_icon : "camera",root_classes : [],child_classes : ["container-fluid"], render_name : false
+				    fa_icon : "camera",root_classes : ["row"],child_classes : ["container-fluid"], render_name : false
 				},
 				elements : {
-				    
 				    options : {
 					name : "Video device options :",
-					ui_opts : { root_classes : ["container"], child_classes : ["row"]},
+					ui_opts : { root_classes : ["container-fluid"], child_classes : ["row"]},
 					elements : {
 					    device : {
 						ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-6 col-sm-6 col-xs-12"],
@@ -105,30 +104,46 @@ var videocap_templates = {
 					    }
 					}
 				    },
-				    integrate : {
-					name  : "Average frames",
-					ui_opts : { label : false, root_classes : ["container"], child_classes : ["row"],
-						    
-						  },
-					subtitle : "Sum up frames to reduce noise",
+				    processing : {
+					name : "Processing options",
+					ui_opts : { root_classes : ["container-fluid"], child_classes : ["row"], fa_icon : "th"},
+
 					elements : {
-					    enable : {
-						name : "Enable",
-						ui_opts : { label : true, root_classes : ["col-md-2 col-sm-2"], type : "edit" },
-						type : "bool",
-						value : false
+					    integrate : {
+						name  : "Average frames",
+						ui_opts : {root_classes : ["col-sm-6"], child_classes : ["row"]},
+						subtitle : "Sum up frames to reduce noise",
+						elements : {
+						    enable : {
+							name : "Enable",
+							ui_opts : { label : true, root_classes : ["col-md-3 col-sm-6"], type : "edit" },
+							type : "bool",
+							value : false
+						    },
+						    nframes : {
+							type : "double",
+							name : "Number of images",
+							ui_opts : { type : "edit", label : true, root_classes : ["col-md-6 col-sm-6"] },
+							step : 1,
+							value : 5,
+							min : 2,
+							max : 100
+						    }
+						}
 					    },
-					    nframes : {
-						type : "double",
-						name : "Number of images",
-						ui_opts : { type : "edit", label : true, root_classes : ["col-md-4 col-sm-4"] },
-						step : 1,
-						value : 5,
-						min : 2,
-						max : 100
+				    	    sampling : {
+						name : "Sampling",
+						name : "Buffer sampling rate (Hz)", intro : "<p>Setting this to a value higher than the actual camera sampling rate is not usefull and consumes CPU.</p>",
+						type : "double", min : .1, max : 50, step : .05, default_value : 20,
+						ui_opts : {
+						    label : true, item_classes : [], root_classes : ["col-md-6 col-sm-6 col-xs-12"],
+						    fa_icon : "dashboard", type : "edit"
+						}
+						
 					    }
 					}
-				    },
+				    }
+				    
 				    
 				}
 			    },
@@ -234,12 +249,17 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var start=butts.start;
     var stop=butts.stop;
 
-    var integ=controls.elements.integrate.elements.enable;
-    var integ_nf=controls.elements.integrate.elements.nframes;
 
     var video_options=controls.elements.options;
+    var processing_options=controls.elements.processing.elements;
+
     var device=video_options.elements.device;
+
     var resolution=video_options.elements.resolution;
+    var sampling=processing_options.sampling;
+
+    var integ=processing_options.integrate.elements.enable;
+    var integ_nf=processing_options.integrate.elements.nframes;
     
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
 
@@ -255,6 +275,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //var phead=cc("div",video_container); //phead.className="panel-heading"; phead.innerHTML="";
    // var pcontent=cc("div",video_container);// pcontent.className="panel-content";
     var video_node=cc("video",camview.ui_root);
+    //var video_node=cc("video",video_container);
+    
     //video_node.style.position="relative";
 
     //btns.appendChild(start.ui);
@@ -269,6 +291,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //var img_node=cc("img",video.ui_root);
     var canvas=cc("canvas",video_container);
     //canvas.style.display="none";
+
     //video_node.style.width=640;
     //video_node.style.height=640;
     
@@ -294,6 +317,10 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    if(video_node.videoWidth!==0){
 		canvas.width= video_node.videoWidth;
 		canvas.height=video_node.videoHeight;
+		if(!spectro_win.moving)
+		    set_box_size();
+
+
 		//console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
 		clearInterval(iv);
 	    }
@@ -302,16 +329,20 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     });
 
-    var iv_cap;
+
     var videoSource = null;
-    
+    var iv_cap;
+    var iv_video;
+
     stop.disable(true);
     start.disable(true);
+
     
     stop.listen("click",function(){
 	
 	if(iv_cap){
 	    clearInterval(iv_cap);
+	    clearInterval(iv_video);
 	}
 	
 	if (stream) {
@@ -400,22 +431,29 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	var constraints = resolution.value==="HD" ? hd_constraints : vga_constraints;
 	
 	console.log("Start video source... ("+resolution.value+")" + JSON.stringify(constraints));
+
+
+	function iv_freq(f, freq){
+	    console.log("Iv : " + 1000.0/freq);
+	    return setInterval(f, 1000.0/freq);
+	}
+
+	function setup_buffer_loop(){
+	    if(è(iv_cap))clearInterval(iv_cap);
+	    iv_cap=iv_freq(function(){
+		process_frame();
+	    }, sampling.value );
+	}
 	
 	navigator.getUserMedia(constraints, function(stream_in) {
 	    video_node.src = window.URL.createObjectURL(stream_in);
 	    stream=stream_in;
 	    
 	    //console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
-	    var iv_delay=100; //integ.value? 100 : 100;
+	    var iv_delay=200; //integ.value? 100 : 100;
+
 	    if (stream) {
-		iv_cap=setInterval(function(){
-			// "image/webp" works in Chrome.
-		    // Other browsers will fall back to image/png.
-		    //img_node.src = canvas.toDataURL('image/webp');
-			
-		    draw_spectrum();
-		}, iv_delay );
-		
+		setup_buffer_loop();
 	    }
 	    video_options.disable(true);
 	    start.disable(true);
@@ -424,8 +462,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	}, errorCallback);
     });
     
-    var buf_data=[];
-    var seq=0;
     var bx,by,bw,bh;
 
     function slice_arrays(){
@@ -535,21 +571,19 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //set_box_size();    
     
     var frid=0;
-    
-    function draw_spectrum(){
-	
-	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
+    var buf_data=[];
+    var seq=0;
 
+    function process_frame(){
 	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf.data.length);
-	
-	
 	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
 	ctx.drawImage(video_node, 0, 0);
 	
+	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
 	var inf=integ_nf.value*1.0;
 	
-	if(integ.value){
-
+	if(integ.value>0){
+	    
 	    if(seq>=inf){
 		for(var i=0;i<buf_data.length;i++) buf_data[i]/=inf;
 		seq=0;
@@ -564,16 +598,12 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		//draw_spectrum_box();
 		return;
 	    }
-	    
 	}else{
 	    buf_data=buf.data;
 	}
 
-	//draw_spectrum_box();
+//	draw_spectrum_box();
 
-	if(!spectro_win.moving)
-	    set_box_size();
-	
 	var ddir=dir.ui.selectedIndex;
 
 	if(ddir){
@@ -619,12 +649,11 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    //console.log("SPEC["+JSON.stringify(spec_data.r)+"]");
 	    
 	}
+	spectro_view.config_range();	
 	//if(frid===0)
-	spectro_view.config_range();
 	frid++;
-	
-	//spectro_view.redraw();
     }
+
 
     return vc.ui;
 };
