@@ -14,8 +14,8 @@ var videocap_templates = {
 	
 	elements : {
 	    camview : {
-		//name : "Video monitor",
-		ui_opts : { root_classes : ["col-md-4 col-xs-12"], child_classes : []},
+		name : "Video monitor", 
+		ui_opts : { root_classes : ["col-md-4 col-xs-12 panel panel-default"], child_classes : ["container-fluid"]},
 		elements : {
 
 		    butts : {
@@ -23,7 +23,7 @@ var videocap_templates = {
 			ui_opts :  {
 			    
 			    child_classes : ["btn-group"],
-			    root_classes : ["container-fluid"],
+			    root_classes : ["inline"],
 			    label : true
 			},
 			elements : {
@@ -40,7 +40,16 @@ var videocap_templates = {
 					   }
 			    }
 			}
+		    },
+		    show : {
+			name : "Show/hide",
+			type : "bool",
+			ui_opts :  {
+			    root_classes : ["inline"],
+			    item_classes : [], type : "edit", label : true
+			}
 		    }
+
 
 
 		}
@@ -234,13 +243,14 @@ template_ui_builders.videocap=function(ui_opts, vc){
     
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
 
-    var video_container=cc("div",camview.ui_root);
+    var video_container=cc("div",camview.ui_childs.div);
 
-    //camview.hide(true);
     
     video_container.style.position="relative";
     video_container.style.marginTop="1em";
-    
+
+    //camview.hide(true);
+
     video_container.className="panel panel-default";
     //var phead=cc("div",video_container); //phead.className="panel-heading"; phead.innerHTML="";
    // var pcontent=cc("div",video_container);// pcontent.className="panel-content";
@@ -277,7 +287,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var errorCallback = function(e) {
 	video_error('Capture error ', e);
     };
-
+    
     video_node.addEventListener("loadeddata", function(){
 	
 	var iv=setInterval(function(){
@@ -360,9 +370,8 @@ template_ui_builders.videocap=function(ui_opts, vc){
     }
     
     start.listen("click",function(){
-
-	//camview.hide(false);
 	
+	//camview.hide(false);
 	var hd_constraints = {
 	    audio: false,
 	    video: {
