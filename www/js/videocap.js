@@ -41,14 +41,14 @@ var videocap_templates = {
 			    }
 			}
 		    },
-		    show : {
-			name : "Show/hide",
-			type : "bool",
-			ui_opts :  {
-			    root_classes : ["inline"],
-			    item_classes : [], type : "edit", label : true
-			}
-		    }
+		    // show : {
+		    // 	name : "Show/hide",
+		    // 	type : "bool",
+		    // 	ui_opts :  {
+		    // 	    root_classes : ["inline"],
+		    // 	    item_classes : [], type : "edit", label : true
+		    // 	}
+		    // }
 
 
 
@@ -90,7 +90,7 @@ var videocap_templates = {
 					elements : {
 					    device : {
 						ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-6 col-sm-6 col-xs-12"],
-							   fa_icon : "camera-retro"
+							   fa_icon : "camera-retro", type : "edit"
 							  },
 						name : "Device",
 						type : "combo"
@@ -98,7 +98,7 @@ var videocap_templates = {
 					    resolution : {
 						name : "Resolution",
 						ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-6 col-sm-6 col-xs-12"],
-							   fa_icon : "qrcode"
+							   fa_icon : "qrcode", type : "edit"
 							  },
 						type : "combo",
 						options : ["VGA", "HD"]
@@ -157,7 +157,7 @@ var videocap_templates = {
 					    x : {
 						name: "x",
 						type: "double",
-						value : 300,
+						default_value : 300, step : 1, min : 0,
 						ui_opts : { type : "edit", label : true,
 							    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
 							    //root_classes : ["form-group"]
@@ -166,7 +166,7 @@ var videocap_templates = {
 					    y : {
 						name: "y",
 						type: "double",
-						value : 50,
+						default_value : 50, step : 1, min : 0,
 						ui_opts : { type : "edit", label : true,
 							    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
 							    //root_classes : ["form-group"]
@@ -175,7 +175,7 @@ var videocap_templates = {
 					    w : {
 						name: "width",
 						type: "double",
-						value : 30,
+						default_value : 30, step : 1, min : 1,
 						ui_opts : { type : "edit", label : true,
 							    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
 							    //root_classes : ["form-group"]
@@ -184,7 +184,7 @@ var videocap_templates = {
 					    h : {
 						name: "height",
 						type: "double",
-						value : 300,
+						default_value : 300, step : 1, min : 1,
 						ui_opts : { type : "edit", label : true,
 							    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
 							    //root_classes : ["form-group"]
@@ -244,7 +244,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
 
     var video_container=cc("div",camview.ui_childs.div);
-
+    var spectro_win;
     
     video_container.style.position="relative";
     video_container.style.marginTop="1em";
@@ -361,8 +361,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 		//sourceSelected(audioSource, videoSource);
 
 		device.listen("change", function(id){
-		    videoSource=device.value.value;
-		    
+		    videoSource=device.value;
 		});
 		
 	    });
@@ -456,10 +455,10 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 	//w.widget_div.style.transform="scale("+scale[0]+","+scale[1]+")";
 
-	w.widget_div.style.left=scale[0]*bx+"px";
-	w.widget_div.style.top=scale[1]*by+"px";
-	w.widget_div.style.width=scale[0]*bw+"px";
-	w.widget_div.style.height=scale[1]*bh+"px";
+	spectro_win.widget_div.style.left=scale[0]*bx+"px";
+	spectro_win.widget_div.style.top=scale[1]*by+"px";
+	spectro_win.widget_div.style.width=scale[0]*bw+"px";
+	spectro_win.widget_div.style.height=scale[1]*bh+"px";
 
     }
 
@@ -478,15 +477,16 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     // 	if(ù(w)){
     var c5=canvas.width/5.0;
-    w=new widget({ x: 2*c5, y: 5, w : c5, h : canvas.height-5});
-    w.widget_div.style.position="absolute";
-    video_container.appendChild(w.widget_div);
+    spectro_win=new widget({ x: 2*c5, y: 5, w : c5, h : canvas.height-5});
+    spectro_win.widget_div.style.position="absolute";
+    video_container.appendChild(spectro_win.widget_div);
     set_box_size();
     
     dir.listen("change",function(){slice_arrays();});
     
-    w.listen("resize", function(sz){
-	//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+    spectro_win.listen("resize", function(sz){
+	console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+	
 	//buf_data=[];
 	//spec_data={r : [], g: [], b : [], t : [] };
 	var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
@@ -533,19 +533,19 @@ template_ui_builders.videocap=function(ui_opts, vc){
     slice_arrays();
     create_plots();
     //set_box_size();    
-    var w;
-    
     
     var frid=0;
     
     function draw_spectrum(){
-	//console.log("draw spectrum Canvas w,h %d %d" ,canvas.width,canvas.height);
 	
 	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
 
+	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf.data.length);
+	
+	
 	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
 	ctx.drawImage(video_node, 0, 0);
-
+	
 	var inf=integ_nf.value*1.0;
 	
 	if(integ.value){
@@ -571,7 +571,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 	//draw_spectrum_box();
 
-	if(!w.moving)
+	if(!spectro_win.moving)
 	    set_box_size();
 	
 	var ddir=dir.ui.selectedIndex;
