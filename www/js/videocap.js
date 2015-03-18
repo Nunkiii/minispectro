@@ -80,12 +80,14 @@ var videocap_templates = {
 			    controls : {
 				name : "Video control",
 				ui_opts :  {
-				    fa_icon : "camera",root_classes : ["row"],child_classes : ["container-fluid"], render_name : false
+				    fa_icon : "camera",root_classes : ["row"],child_classes : ["container-fluid"], render_name : false,  save : true
 				},
 				elements : {
 				    options : {
 					name : "Video device options :",
-					ui_opts : { root_classes : ["container-fluid"], child_classes : ["row"]},
+					ui_opts : {
+					    root_classes : ["container-fluid"], child_classes : ["row"]
+					},
 					elements : {
 					    device : {
 						ui_opts : {label : true, item_classes : ["inline"], root_classes : ["col-md-6 col-sm-6 col-xs-12"],
