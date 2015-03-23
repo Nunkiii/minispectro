@@ -159,11 +159,13 @@ var videocap_templates = {
 					name : "Wavelength direction",
 					fa_icon : "repeat",
 					type : "combo",
-					options : ["Vertical", "Horizontal"],
+					options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
 					ui_opts : { root_classes : ["col-md-12 col-sm-12 col-xs-12"],
-						    item_classes : ["inline"]
+						    item_classes : ["inline"],
+						    type : "edit"
 						    
 						  },
+					default_value : 0,
 					intro : "Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction."
 				    },
 				    region : {
@@ -232,21 +234,20 @@ var videocap_templates = {
 template_ui_builders.videocap=function(ui_opts, vc){
     console.log("Videocap constructor !");
     //var main_node=vc.ui=ce("div"); main_node.class_name="container-fluid";
-    var video=vc.elements.video;
+    var video=vc.get("video");
 
-    var camview=vc.elements.camview;
+    var camview=vc.get("camview");
 
-    var spectrum=video.elements.spectrum;
-
-
+    var spectrum=video.get("spectrum");
     var spectro_view=spectrum;
+
     var options=video.elements.options;
 
     var spectro_opts=options.elements.box.elements;
     var controls=options.elements.controls;
     var spectro_box=spectro_opts.region.elements;
 
-    var dir=spectro_opts.dir;
+    var dir=options.get("dir");
     var butts=camview.elements.butts.elements;
     var start=butts.start;
     var stop=butts.stop;
@@ -472,7 +473,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	bw=spectro_box.w.value;
 	bh=spectro_box.h.value;
 
-	var ddir=dir.ui.selectedIndex;
+	var ddir=dir.value;
 	var ddim= ddir? bw:bh;
 	
 	if(ddim < spec_data.r.length){
