@@ -15,7 +15,7 @@ var videocap_templates = {
 	elements : {
 	    camview : {
 		name : "Video monitor", 
-		ui_opts : { root_classes : ["col-md-4 col-xs-12 panel panel-default"], child_classes : ["container-fluid"]},
+		ui_opts : { root_classes : ["col-md-4 col-xs-12"], child_classes : ["container-fluid"]},
 		elements : {
 
 		    butts : {
@@ -136,7 +136,7 @@ var videocap_templates = {
 				    	    sampling : {
 						name : "Sampling",
 						name : "Buffer sampling rate (Hz)", intro : "<p>Setting this to a value higher than the actual camera sampling rate is not usefull and consumes CPU.</p>",
-						type : "double", min : .1, max : 50, step : .05, default_value : 20,
+						type : "double", min : .1, max : 50, step : 1, default_value : 20,
 						ui_opts : {
 						    label : true, item_classes : [], root_classes : ["col-md-6 col-sm-6 col-xs-12"],
 						    fa_icon : "dashboard", type : "edit"
@@ -252,7 +252,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var start=butts.start;
     var stop=butts.stop;
 
-
     var video_options=controls.elements.options;
     var processing_options=controls.elements.processing.elements;
 
@@ -272,31 +271,13 @@ template_ui_builders.videocap=function(ui_opts, vc){
     video_container.style.position="relative";
     video_container.style.marginTop="1em";
 
-    //camview.hide(true);
-
     video_container.className="panel panel-default";
-    //var phead=cc("div",video_container); //phead.className="panel-heading"; phead.innerHTML="";
-   // var pcontent=cc("div",video_container);// pcontent.className="panel-content";
+
     var video_node=cc("video",camview.ui_root);
-    //var video_node=cc("video",video_container);
-    
-    //video_node.style.position="relative";
-
-    //btns.appendChild(start.ui);
-    //btns.appendChild(stop.ui);
-
-    //vc.cnt.appendChild(spectrum.ui_root);
-
-    video.className="center-block";
-    video_node.style.width=200;
     video_node.setAttribute("autoplay",true);
     video_node.style.display="none";
-    //var img_node=cc("img",video.ui_root);
     var canvas=cc("canvas",video_container);
-    //canvas.style.display="none";
 
-    //video_node.style.width=640;
-    //video_node.style.height=640;
     
     var stream = null;
 
@@ -350,6 +331,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	
 	if (stream) {
 	    stream.stop();
+	    stream=null;
 	}
 	//camview.hide(true);
 	video_options.disable(false);
@@ -401,6 +383,24 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	    });
 	}
     }
+
+    
+    function iv_freq(f, freq){
+	console.log("Setting frame iv to : " + 1000.0/freq + " ms");
+	return setInterval(f, 1000.0/freq);
+    }
+    
+    function setup_buffer_loop(){
+	if(è(iv_cap))clearInterval(iv_cap);
+	iv_cap=iv_freq(function(){
+	    process_frame();
+	}, sampling.value );
+    }
+    
+    sampling.listen("change", function(v){
+	if(stream!=null)
+	    setup_buffer_loop();
+    });
     
     start.listen("click",function(){
 	
@@ -435,18 +435,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	
 	console.log("Start video source... ("+resolution.value+")" + JSON.stringify(constraints));
 
-
-	function iv_freq(f, freq){
-	    console.log("Iv : " + 1000.0/freq);
-	    return setInterval(f, 1000.0/freq);
-	}
-
-	function setup_buffer_loop(){
-	    if(è(iv_cap))clearInterval(iv_cap);
-	    iv_cap=iv_freq(function(){
-		process_frame();
-	    }, sampling.value );
-	}
 	
 	navigator.getUserMedia(constraints, function(stream_in) {
 	    video_node.src = window.URL.createObjectURL(stream_in);
@@ -669,7 +657,3 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     });
 })();
-
-	
-
-
