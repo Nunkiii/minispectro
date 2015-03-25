@@ -8,9 +8,10 @@ var videocap_templates = {
 	subtitle : "A web/home experiment to discover spectroscopy",
 	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	type : "videocap",
-	ui_opts : { root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : [],
-		    icon : "/minispectro/ico/Prism-rainbow.svg"
-		  },
+	ui_opts : {
+	    root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : [],
+	    icon : "/minispectro/ico/minispectro.svg"
+	},
 	
 	elements : {
 	    camview : {
