@@ -7,7 +7,6 @@ var videocap_templates = {
 	name : "Minispectro",
 	subtitle : "A web/home experiment to discover spectroscopy",
 	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
-	type : "videocap",
 	ui_opts : {
 	    root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : [],
 	    icon : "/minispectro/ico/minispectro.svg"
@@ -67,8 +66,7 @@ var videocap_templates = {
 			ui_opts : { fa_icon : "line-chart", root_classes : ["col-md-12 col-xs-12"], child_classes : [], item_classes : [],
 				    render_name : false
 				  },
-			type : "template",
-			template_name : "vector",
+			type : "vector",
 			y_range : [0, 255]
 		    },
 		    
@@ -339,6 +337,15 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 	start.disable(false);
 	stop.disable(true);
+
+	var types={};
+	for(var b in template_ui_builders){
+	    if(ù(tmaster.templates[b])){
+		types[b]={}
+	    }
+	}
+	console.log(JSON.stringify(types));
+
     });
 
     
