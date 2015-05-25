@@ -9,8 +9,13 @@ var videocap_templates = {
 	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	ui_opts : {
 	    root_classes : ["container-fluid"],  child_classes : ["row"], name_classes : [],
-	    icon : "/minispectro/ico/minispectro.svg"
+	    icon : "/minispectro/ico/minispectro.svg",
+	    child_toolbar : true,
+	    name_node : "h4"
+	    
 	},
+
+	toolbar : {},
 	
 	elements : {
 	    camview : {
@@ -57,7 +62,10 @@ var videocap_templates = {
 	    video : {
 		//name : "Control-panel",
 		//intro : "Click start to start capture",
-		ui_opts : { child_view_type : "tabbed", root_classes : ["col-md-8 col-xs-12"],child_classes : ["container-fluid"]},
+		ui_opts : {
+		    child_view_type : "tabbed",
+		    root_classes : ["col-md-8 col-xs-12"],
+		    child_classes : ["container-fluid"]},
 
 		elements : {
 		    spectrum : {
@@ -72,7 +80,7 @@ var videocap_templates = {
 		    
 		    options : {
 			name : "Setup",
-			ui_opts : {child_view_type : "pills", root_classes : ["container-fluid"], render_name : false, child_classes : ["row"],
+			ui_opts : {child_view_type : "pills", root_classes : ["container-fluid"], render_name : false, child_classes : ["container-fluid"],
 				   fa_icon : "reorder"
 				  },
 			elements : {
