@@ -515,7 +515,8 @@ var videocap_templates = {
 				name : "Live spectro",
 				subtitle : "One dimensional spectra (R,G,B)",
 				ui_opts : {
-				    fa_icon : "line-chart"
+				    fa_icon : "line-chart",
+				    name_node : "h2"
 				},
 
 				elements : {
