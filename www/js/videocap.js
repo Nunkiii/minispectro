@@ -122,9 +122,10 @@ var videocap_templates = {
 		    .attr('y1',5)
 		    .attr('x2',m)
 		    .attr('y2',160)
-		    .attr('stroke','black')
+		    .attr('stroke','rgba(100,150,150,.5)')
 		    .attr('fill','purple')
-		    .attr('stroke-width','3');	
+		    .attr('stroke-width','3')
+		    .attr('stroke-linecap','round');	
 
 		var g = context.append('g');
 		
@@ -313,6 +314,7 @@ var videocap_templates = {
     
     wlc : {
 	name : "Wavelength calibration",
+	//	intro : " This is the calibration !!!",
 	ui_opts : {
 	    render_name : true, child_view_type : 'div', name_node : 'h2',
 	    root_classes : ["container-fluid"],
@@ -688,42 +690,46 @@ var videocap_templates = {
 					elements : {
 					    dir : {
 						name : "Wavelength direction",
-						
+						subtitle : "Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction.",
 						type : "combo",
 						
 						options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
-						ui_opts : { root_classes : ["col-md-12 col-sm-12 col-xs-12"],
-							    item_classes : ["inline"],
-							    type : "edit",
-							    label : true,fa_icon : "exchange",
-							    
-							  },
+						ui_opts : {
+						    root_classes : ["col-md-12 col-sm-12 col-xs-12 form form-inline"],
+						    item_classes : ["col-xs-12 text-center"],
+						    type : "edit",
+						    //label : true,
+						    fa_icon : "exchange",
+						    
+						},
 						default_value : 0,
-						intro : "Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction."
+						
 					    },
 					    region : {
 						name : "Spectrum box",
-						intro : "Adjust the spectrum area within image",
+						subtitle : "Adjust the spectrum area within image",
 						ui_opts :  {
-						    root_classes : ["col-sm-12 col-xs-12"],child_classes : ["form-inline"],
-						    label : true
+						    root_classes : ["col-xs-12"],child_classes : ["form-inline"],
+						    //label : true,
+						    intro_stick : true
 						},
 						elements : {
 						    x : {
 							name: "x",
 							type: "double",
 							default_value : 300, step : 1, min : 0,
-							ui_opts : { type : "edit", label : true,
-								    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
-								    //root_classes : ["form-group"]
-								  }
+							ui_opts : {
+							    type : "edit", label : true,
+							    root_classes : ["form-inline col-xs-6 col-md-3"]
+							    //root_classes : ["form-group"]
+							}
 						    },
 						    y : {
 							name: "y",
 							type: "double",
 							default_value : 50, step : 1, min : 0,
 							ui_opts : { type : "edit", label : true,
-								    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
+								    root_classes : ["form-group col-xs-6 col-md-3"]
 								    //root_classes : ["form-group"]
 								  }
 						    },
@@ -732,7 +738,7 @@ var videocap_templates = {
 							type: "double",
 							default_value : 30, step : 1, min : 1,
 							ui_opts : { type : "edit", label : true,
-								    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
+								    root_classes : ["form-group col-xs-6 col-md-3"]
 								    //root_classes : ["form-group"]
 								  }
 						    },
@@ -741,7 +747,7 @@ var videocap_templates = {
 							type: "double",
 							default_value : 300, step : 1, min : 1,
 							ui_opts : { type : "edit", label : true,
-								    root_classes : ["form-group col-md-3 col-sm-3 col-xs-6"]
+								    root_classes : ["form-group col-xs-6 col-md-3"]
 								    //root_classes : ["form-group"]
 								  }
 						    }
@@ -761,13 +767,20 @@ var videocap_templates = {
 	    spectra : {
 		name : "Saved spectra",
 		ui_opts : {
-		    child_view_type : "tabbed", root_classes : ["container-fluid"], render_name : true,
+		    child_view_type : "tabbed",
+		    root_classes : ["container-fluid"],
+		    render_name : true,
 		    child_classes : ["container-fluid"],
-		    fa_icon : "file",
+		    fa_icon : "folder",
 		    tabs_mode : "left",
 		    //render_name : false,
-		    save : "spectra"
+		    save : "spectra",
+		    container : {
+			type : 'spectrum',
+			del : true,
+		    }
 		}
+
 	    },
 	    
 	    options : {
@@ -775,7 +788,7 @@ var videocap_templates = {
 		subtitle : "Setup wavelength and flux calibration.",
 		ui_opts : {
 		    child_view_type : "tabbed",
-		    root_classes : ["left"],
+		    root_classes : ["container-fluid left"],
 		    render_name : true,
 		    child_classes : ["container-fluid"],
 		    fa_icon : "reorder"
@@ -961,6 +974,8 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 
 
 
+    
+
     wlc.set_sv=function(sv){
 	this.sv=sv;
     }
@@ -995,12 +1010,19 @@ template_ui_builders.wlc=function(ui_opts, wlc){
     exec.listen('click', function(){
 
 	var fit_points=[];
-	
-	var fl=wlc.selspec.get('feature_list');
 
-	for (var fi in fl.elements){
-	    var f=fl.elements[fi];
-	    fit_points.push([f.val('pixel'),f.val('wl')]);
+	if(wlc.selspec===undefined){
+	    if(wlc.spectra!==undefined)
+		wlc.selspec=wlc.spectra[specsel.value];
+	}
+
+	if(wlc.selspec!==undefined){
+	    var fl=wlc.selspec.get('feature_list');
+	    
+	    for (var fi in fl.elements){
+		var f=fl.elements[fi];
+		fit_points.push([f.val('pixel'),f.val('wl')]);
+	    }
 	}
 
 	
@@ -1155,7 +1177,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     
     
     var errorCallback = function(e) {
-	video_error('Capture error ', e);
+	camview.debug('Capture error : ' + e);
     };
     
     video_node.addEventListener("loadeddata", function(){
@@ -1215,12 +1237,15 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
     
     if (!navigator.getUserMedia) {
-	video_error("Oh No!", "It seems your browser doesn't support HTML5 getUserMedia.");
+	controls.debug("Oh No! It seems your browser doesn't support HTML5 getUserMedia.");
+	video_options.disable();
     }else{
 
 	if (typeof MediaStreamTrack === 'undefined' ||
 	    typeof MediaStreamTrack.getSources === 'undefined') {
-	    video_error("Oh No!", "This browser does not support MediaStreamTrack. Try Chrome.");
+	    controls.debug("This browser does not support MediaStreamTrack. You cannot choose the input device. Try Chrome.");
+	    video_options.disable();
+	    start.disable(false);
 	} else {
 	    start.disable(false);
 	    
