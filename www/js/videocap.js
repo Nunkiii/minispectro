@@ -425,60 +425,45 @@ var videocap_templates = {
 	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	ui_opts : {
 	    root_classes : [],  child_classes : [], name_classes : [],
-	    icon : "/minispectro/ico/minispectro.svg",
+	    icon : "/minispectro/ico/minispectro_white.svg",
 	    //child_toolbar : true,
 	    child_view_type : 'tabbed',
-	    name_node : "h4"
+	    name_node : "h3"
 	    
 	},
 
 	toolbar : {},
 	
-//	elements : {
-		    // show : {
-		    // 	name : "Show/hide",
-		    // 	type : "bool",
-		    // 	ui_opts :  {
-		    // 	    root_classes : ["inline"],
-		    // 	    item_classes : [], type : "edit", label : true
-		    // 	}
-		    // }
-
-
-
-	    // 	}
-	    // },
-	    // video : {
-	    // 	//name : "Control-panel",
-	    // 	//intro : "Click start to start capture",
-	    // 	ui_opts : {
-	    // 	    child_view_type : "tabbed",
-	    // 	    root_classes : ["col-md-8 col-xs-12"],
-	    // 	    child_classes : ["container-fluid"]},
-
 	elements : {
 	    spectrum : {
-		name : "Spectro view",
+		name : "Spectro Control",
+		
 		ui_opts : {
-		    root_classes : ["container-fluid"],
-		    child_classes : ['container-fluid'],
+		    fa_icon : "line-chart",
+		    //root_classes : ["container-fluid"],
+		    //child_classes : ['container-fluid'],
 		    item_classes : [],
 		    render_name : false,
-		    fa_icon : "line-chart"
-
 		    //childs_pos : "below",
 		},
 		elements : {
 		    
 		    camview : {
-			//name : "Video monitor", 
-			ui_opts : { root_classes : ["col-md-4 col-xs-12"], child_classes : ["container-fluid"]},
+			name : "Video monitor", 
+			ui_opts : {
+			    
+			    root_classes : ["col-md-4 col-xs-12"],
+			    fa_icon : "camera"
+			    
+
+			    //child_classes : ["container-fluid"]
+			},
 			elements : {
 			    
 			    butts : {
 				name : "Start/Stop capture :",
 				ui_opts :  {
-				    fa_icon : "camera",
+				    //fa_icon : "camera",
 				    child_classes : ["btn-group"],
 				    root_classes : ["inline"],
 				    label : true
@@ -499,14 +484,70 @@ var videocap_templates = {
 					}
 				    }
 				}
+			    },
+			    
+			    camwindow : {
+
+			    },
+			    
+			    fileops : {
+				name : "Save current spectrum",
+				ui_opts : {
+				    label : true,
+				    fa_icon : "save",
+				    root_classes : ["col-xs-12"],
+				    child_node_type : "form",
+				    child_classes : ["inline form-inline"]
+				},
+				
+				
+				elements : {
+				    specname : {
+					type : "string",
+					name : "Name :",
+					holder_value : "Auto (Date)",
+					ui_opts : {
+					    root_classes : ["input-group"],
+					    //wrap : true,
+					    //wrap_classes : ["col-sm-4 nopadding"],
+					    name_classes : ["input-group-addon"],
+					    name_node : "div",
+						    type : "edit"
+					}
+					
+				    },
+				    
+				    target : {
+					type : "string",
+					name : "Target :",
+					holder_value : "An interesting light source",
+					ui_opts : {
+					    root_classes : ["input-group"],
+					    //wrap : true,
+					    //wrap_classes : ["col-sm-4 nopadding"],
+					    name_classes : ["input-group-addon"],
+					    name_node : "div",
+					    type : "edit"
+					}
+						
+				    },
+				    save :   {
+					name:  "Save", type : "action", ui_opts:{
+					    item_root : true,
+					    fa_icon : "save", item_classes : ["btn btn-warning"]}
+				    }
+				}
 			    }
+			    
 			}
 		    },
+		    
+		    
 		    
 
 		    right : {
 			ui_opts : {
-			    root_classes : ['col-md-8 left'],
+			    root_classes : ['col-md-8'],
 			    child_view_type : 'tabbed',
 			    render_name : false
 			},
@@ -518,61 +559,12 @@ var videocap_templates = {
 				subtitle : "One dimensional spectra (R,G,B)",
 				ui_opts : {
 				    fa_icon : "line-chart",
-				    name_node : "h2"
+				    name_node : "h3"
 				},
 
 				elements : {
-				    
-				    fileops : {
-					name : "Save current spectrum",
-					ui_opts : {
-					    label : true,
-					    fa_icon : "save",
-					    root_classes : ["col-xs-12"],
-					    child_node_type : "form",
-					    child_classes : ["inline form-inline"]
-					},
-					
-					
-					elements : {
-					    specname : {
-						type : "string",
-						name : "Name :",
-						holder_value : "Auto (Date)",
-						ui_opts : {
-						    root_classes : ["input-group"],
-						    //wrap : true,
-						    //wrap_classes : ["col-sm-4 nopadding"],
-						    name_classes : ["input-group-addon"],
-						    name_node : "div",
-						    type : "edit"
-						}
-						
-					    },
-					    
-					    target : {
-						type : "string",
-						name : "Target :",
-						holder_value : "An interesting light source",
-						ui_opts : {
-						    root_classes : ["input-group"],
-						    //wrap : true,
-						    //wrap_classes : ["col-sm-4 nopadding"],
-						    name_classes : ["input-group-addon"],
-						    name_node : "div",
-						    type : "edit"
-						}
-						
-					    },
-					    save :   {
-						name:  "Save", type : "action", ui_opts:{
-						    item_root : true,
-						    fa_icon : "save", item_classes : ["btn btn-warning"]}
-					    }
-					}
-				    },
 				    specview : {
-					name : "Live spectra",
+					//name : "Live spectra",
 					type : "vector",
 					y_range : [0, 255],
 					ui_opts : {
@@ -580,9 +572,10 @@ var videocap_templates = {
 					    enable_range : false,
 					    enable_selection : false,
 					    root_classes : ['col-md-12'],
-					    show_cursor : true
+					    show_cursor : true,
+					    render_name : false
 					}
-				    }
+				    },
 				}
 			    },
 
@@ -684,13 +677,14 @@ var videocap_templates = {
 					    fa_icon : 'crop',
 					    root_classes : ["container-fluid"],
 					    child_classes : ["row"],
+					    name_node : "h3"
 					    //intro_stick : true
 					},
 					
 					elements : {
 					    dir : {
 						name : "Wavelength direction",
-						subtitle : "Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction.",
+						intro : "Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction.",
 						type : "combo",
 						
 						options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
@@ -698,18 +692,19 @@ var videocap_templates = {
 						    root_classes : ["col-md-12 col-sm-12 col-xs-12 form form-inline"],
 						    item_classes : ["col-xs-12 text-center"],
 						    type : "edit",
-						    //label : true,
+						    label : true,
 						    fa_icon : "exchange",
+						    //name_node : "h4"
 						    
 						},
 						default_value : 0,
-						
 					    },
 					    region : {
 						name : "Spectrum box",
 						subtitle : "Adjust the spectrum area within image",
 						ui_opts :  {
 						    root_classes : ["col-xs-12"],child_classes : ["form-inline"],
+						    name_node : "strong",
 						    //label : true,
 						    intro_stick : true
 						},
@@ -1066,6 +1061,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //var video=vc.get("video");
 
     var camview=vc.get("camview");
+    var camwin=vc.get("camwindow");
     var spectrum=vc.get("spectrum");
     var spectro_view=vc.get("specview");//spectrum;
 
@@ -1099,7 +1095,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var spectra=vc.get("spectra");
     //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
 
-    var video_container=cc("div",camview.ui_childs.div);
+    var video_container=cc("div",camwin.ui_root);
 
 
     var spectro_win;
