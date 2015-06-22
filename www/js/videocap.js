@@ -325,16 +325,16 @@ var videocap_templates = {
 		name : "Polynomial fit",
 		intro : "Explain what we do here ...",
 		ui_opts : {
-		    name_node : 'h4',
+		    name_node : 'h3',
 		    root_classes : ['col-md-6 col-xs-12'],
-		    child_classes : ['container-fluid']
+		    child_classes : ['container-fluid'],
+		    save : "wlc"
 		},
 		elements : {
 		    control : {
 			ui_opts : {
 			    root_classes : ['container-fluid'],
-			    child_classes : ['row'],
-			    save : "wlc"
+			    child_classes : ['row panel panel-default']
 			},
 			elements : {
 			    specsel : {
@@ -344,7 +344,7 @@ var videocap_templates = {
 				ui_opts : {
 				    label : true,
 				    type : 'edit',
-				    root_classes : ['col-md-6 col-xs-12'],
+				    root_classes : ['col-xs-6'],
 				    item_classes : []
 				}
 			    },
@@ -355,17 +355,18 @@ var videocap_templates = {
 				ui_opts : {
 				    type : 'edit',
 				    label : true,
-				    root_classes : ["col-md-6 col-xs-12"]},
+				    root_classes : ["col-xs-6"]},
 				default_value : 2
 			    },
 			    exec :  {
 				type : 'action',
 				name : 'Fit datapoints',
 				ui_opts:{
-				    item_root : true,
+				    //item_root : false,
+				    // wrap : true,
+				    // wrap_classes : ["container"],
 				    fa_icon : "cogs",
-				    item_classes : ["btn btn-warning col-xs-12 col-md-6"],
-				    //root_classes : ['container']
+				    item_classes : ["col-xs-12 btn btn-warning"]
 				}
 			    },
 			    fit_eq : {
@@ -416,13 +417,9 @@ var videocap_templates = {
 	}
     },
     
-    
-    
-    
     videocap : {
 	name : "<font color='white'>MiniSpectro</font>",
-	subtitle : "A web/home experiment to discover spectroscopy",
-	intro : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
+	intro : "<h1>A web/home experiment to discover spectroscopy</h1><p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	ui_opts : {
 	    root_classes : [],  child_classes : [], name_classes : [],
 	    icon : "/minispectro/ico/minispectro_white.svg",
@@ -441,7 +438,7 @@ var videocap_templates = {
 		ui_opts : {
 		    fa_icon : "line-chart",
 		    //root_classes : ["container-fluid"],
-		    //child_classes : ['container-fluid'],
+		    child_classes : ['row'],
 		    item_classes : [],
 		    render_name : false,
 		    //childs_pos : "below",
@@ -547,7 +544,7 @@ var videocap_templates = {
 
 		    right : {
 			ui_opts : {
-			    root_classes : ['col-md-8'],
+			    root_classes : ['col-md-8 col-xs-12'],
 			    child_view_type : 'tabbed',
 			    render_name : false
 			},
@@ -1221,13 +1218,13 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	start.disable(false);
 	stop.disable(true);
 
-	var types={};
-	for(var b in template_ui_builders){
-	    if(ù(tmaster.templates[b])){
-		types[b]={}
-	    }
-	}
-	console.log(JSON.stringify(types));
+	// var types={};
+	// for(var b in template_ui_builders){
+	//     if(ù(tmaster.templates[b])){
+	// 	types[b]={}
+	//     }
+	// }
+	//console.log(JSON.stringify(types));
 
     });
 
