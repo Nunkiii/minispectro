@@ -67,14 +67,16 @@ var videocap_templates = {
     spectrum_feature : {
 	name : "Spectrum feature",
 	//subtitle : "Emission or absorption line",
+	intro : "<strong>Emission or absorption line</strong><p>First parameter is the physical wavelength of the feature, in Å. The second parameter, is the pixel space position of the same feature.</p>",
 	ui_opts : {
 	    fa_icon : "magnet",
 	    name_edit : true,
 	    //editable : true, edited : false,
-	    name_node : "h4",
+	    //name_node : "h4",
 	    child_classes : ['container-fluid'],
 	    child_view_type : 'table',
-	    sliding : true, slided : false
+	    
+	    //sliding : true, slided : false
 	},
 	elements : {
 	    // name : {
@@ -84,7 +86,7 @@ var videocap_templates = {
 	    // },
 	    wl : {
 		name : "Wavelength",
-		intro : "Physical wavelength, Å",
+	//	subtitle : "Physical wavelength, Å",
 		type : "double",
 		min : 0,
 		max : 30000,
@@ -93,7 +95,7 @@ var videocap_templates = {
 	    },
 	    pixel : {
 		name : "Pixel",
-		intro : "Pixel space position",
+	//	subtitle : "Image pixel space position",
 		type : "double",
 		min : 0, max : 20000, step : 1.0,
 		value : 0,
@@ -200,7 +202,7 @@ var videocap_templates = {
 	name : "Spectrum",
 	ui_opts : {
 	    icon : "/minispectro/ico/minispectro.svg",
-	    name_node :"h2",
+	    //name_node :"h2",
 	    show_cursor : true,
 	    name_edit : true
 	    //save : "spectrum"
@@ -238,11 +240,11 @@ var videocap_templates = {
 
 		ui_opts : {
 		    //fa_icon : "save",
-		    //root_classes : ["container-fluid inline"],
+		    root_classes : ["container-fluid"],
 		    child_view_type : "tabbed",
 		    child_node_type : "form",
-		    child_classes : ["inline form-inline"],
-		    name_node : "h3",
+		    //child_classes : ["inline form-inline"],
+		    //name_node : "h3",
 		    sliding : true,
 		    slided : false
 		},
@@ -300,15 +302,14 @@ var videocap_templates = {
 			    fa_icon : "plus",
 			    //root_classes : ["container-fluid inline"],
 			    child_node_type : "form",
-			    child_classes : ["form-inline text-center container-fluid"],
+			    child_classes : ["form-inline container-fluid"],
 			    //name_node : "strong",
 			    //	    sliding : true,
 			    //	    slided : false
 			},
 			
 			elements : {
-			    select_line : {
-				
+			    custom_feature : {
 				ui_opts : {
 				    //root_classes : ["input-group"],
 				    name_classes : ["text-left"],
@@ -317,15 +318,14 @@ var videocap_templates = {
 				    //render_name : true,
 				    type : "edit",
 				    name_edit : true,
-				    slided : true
+				    //slided : true
+				    intro_stick : true
 				},
-				
-				
 				name : 'A spectrum feature ...',
 				type : 'spectrum_feature'
 			    },
 			    
-			    add_line :   {
+			    add_custom_feature :   {
 				name:  "Add feature", type : "action",
 				ui_opts:{
 				    //root_element : "select_line",
@@ -409,11 +409,12 @@ var videocap_templates = {
     
     wlc : {
 	name : "Wavelength calibration",
-	//	intro : " This is the calibration !!!",
+	intro : "<strong>Introduction</strong> <p> The webcam CCD records the spectra as a 2D image. The spectrograph should be setup to assure that the color direction of the spectrum image is projected parallel to a CCD direction to simplify image processing. Along that direction, each pixel correspond to a different physical colour, hence a different light's wavelength.</p> <strong>Calibration</strong> <p>To be able to associate a pixel index with a physical wavelength, a <em>calibration spectrum</em> must be used to identify the pixel-space position of a certain number of spectral features whose wavelength is known, and use these points to build a model, in this case a polynomial function, to interpolate the colour for every pixel position.</p>",
 	ui_opts : {
 	    render_name : true, child_view_type : 'div', name_node : 'h2',
 	    root_classes : ["container-fluid"],
 	    child_classes : ["row"],
+	    intro_stick : true
 	},
 	elements : {
 	    fit : {
@@ -611,7 +612,7 @@ var videocap_templates = {
 				subtitle : "One dimensional raw spectra (R,G,B, Sum/3)",
 				ui_opts : {
 				    fa_icon : "line-chart",
-				    name_node : "h3"
+				    //name_node : "h3"
 				},
 
 				elements : {
@@ -621,7 +622,7 @@ var videocap_templates = {
 					y_range : [0, 255],
 					ui_opts : {
 					    label : true,
-					    enable_range : false,
+					    enable_range : true,
 					    enable_selection : false,
 					    root_classes : ['col-md-12'],
 					    show_cursor : true,
@@ -694,7 +695,7 @@ var videocap_templates = {
 				    fa_icon : "cogs",
 				    child_view_type : 'tabbed',
 				    save : "minispectro_setup",
-				    name_node : 'h2'
+				    //name_node : 'h2'
 				},
 				elements : {
 
@@ -711,15 +712,16 @@ var videocap_templates = {
 						name : "Video device options :",
 						ui_opts : {
 						    root_classes : ["container-fluid"],
-						    child_classes : ["form-horizontal"]
+						    child_classes : ["form-horizontal"],
+						    fa_icon : 'camera-retro'
 						},
 						elements : {
 						    device : {
 							ui_opts : {
 							    label : true,
 							    name_classes : ["col-sm-4 control-label"],
-							    wrap : true,
-							    wrap_classes : ["col-sm-4"],
+							    //wrap : true,
+							    //wrap_classes : ["col-sm-4"],
 							    root_classes : ["form-group"],
 							    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
 							    fa_icon : "camera-retro", type : "edit"
@@ -732,8 +734,8 @@ var videocap_templates = {
 							ui_opts : {
 							    label : true,
 							    name_classes : ["col-sm-4 control-label"],
-							    wrap : true,
-							    wrap_classes : ["col-sm-4"],
+							    //wrap : true,
+							    //wrap_classes : ["col-sm-4"],
 							    root_classes : ["form-group"],
 							    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
 							    fa_icon : "qrcode", type : "edit"
@@ -818,9 +820,11 @@ var videocap_templates = {
 						options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
 						ui_opts : {
 						    root_classes : ["col-xs-12"],
+						    item_classes : ["col-xs-12"],
 						    type : "edit",
 						    label : true,
 						    fa_icon : "exchange",
+						    intro_stick : true
 						    //name_node : "h4"
 						    
 						},
@@ -909,7 +913,7 @@ var videocap_templates = {
 		ui_opts : {
 		    child_view_type : "tabbed",
 		    root_classes : ["container-fluid"],
-		    render_name : true,
+		    name_classes : ["well"],
 		    child_classes : ["container-fluid"],
 		    fa_icon : "folder",
 		    tabs_mode : "left",
@@ -925,14 +929,16 @@ var videocap_templates = {
 	    
 	    options : {
 		name : "Calibration",
-		subtitle : "Setup wavelength and flux calibration.",
+		subtitle : "Setup wavelength and flux calibration",
 		ui_opts : {
 		    child_view_type : "tabbed",
 		    root_classes : ["container-fluid left"],
 		    render_name : true,
-		    child_classes : ["container-fluid"],
-		    fa_icon : "reorder"
+		    name_classes : ["title_margin"],
+		    fa_icon : "calculator",
+		    intro_stick : true
 		},
+		//toolbar : { ui_opts : { toolbar_classes : ""} },
 		elements : {
 		    wlc : {
 			type : 'wlc'
@@ -984,7 +990,10 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
     
     var flist=spectrum.get('feature_list');
     var new_line=spectrum.get('new_line');
-
+    
+    var add_custom_feature=spectrum.get('add_custom_feature');
+    
+    
     select_line.options=[];
     hg_lines.forEach( function( line, i ){
 	
@@ -995,7 +1004,19 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
     select_line.set_options();
 
     //line_table.value=[];
-
+    
+    function check_line(l){
+	
+	for(var f in flist.elements){
+	    
+	    if(flist.elements[f].val('wl')==l){
+		spectrum.debug("The wavelength " + l + " is already in the table !");
+		return false;
+	    }
+	}
+	return true;
+    }
+    
     add_line.listen('click', function(){
 	var sel_line=select_line.ui.value;
 
@@ -1003,19 +1024,8 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
 	var lambda=hg_lines[sel_line][1];
 	
 	console.log("Selected line : " + JSON.stringify(sel_line));
-	function check_line(){
 	
-	    for(var f in flist.elements){
-		
-		if(flist.elements[f].val('wl')==lambda){
-		    new_line.debug("The wavelength " + lambda + " is already in the table !");
-		    return false;
-		}
-	    }
-	    return true;
-	}
-	
-	if(check_line()){
+	if(check_line(lambda)){
 	    var fe=create_widget('spectrum_feature');
 	    fe.set('wl',lambda);
 	    fe.set_title(ion + ", "+lambda+ 'Å');
@@ -1026,6 +1036,27 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
 	    view.redraw();
 	}
     });
+
+    add_custom_feature.listen('click', function(){
+	var specfec=spectrum.get('custom_feature');
+
+	var lambda=specfec.val('wl');
+	
+	if(check_line(lambda)){
+	    
+	    var fe=create_widget('spectrum_feature');
+	    fe.set('wl',lambda);
+	    fe.set('pixel',specfec.val('pixel'));
+	    fe.set_title(specfec.name);
+	    flist.add_child(fe);
+	    
+	    //line_table.value.push([ion, lambda, 0.0] );
+	    //line_table.redraw();
+	    view.redraw();
+	}
+    });
+    
+    
     
     view.listen('redraw',function(context){
 	//console.log("Spec redraw !!! context " + context);
@@ -1747,9 +1778,11 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	spectro_view.value[2].data=spec_data.b.slice();
 	spectro_view.value[3].data=spec_data.t.slice();
 	
-	spectro_view.config_range();
+	if(frid===0)
+	    spectro_view.config_range(true, true);
+	else
+	    spectro_view.config_range(false, true);
 	
-	//if(frid===0)
 	frid++;
     }
 
