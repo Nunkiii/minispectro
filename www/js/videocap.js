@@ -328,14 +328,14 @@ var videocap_templates = {
 		elements : {
 		    new_line : {
 			name : "Add a new Hg spectral feature",
-			intro : "Add a mercury emission line from the list of strong emission lines :",
+			intro : "<p>Add a mercury emission line from the list of strong emission lines :</p>",
 			ui_opts : {
 			    fa_icon : "plus",
-			    //root_classes : ["container-fluid inline"],
+			    root_classes : ["container-fluid col-xs-12"],
 			    child_node_type : "form",
-			    child_classes : ["inline form-inline"],
+			    child_classes : ["form-horizontal col-md-offset-2 col-md-8 vertical_margin"],
 			    name_node : "strong",
-			    intro_stick : true
+			    //intro_stick : true
 			    //	    sliding : true,
 			    //	    slided : false
 			},
@@ -374,11 +374,11 @@ var videocap_templates = {
 		    	name : "Add a custom spectral feature",
 			intro : "<ul><li>Edit feature's name.</li><li> Setup the wavelength in Å and eventually the pixel position of the new spectral feature, pixel position can also be changed by dragging the feature line in the spectrum's plot.</li> <li>Click 'Add feature' button to add the feature to the list</li></ul>",
 			ui_opts : {
-			    intro_stick : true,
+			    //intro_stick : true,
 			    fa_icon : "plus",
-			    //root_classes : ["container-fluid inline"],
+			    root_classes : ["container-fluid"],
 			    child_node_type : "form",
-			    child_classes : ["form-inline container-fluid"],
+			    child_classes : ["form-inline container-fluid col-md-offset-3 col-md-6 list-group-item"],
 			    //name_node : "strong",
 			    //	    sliding : true,
 			    //	    slided : false
@@ -395,7 +395,7 @@ var videocap_templates = {
 				    type : "edit",
 				    name_edit : true,
 				    //slided : true
-				    intro_stick : true
+				    //intro_stick : true
 				},
 				name : 'A spectrum feature ...',
 				type : 'spectrum_feature'
@@ -458,7 +458,7 @@ var videocap_templates = {
 			name : "Spectral features list", 
 			
 			ui_opts : {
-			    name_node : 'h3',
+			    //name_node : 'h3',
 			    child_view_type : "table",
 			    fa_icon : "reorder"
 			}
@@ -478,7 +478,8 @@ var videocap_templates = {
 		    enable_range : false,
 		    //sliding : true,
 		    //slided : true,
-		    render_name : false
+		    render_name : false,
+		    root_classes : ["list-group-item vertical_margin"]
 		}
 	    }
 	},
@@ -897,320 +898,113 @@ var videocap_templates = {
 		    child_classes : ['row'],
 		    item_classes : [],
 		    render_name : false,
-		    child_view_type : 'divider',
+		    //child_view_type : 'divider',
+
 		    //childs_pos : "below",
 		},
+
+
 		elements : {
 		    left: {
-			//name : "LEFT",
+			name : "2D capture",
 			ui_opts : {
-			    root_classes : ["col-md-4 col-xs-12"],
-			    child_classes : ["row vlimit"]
+			    root_classes : ["col-md-4 col-xs-12 vlimit"],
+			    child_classes : [""],
+			    save : "minispectro_setup",
+			    child_view_type : 'tabbed',
+			    fa_icon : "camera",//fa_icon : 'cogs',
+			    // sliding : true,
+			    // slided : true
 			},
+			//toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
+			
 			elements : {
 			    
-			    camview : {
-				//name : "Video monitor", 
-				ui_opts : {
-				    //root_classes : ["col-xs-12"],
-				    fa_icon : "camera",
-				    //root_classes : ["container-fluid"]
-				},
-				elements : {
-				    
-				    butts : {
-					name : "Start/Stop spectro capture :",
-					intro : "<h4>Start/stop capturing frames from the webcam and computing one-dimensional spectrum</p><p>You might be prompted to accept webcam capture from your browser</h4>",
-					ui_opts :  {
-					    fa_icon : "camera",
-					    child_classes : ["btn-group"],
-					    root_classes : ["inline"],
-					    label : true
-					},
-					elements : {
-					    start : {
-						name : "",
-						type : "action",
-						ui_opts :  {
-						    fa_icon : "play",item_classes : ["btn btn-primary"],
-						}
-					    },
-					    stop : {
-						name : "",
-						type : "action",
-						ui_opts :  {
-						    fa_icon : "stop",item_classes : ["btn btn-primary"],
-						}
-					    }
-					}
-				    },
-				    
-				    camwindow : {
-					
-				    }
-				    
-				    
-				    
-				}
-			    },
-			    setup : {
-				name : "Setup",
-				//intro : "<p>Configure camera and spectrum sampling</p>",
-				ui_opts : {
-				    //root_classes : ["col-xs-12"],
-				    fa_icon : "cogs",
-				    child_view_type : 'pills',
-				    save : "minispectro_setup",
-				    //name_classes : ["well"]
-				    //name_node : 'h2',
-				    //render_name : false
-				    sliding : true,
-				    slided : true
-				    
-				},
-				//toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
-				elements : {
+			    // setup : {
+			    // 	name : "Setup",
+			    // 	//intro : "<p>Configure camera and spectrum sampling</p>",
+			    // 	ui_opts : {
+			    // 	    //root_classes : ["col-xs-12"],
+			    // 	    fa_icon : "cogs",
 
-				    video : {
-					name : "Cam device",
+				    
+			    // 	    //name_classes : ["well"]
+			    // 	    //name_node : 'h2',
+			    // 	    //render_name : false
+
+				    
+			    // 	},
+			    // 	toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
+			    // 	elements : {
+				    camview : {
+					//name : "Video monitor", 
 					ui_opts : {
-					    root_classes : ["panel panel-default"],
-					    child_classes : ["vertical_margin"],
-					    fa_icon : 'camera-retro',
-					    render_name : false
+					    in_root : 'prepend',
+					    //root_classes : ["col-xs-12"],
+					    fa_icon : 'play'
+					    //root_classes : ["container-fluid"]
 					},
 					elements : {
-					    device : {
-						ui_opts : {
-						    label : true,
-						    name_classes : ["col-sm-4 control-label"],
-						    //wrap : true,
-						    //wrap_classes : ["col-sm-4"],
-						    root_classes : ["form-group"],
-						    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
-						    fa_icon : "camera-retro", type : "edit"
-						},
-						name : "Device",
-						type : "combo"
-					    },
-					    resolution : {
-						name : "Resolution",
-						ui_opts : {
-						    label : true,
-						    name_classes : ["col-sm-4 control-label"],
-						    //wrap : true,
-						    //wrap_classes : ["col-sm-4"],
-						    root_classes : ["form-group"],
-						    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
-						    fa_icon : "qrcode", type : "edit"
-						},
-						type : "combo",
-						options : ["VGA", "HD"]
-					    }
-					}
-				    },
-				    processing : {
-					name : "Processing",
-					intro : "<h4>Setup image processing pipeline options</h4>",
-					ui_opts : {
-					    root_classes : ["panel panel-default"],
-					    child_classes : ["list-group"],
-					    fa_icon : "th",
-					    render_name : false,
-					    intro_stick : true,
-					    //child_node_type  : 'ul',
-					    child_view_type : 'div'
-					},
-					
-					elements : {
-					    integrate : {
-						name  : "Average frames",
- 						ui_opts : {
-						    //name_classes : ["panel-heading"],
-						    root_classes : ["list-group-item"],
-						    child_classes : ["container-fluid"]
-						},
-						intro : "<p>Sum up frames to reduce noise</p>",
-						elements : {
-						    enable : {
-							name : "Enable",
-							ui_opts : {
-							    label : true,
-							    root_classes : [""], type : "edit" },
-							type : "bool",
-							value : false
-						    },
-						    nframes : {
-							type : "double",
-							name : "Number of images",
-							ui_opts : {
-							    type : "edit", label : true,
-							    root_classes : [""] },
-							step : 1,
-							value : 5,
-							min : 2,
-							max : 100
-						    }
-						}
-					    },
-					    sampling : {
-						name : "Sampling",
-						name : "Buffer sampling rate (Hz)", intro : "<p>Setting this to a value higher than the actual camera sampling rate is not usefull and consumes CPU.</p>",
-						type : "double", min : .1, max : 50, step : 1, default_value : 20,
-						ui_opts : {
-						    //label : true,
-						    //name_classes : ["panel-heading"],
-						    item_classes : [],
-						    root_classes : ["list-group-item"],
-						    fa_icon : "dashboard", type : "edit"
-						}
-						
-					    }
-					}
-				    },
-				    box : {
-					name : "Region",
-					intro : "<h4>Setup the orientation and dimensions of the spectrum area within the image.</h4>",
-					ui_opts :  {
-					    render_name: false,
-					    fa_icon : 'crop',
-					    root_classes : ["panel panel-default"],
-					    child_classes : ["row"],
-					    //name_node : "h3"
-					    intro_stick : true
-					},
-					
-					elements : {
-					    dir : {
-						name : "Wavelength direction",
-						intro : "<p>Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction.</p>",
-						type : "combo",
-						
-						options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
-						ui_opts : {
-						    root_classes : ["col-xs-12"],
-						    item_classes : ["col-xs-12"],
-						    type : "edit",
-						    label : true,
-						    fa_icon : "exchange",
-						    //intro_stick : true
-						    //name_node : "h4"
-						    
-						},
-						default_value : 0,
-					    },
-					    region : {
-						name : "Spectrum box",
-						intro : "<strong>Adjust the spectrum area coordinates</strong><p> (x,y) is the top left corner</p>",
+					    
+					    butts : {
+						name : "Start/Stop capture :",
+						intro : "<h4>Start/stop capturing frames from the webcam and computing one-dimensional spectrum</p><p>You might be prompted to accept webcam capture from your browser</h4>",
 						ui_opts :  {
-						    root_classes : ["col-xs-12"],child_classes : ["form-horizontal container-fluid"],
-						    name_node : "strong",
-						    label : true,
-						    //intro_stick : true
+						    //fa_icon : "play",
+						    child_classes : ["btn-group text-center"],
+						    root_classes : ["container-fluid"],
+						    label : true
 						},
 						elements : {
-						    x : {
-							name: "x",
-							type: "double",
-							default_value : 300, step : 1, min : 0,
-							ui_opts : {
-							    type : "edit",
-							    label : true,
-							    root_classes : ["form-group"],
-							    name_classes : ["control-label col-sm-offset-1 col-sm-3"],
-							    wrap : true,
-							    wrap_classes : ["col-sm-6 nopadding"]
-							    //root_classes : ["form-group"]
+						    start : {
+							name : "",
+							type : "action",
+							ui_opts :  {
+							    fa_icon : "play",item_classes : ["btn btn-primary btn-sm"],
 							}
 						    },
-						    y : {
-							name: "y",
-							type: "double",
-							default_value : 50, step : 1, min : 0,
-							ui_opts : {
-							    type : "edit",
-							    label : true,
-							    root_classes : ["form-group"],
-							    name_classes : ["control-label col-sm-offset-1 col-sm-3"],
-							    wrap : true,
-							    wrap_classes : ["col-sm-6 nopadding"]
+						    stop : {
+							name : "",
+							type : "action",
+							ui_opts :  {
+							    fa_icon : "stop",item_classes : ["btn btn-default btn-sm"],
 							}
-						    },
-						    w : {
-							name: "width",
-							type: "double",
-							default_value : 30, step : 1, min : 1,
-							ui_opts : { type : "edit", label : true,
-								    root_classes : ["form-group"],
-								    name_classes : ["control-label col-sm-offset-1 col-sm-3"],
-								    wrap : true,
-								    wrap_classes : ["col-sm-6 nopadding"]
-								    
-								    
-								    //root_classes : ["form-group"]
-								  }
-						    },
-						    h : {
-							name: "height",
-							type: "double",
-							default_value : 300, step : 1, min : 1,
-							ui_opts : { type : "edit", label : true,
-								    root_classes : ["form-group"],
-								    name_classes : ["control-label col-sm-offset-1 col-sm-3"],
-								    wrap : true,
-								    wrap_classes : ["col-sm-6 nopadding"]
-								    
-								    
-								    //root_classes : ["form-group"]
-								  }
 						    }
 						}
+					    },
+					    
+					    camwindow : {
+						
 					    }
+					},
+					widget_builder : function(ui_opts, camview){
 					}
-				    }
-				}
-			    }
+				    },
 			    
-				
-			    // 	controls : {
-			    // 	    name : "Video control",
-			    // 		ui_opts :  {
-			    // 		    fa_icon : "camera",
-			    // 		    root_classes : ["container-fluid"],
-			    // 		    child_classes : ["row"],
-			    // 		    render_name : false
-			    // 		},
-			    // 		elements : {
-					    
-					    
-			    // 		}
-			    // 	    },
-			    // }
 			}
+			
 		    },
-		    right : {
-			name : "Right !",
-			ui_opts : {
-			    root_classes : ['col-md-8 col-xs-12 container-fluid'],
-			    child_classes : ["row vlimit"],
+		    // right : {
+		    // 	name : "Right !",
+		    // 	ui_opts : {
 			    
-			    //child_view_type : 'tabbed',
-			    render_name : false
-			},
-			elements : {
-			    view_main : {
+		    // 	    //child_view_type : 'tabbed',
+		    // 	    render_name : false
+		    // 	},
+		    // 	elements : {
+			    // view_main : {
 
-				name : "Real-time spectrum",
-				subtitle : "One dimensional raw spectra (R,G,B, Sum/3)",
-				ui_opts : {
-				    fa_icon : "line-chart",
-				    //name_node : "h3",
-				    render_name : false
-				},
+			    // 	name : "Real-time spectrum",
+			    // 	subtitle : "One dimensional raw spectra (R,G,B, Sum/3)",
+			    // 	ui_opts : {
+			    // 	    fa_icon : "line-chart",
+			    // 	    //name_node : "h3",
+			    // 	    render_name : false
+			    // 	},
 
-				elements : {
+			    // 	elements : {
 				    specview : {
-					name : "Real-time spectrum",
+					name : "Live 1D spectra",
 					type : "spectrum",
 					//intro:  "One dimensional raw spectra (R,G,B, Sum/3)",
 					y_range : [0, 255],
@@ -1218,13 +1012,292 @@ var videocap_templates = {
 					    name_edit : false,
 					    intro_stick: true,
 					    fa_icon : "line-chart",
-					    
-					  //  label : true,
+					    root_classes : ['col-md-8 col-xs-12 container-fluid'],
+					    child_classes : ["vlimit"],
+					    //item_classes : ["list-group-item"],
+					    //  label : true,
 					  //  enable_range : false,
-					  //  enable_selection : false,
+					    //  enable_selection : false,
 					    //root_classes : ['col-md-12'],
 					    
 					    //render_name : false
+					},
+					elements : {
+					    lines : {
+						name : "Features",
+						ui_opts : { fa_icon : 'magnet'}
+					    },
+					    
+					    video : {
+						name : "Device",
+						intro : "<h4>Setup the webcam device you wish to use</h4><p>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</p><p>Resolution selection is only available on few browsers</p>",
+						ui_opts : {
+						    root_classes : [""],
+						    child_classes : ["list-group"],
+						    fa_icon : 'camera-retro',
+						    render_name : false,
+						    intro_stick : true
+						},
+						elements : {
+						    device : {
+							ui_opts : {
+							    label : true,
+							    name_classes : ["col-sm-6 control-label"],
+							    //wrap : true,
+							    //wrap_classes : ["col-sm-4"],
+							    root_classes : ["form-group list-group-item vertical_margin"],
+							    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
+							    fa_icon : "camera-retro", type : "edit"
+							},
+							name : "Camera device",
+							type : "combo"
+						    },
+						    resolution : {
+							name : "Resolution",
+							ui_opts : {
+							    label : true,
+							    name_classes : ["col-sm-6 control-label"],
+							    //wrap : true,
+							    //wrap_classes : ["col-sm-4"],
+							    root_classes : ["form-group list-group-item"],
+							    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
+							    fa_icon : "qrcode", type : "edit"
+							},
+							type : "combo",
+							options : ["VGA", "HD"]
+						    }
+						}
+					    },
+					    processing : {
+						name : "Processing",
+						intro : "<h4>Set the image processing pipeline options</h4>",
+						ui_opts : {
+						    root_classes : [""],
+						    child_classes : ["list-group"],
+						    fa_icon : "th",
+						    //render_name : false,
+						    close : true,
+						    intro_stick : true,
+						    //child_node_type  : 'ul',
+						    child_view_type : 'div'
+						},
+						
+						elements : {
+						    integrate : {
+							name  : "Average frames",
+ 							ui_opts : {
+							    name_classes : ["col-sm-3"],
+							    root_classes : ["list-group-item vertical_margin col-xs-12"],
+							    child_classes : ["col-sm-9 container-fluid"],
+							    //child_view_type : 'table',
+							    fa_icon : 'plus'
+							},
+							intro : "<p>Sum up frames to reduce noise</p>",
+							elements : {
+							    enable : {
+								name : "Enable",
+								ui_opts : {
+								    //label : true,
+								    root_classes : ["col-sm-2 col-xs-6"],
+								    name_classes : ["col-sm-6 col-xs-6"],
+								    item_classes : ["col-sm-6 col-xs-6"],
+								    type : "edit" },
+								type : "bool",
+								value : false
+							    },
+							    nframes : {
+								type : "double",
+								name : "Number of images",
+								ui_opts : {
+								    type : "edit",
+								    //label : true,
+								    root_classes : ["col-sm-10 col-xs-6 text-right"],
+								    name_classes : ["col-xs-6"],
+								    item_classes : ["col-xs-6"]
+								    //root_classes : ["list-group-item"]
+								},
+								step : 1,
+								value : 5,
+								min : 2,
+								max : 100
+							    }
+							}
+						    },
+						    sampling : {
+							name : "Sampling",
+							name : "Buffer sampling rate (Hz)", intro : "<p>Setting this to a value higher than the actual camera sampling rate is not usefull and consumes CPU.</p>",
+							type : "double", min : .1, max : 50, step : 1, default_value : 2,
+							ui_opts : {
+							    //label : true,
+							    name_classes : ["col-xs-6"],
+							    item_classes : ['col-xs-6'],
+							    root_classes : ["list-group-item col-xs-12"],
+							    fa_icon : "dashboard", type : "edit"
+							}
+							
+						    }
+						}
+					    },
+					    box : {
+						name : "Region",
+						//intro : "<h4>Setup the orientation and dimensions of the spectrum area within the image.</h4>",
+						ui_opts :  {
+						    render_name: false,
+						    fa_icon : 'retweet',
+						    //root_classes : ["panel panel-default"],
+						    child_classes : ["list-group"],
+						    child_view_type : 'div',
+						    //name_node : "h3"
+						    //intro_stick : true
+						},
+						
+						elements : {
+						    dir : {
+							name : "Wavelength direction",
+							intro : "<p>Set the wavelength direction depending on your spectro design. Default is vertical, along the Y direction.</p>",
+							type : "combo",
+							
+							options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
+							ui_opts : {
+							    root_classes : ["list-group-item vertical_margin"],
+							    wrap_classes : ["col-xs-12"],
+							    type : "edit",
+							    //label : true,
+							    fa_icon : "exchange",
+							    intro_stick : true
+							    //name_node : "h4"
+							    
+							},
+							default_value : 0,
+						    },
+						    region : {
+							name : "Spectrum box",
+							intro : "<h4>Adjust the spectrum box coordinates</h4><p> (x,y) is the top left pixel corner</p><p>The box can also be resized interactively by resizing the box rectangle overlayed on the camera view window.</p>",
+							ui_opts :  {
+							    root_classes : ["list-group-item"],
+							    child_classes : ["form-inline container-fluid"],
+							    fa_icon : 'crop',
+							    //child_view_type : 'table'
+							    //label : true,
+							    //intro_stick : true
+							},
+							elements : {
+							    x : {
+								name: "x",
+								type: "double",
+								default_value : 300, step : 1, min : 0,
+								ui_opts : {
+								    type : "edit",
+								    //label : true,
+								    root_classes : ["col-sm-6 col-xs-12 vertical_margin"],
+								    name_classes : ["col-sm-3 col-xs-6"],
+								    item_classes : ["col-sm-3 col-xs-6"]
+								    //root_classes : ["form-group"]
+								}
+							    },
+							    y : {
+								name: "y",
+								type: "double",
+								default_value : 50, step : 1, min : 0,
+								ui_opts : {
+								    type : "edit",
+								    //label : true,
+
+								    root_classes : ["col-sm-6 col-xs-12 vertical_margin"],
+								    name_classes : ["col-sm-3 col-xs-6"],
+								    item_classes : ["col-sm-3 col-xs-6"]
+								}
+							    },
+							    w : {
+								name: "width",
+								type: "double",
+								default_value : 30, step : 1, min : 1,
+								ui_opts : { type : "edit", //label : true,
+									    root_classes : ["col-sm-6 vertical_margin col-xs-12"],
+									    name_classes : ["col-sm-3 col-xs-6"],
+									    item_classes : ["col-sm-3 col-xs-6"]
+
+									  }
+							    },
+							    h : {
+								name: "height",
+								type: "double",
+								default_value : 300, step : 1, min : 1,
+								ui_opts : { type : "edit", //label : true,
+									    root_classes : ["col-sm-6 col-xs-12 vertical_margin"],
+									    name_classes : ["col-sm-3 col-xs-6"],
+									    item_classes : ["col-sm-3 col-xs-6"]
+									    
+									  }
+							    }
+							}
+						    }
+							
+						    
+						    
+						}
+					    },
+					    fileops : {
+						name : "Save spectrum",
+						intro : "<h4>Save current spectrum</h4>",
+						ui_opts : {
+						    //label : true,
+						    fa_icon : "save",
+						    render_name : false,
+						    intro_stick : true,
+						    root_classes : ["col-xs-12 panel panel-default"],
+						    child_node_type : "form",
+						    child_classes : ["inline form-inline vertical_margin"]
+						    
+						},
+						
+						
+						elements : {
+						    specname : {
+							type : "string",
+							name : "Name :",
+							holder_value : "Auto (Date)",
+							ui_opts : {
+							    root_classes : ["input-group"],
+							    //wrap : true,
+							    //wrap_classes : ["col-sm-4 nopadding"],
+							    name_classes : ["input-group-addon"],
+							    name_node : "div",
+							    type : "edit"
+							}
+							
+						    },
+						    
+						    target : {
+							type : "string",
+							name : "Target :",
+							holder_value : "An interesting light source",
+							ui_opts : {
+							    root_element : "specname",
+							    //root_classes : ["input-group"],
+							    label : true,
+							    //wrap_classes : ["col-sm-4 nopadding"],
+							    name_classes : ["input-group-addon"],
+							    name_node : "div",
+							    type : "edit"
+							}
+							
+						    },
+						    save :   {
+							name:  "Save",
+							type : "action",
+							ui_opts:{
+							    root_element : "specname",
+							    fa_icon : "save",
+							    wrap : true,
+							    wrap_classes : ["input-group-btn"],
+							    item_classes : ["btn btn-warning"]
+							    
+							}
+						    }
+						}
+					    }
+					    
 					},
 					widget_builder : function(ui_opts, sv){
 					    console.log(sv.name + " Specview BUILDER !!");
@@ -1233,74 +1306,11 @@ var videocap_templates = {
 					
 					
 				    },
-				    fileops : {
-					name : "Save current spectrum",
-					ui_opts : {
-					    //label : true,
-					    fa_icon : "save",
-					    render_name : false,
-					    root_classes : ["col-xs-12 text-center"],
-					    child_node_type : "form",
-					    child_classes : ["inline form-inline"]
-					},
-					
-					
-					elements : {
-					    specname : {
-						type : "string",
-						name : "Name :",
-						holder_value : "Auto (Date)",
-						ui_opts : {
-						    root_classes : ["input-group"],
-						    //wrap : true,
-						    //wrap_classes : ["col-sm-4 nopadding"],
-						    name_classes : ["input-group-addon"],
-						    name_node : "div",
-						    type : "edit"
-						}
-						
-					    },
-					    
-					    target : {
-						type : "string",
-						name : "Target :",
-						holder_value : "An interesting light source",
-						ui_opts : {
-						    root_element : "specname",
-						    //root_classes : ["input-group"],
-						    label : true,
-						    //wrap_classes : ["col-sm-4 nopadding"],
-						    name_classes : ["input-group-addon"],
-						    name_node : "div",
-						    type : "edit"
-						}
-						
-					    },
-					    save :   {
-						name:  "Save",
-						type : "action",
-						ui_opts:{
-						    root_element : "specname",
-						    fa_icon : "save",
-						    wrap : true,
-						    wrap_classes : ["input-group-btn"],
-						    item_classes : ["btn btn-warning"]
-						    
-						}
-					    }
-					}
-					
-				    }
-				    
-				    
-				}
-			    }
-			}
-		    }
+			    
 		}
 	    },
 	    
-		    
+	    
 	    spectra : {
 		name : "Saved spectra",
 		ui_opts : {
@@ -1358,8 +1368,6 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
     spectrum.update_plot=function(spec_data){
 	//var spec_data=spectrum.value;
 	if(spec_data===undefined) return;
-	
-	
 	
 	view.plots=[];
 	var pr,pg,pb,pt;
@@ -1640,7 +1648,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     //var options=vc.get('setup');
 
     var spectro_opts=vc.get('box').elements;
-    var controls=vc.get('setup');
+    var controls=vc.get('left');
     var spectro_box=vc.get('region').elements;
 
     var dir=vc.get("dir");
@@ -1649,10 +1657,9 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var start=butts.start;
     var stop=butts.stop;
 
-    var video_options=controls.get('video');
-    var processing_options=controls.get('processing').elements;
-
-    var device=video_options.elements.device;
+    var video_options=vc.get('video');
+    var processing_options=vc.get('processing').elements;
+    var device=video_options.get('device');
 
     var resolution=video_options.elements.resolution;
     var sampling=processing_options.sampling;
@@ -1957,41 +1964,44 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	}, errorCallback);
     });
     
-    var bx,by,bw,bh;
-
+    function get_box(){
+	return [
+	    spectro_box.x.value,
+	    spectro_box.y.value,
+	    spectro_box.w.value,
+	    spectro_box.h.value
+	];
+    }
+    
     function slice_arrays(){
-	bx=spectro_box.x.value;
-	by=spectro_box.y.value;
-	bw=spectro_box.w.value;
-	bh=spectro_box.h.value;
-
-	var ddir=dir.value;
-	var ddim= ddir? bw:bh;
+	var box=get_box();
 	
+	var ddim= dir.value=="Vertical" ? box[3] : box[2];
+	//console.log("Slicing [" + bx + ","+ by+ "," + bw+ "," + bh + "]to ddim="+ddim + " dir = " + dir.value);
 	if(ddim < spec_data.r.length){
 	    pr.data=spec_data.r=spec_data.r.slice(0, ddim);
 	    pg.data=spec_data.g=spec_data.g.slice(0, ddim);
 	    pb.data=spec_data.b=spec_data.b.slice(0, ddim);
 	    pt.data=spec_data.t=spec_data.t.slice(0, ddim);
-	    
-	    //console.log("Resized !!" + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+
+	    //spectro_view.config_range(true, true);
+	    //console.log("Resized !! ddim=" + ddim + " SL " + spec_data.r.length + " bh " + bh );
 	}
-	if(seq==0)set_box_size();
+	if(seq==0)
+	    set_box_size();
     }
     
     function set_box_size(){
 	var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
-	
+	var box=get_box();
 	//console.log("Canvas  " + canvas.clientWidth);
 
 	//w.widget_div.style.transform="scale("+scale[0]+","+scale[1]+")";
 
-	spectro_win.widget_div.style.left=scale[0]*bx+"px";
-	spectro_win.widget_div.style.top=scale[1]*by+"px";
-	spectro_win.widget_div.style.width=scale[0]*bw+"px";
-	spectro_win.widget_div.style.height=scale[1]*bh+"px";
-
-	
+	spectro_win.widget_div.style.left=scale[0]*box[0]+"px";
+	spectro_win.widget_div.style.top=scale[1]*box[1]+"px";
+	spectro_win.widget_div.style.width=scale[0]*box[2]+"px";
+	spectro_win.widget_div.style.height=scale[1]*box[3]+"px";
 	
     }
 
@@ -2018,7 +2028,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     dir.listen("change",function(){slice_arrays();});
     
     spectro_win.listen("resize", function(sz){
-	console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+	//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
 	
 	//buf_data=[];
 	//spec_data={r : [], g: [], b : [], t : [] };
@@ -2053,7 +2063,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
     function create_plots(){
 	spectro_view.value=[];
 
-
 	if(have_wlc){
 	    pr=spectro_view.add_plot(spec_data.r, global_wlc.calib_func);
 	    pg=spectro_view.add_plot(spec_data.g, global_wlc.calib_func);
@@ -2081,7 +2090,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	
     }	
     //vc.ui_root.style.position="relative";
-    slice_arrays();
+    //slice_arrays();
     create_plots();
     //set_box_size();    
     
@@ -2090,12 +2099,16 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var seq=0;
 
     function process_frame(){
-	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf.data.length);
+	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf_data.length);
+
 	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
 	ctx.drawImage(video_node, 0, 0);
 	
 	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
 	var inf=integ_nf.value*1.0;
+	var box=get_box();
+	var bx=box[0]*1.0,by=box[1]*1.0,bw=box[2]*1.0,bh=box[3]*1.0;
+	//console.log("process frame in " + JSON.stringify(box));
 	
 	if(integ.value>0){
 	    
@@ -2119,7 +2132,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 
 //	draw_spectrum_box();
 
-	var ddir=dir.ui.selectedIndex;
+	var ddir=dir.value=='Vertical' ? false : true; //dir.ui.selectedIndex;
 
 	if(ddir){
 	    for(var i=0;i<bw;i++){
@@ -2169,6 +2182,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	spectro_view.value[1].data=spec_data.g.slice();
 	spectro_view.value[2].data=spec_data.b.slice();
 	spectro_view.value[3].data=spec_data.t.slice();
+
 	
 	if(frid===0)
 	    spectro_view.config_range(true, true);
