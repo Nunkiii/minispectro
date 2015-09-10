@@ -319,12 +319,8 @@ var videocap_templates = {
 		    //root_classes : ["container-fluid"],
 		    child_view_type : "tabbed",
 		    child_node_type : "form",
-		    //child_classes : ["inline form-inline"],
-		    //name_node : "h3",
-		    //sliding : true,
-		    //slided : false
 		},
-		
+		toolbar : { ui_opts : { toolbar_classes : ["navbar-default"] }},
 		elements : {
 		    new_line : {
 			name : "Add a new Hg spectral feature",
@@ -779,96 +775,12 @@ var videocap_templates = {
 
 	}
     },
-    
-    specview : {
-	name : "Real-time spectrum",
-	//type : "spectrum",
-	//intro:  "One dimensional raw spectra (R,G,B, Sum/3)",
-	y_range : [0, 255],
-	ui_opts : {
-	    name_edit : false,
-	    intro_stick: true,
-	    fa_icon : "line-chart",
-	    
-	    //  label : true,
-					  //  enable_range : false,
-	    //  enable_selection : false,
-	    //root_classes : ['row'],
-	    show_cursor : true,
-	    //render_name : false
-	},
-	widget_builder : function(ui_opts, sv){
-	    console.log(sv.name + " Specview BUILDER !!");
-	    //sv.elements.keys.set_title("BASTAAAA");
-	    //sv.ui_childs.remove_child(sv.elements.keys);
-	    
-	},
-	
-	elements : {
-	    fileops : {
-		name : "Save current spectrum",
-		ui_opts : {
-		    //label : true,
-		    fa_icon : "save",
-		    root_classes : ["col-xs-12"],
-					    child_node_type : "form",
-		    child_classes : ["inline form-inline"]
-		},
-		
-		
-		elements : {
-		    specname : {
-			type : "string",
-			name : "Name :",
-			holder_value : "Auto (Date)",
-			ui_opts : {
-			    root_classes : ["input-group"],
-			    //wrap : true,
-			    //wrap_classes : ["col-sm-4 nopadding"],
-			    name_classes : ["input-group-addon"],
-			    name_node : "div",
-			    type : "edit"
-			}
-			
-		    },
-		    
-		    target : {
-			type : "string",
-			name : "Target :",
-			holder_value : "An interesting light source",
-			ui_opts : {
-			    root_element : "specname",
-			    //root_classes : ["input-group"],
-			    label : true,
-			    //wrap_classes : ["col-sm-4 nopadding"],
-			    name_classes : ["input-group-addon"],
-			    name_node : "div",
-			    type : "edit"
-			}
-			
-		    },
-		    save :   {
-			name:  "Save",
-			type : "action",
-			ui_opts:{
-			    root_element : "specname",
-			    fa_icon : "save",
-			    wrap : true,
-			    wrap_classes : ["input-group-btn"],
-			    item_classes : ["btn btn-warning"]
-			    
-			}
-		    }
-		}
-	    }
-	}
-    },
-    
+
     videocap : {
 	
 	name : "WebSpectro",
 	
-	intro : "<h1>A web/home experiment to discover spectroscopy</h1><p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
+	//intro : "<h1>A web/home experiment to discover spectroscopy</h1><p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
 	ui_opts : {
 	    root_classes : ["container-fluid"],
 	    child_classes : [],
@@ -889,6 +801,32 @@ var videocap_templates = {
 	},
 	
 	elements : {
+
+	    intro : {
+		type : 'html',
+		name : "WebSpectro",
+		subtitle : "<strong>A javascript application to discover spectroscopy at home or at school !</strong>",
+		ui_opts : {
+		    root_classes : ["container-fluid"],
+		    child_classes : [],
+		    name_classes : [],
+		    icon : "/minispectro/ico/minispectro.svg",
+		    intro_stick : true
+		},
+		elements : {
+		    soft_manual : {
+			type : 'html',
+			name : 'Spectro application'
+		    },
+		    building : {
+			type : 'html',
+			name : 'Construction',
+			value : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>"
+		    },
+		    value : '<p>Test main page ui...</p>'
+		}
+	    },
+	    
 	    spectro : {
 		name : "Spectrograph",
 		
@@ -1030,13 +968,14 @@ var videocap_templates = {
 					    
 					    video : {
 						name : "Device",
-						intro : "<h4>Setup the webcam device you wish to use</h4><p>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</p><p>Resolution selection is only available on few browsers</p>",
+						subtitle : "Setup your webcam device",
+						intro : "<strong>Warning</strong><p>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</p><p>Resolution selection is only available on few browsers</p>",
 						ui_opts : {
 						    root_classes : [""],
 						    child_classes : ["list-group"],
 						    fa_icon : 'camera-retro',
-						    render_name : false,
-						    intro_stick : true
+						    //render_name : false,
+						    //intro_stick : true
 						},
 						elements : {
 						    device : {
@@ -1070,13 +1009,13 @@ var videocap_templates = {
 					    },
 					    processing : {
 						name : "Processing",
-						intro : "<h4>Set the image processing pipeline options</h4>",
+						subtitle : "Set the image processing pipeline options",
 						ui_opts : {
 						    root_classes : [""],
 						    child_classes : ["list-group"],
 						    fa_icon : "th",
 						    //render_name : false,
-						    close : true,
+						   // close : true,
 						    intro_stick : true,
 						    //child_node_type  : 'ul',
 						    child_view_type : 'div'
@@ -1140,11 +1079,11 @@ var videocap_templates = {
 					    },
 					    box : {
 						name : "Region",
-						//intro : "<h4>Setup the orientation and dimensions of the spectrum area within the image.</h4>",
+						subtitle : "Setup the orientation and dimensions of the spectrum area within the image",
 						ui_opts :  {
-						    render_name: false,
+						    //render_name: false,
 						    fa_icon : 'retweet',
-						    //root_classes : ["panel panel-default"],
+						    name_classes : ["title_margin"],
 						    child_classes : ["list-group"],
 						    child_view_type : 'div',
 						    //name_node : "h3"
@@ -1172,7 +1111,7 @@ var videocap_templates = {
 						    },
 						    region : {
 							name : "Spectrum box",
-							intro : "<h4>Adjust the spectrum box coordinates</h4><p> (x,y) is the top left pixel corner</p><p>The box can also be resized interactively by resizing the box rectangle overlayed on the camera view window.</p>",
+							intro : "<strong>Adjust the spectrum box coordinates</strong><p> (x,y) is the top left pixel corner</p><p>The box can also be resized interactively by resizing the box rectangle overlayed on the camera view window.</p>",
 							ui_opts :  {
 							    root_classes : ["list-group-item"],
 							    child_classes : ["form-inline container-fluid"],
