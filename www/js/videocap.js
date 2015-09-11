@@ -330,7 +330,7 @@ var videocap_templates = {
 			    root_classes : ["container-fluid col-xs-12"],
 			    child_node_type : "form",
 			    child_classes : ["form-horizontal col-md-offset-2 col-md-8 vertical_margin"],
-			    name_node : "strong",
+			    //name_node : "strong",
 			    //intro_stick : true
 			    //	    sliding : true,
 			    //	    slided : false
@@ -969,7 +969,7 @@ var videocap_templates = {
 					    video : {
 						name : "Device",
 						subtitle : "Setup your webcam device",
-						intro : "<strong>Warning</strong><p>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</p><p>Resolution selection is only available on few browsers</p>",
+						intro : "<strong>Warning</strong><ul><li>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</li><li>Resolution selection is only available on few browsers</li></ul>",
 						ui_opts : {
 						    root_classes : [""],
 						    child_classes : ["list-group"],
@@ -1178,12 +1178,12 @@ var videocap_templates = {
 					    },
 					    fileops : {
 						name : "Save spectrum",
-						intro : "<h4>Save current spectrum</h4>",
+						intro : "<p>Save visible spectrum on browser webstorage</p>",
 						ui_opts : {
 						    //label : true,
 						    fa_icon : "save",
-						    render_name : false,
-						    intro_stick : true,
+						    //render_name : false,
+						    //intro_stick : true,
 						    root_classes : ["col-xs-12 panel panel-default"],
 						    child_node_type : "form",
 						    child_classes : ["inline form-inline vertical_margin"]
@@ -1320,7 +1320,7 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
 	pr.set_opts({ stroke : "#ff0000", stroke_width : ".5px", label : "Red"});
 	pg.set_opts({ stroke : "#10ee05", stroke_width : ".5px", label : "Green"});
 	pb.set_opts({ stroke : "#0202ee", stroke_width : ".5px", label : "Blue"});
-	pt.set_opts({ stroke : "#6020cc", stroke_width : "1px", label : "(R+G+B)/3"});
+	pt.set_opts({ stroke : "#6020cc", stroke_width : "1px", label : "Mean"});
 
 	view.redraw();	
     }
@@ -2023,7 +2023,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	pr.set_opts({ stroke : "#ff0000", stroke_width : ".5px", label : "Red"});
 	pg.set_opts({ stroke : "#10ee08", stroke_width : ".5px", label : "Green"});
 	pb.set_opts({ stroke : "#0000ff", stroke_width : ".5px", label : "Blue"});
-	pt.set_opts({ stroke : "#aa08dd", stroke_width : "1px", label : "(R+G+B)/3"});
+	pt.set_opts({ stroke : "#aa08dd", stroke_width : "1px", label : "Mean"});
 	
 
 	
