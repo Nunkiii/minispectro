@@ -788,11 +788,13 @@ var videocap_templates = {
 	    icon : "/minispectro/ico/minispectro_white.svg",
 	    //child_toolbar : true,
 	    child_view_type : 'tabbed',
-	    
-	    toolbar_brand : true
+	    toolbar_brand : true,
 	    //name_node : "h4"
-	    
 	},
+
+	// type : 'html',
+	// url : '/minispectro/',
+	//value : "Helloooo !",
 
 	toolbar : {
 	    ui_opts : {
@@ -806,6 +808,8 @@ var videocap_templates = {
 		type : 'html',
 		name : "WebSpectro",
 		subtitle : "<strong>A javascript application to discover spectroscopy at home or at school !</strong>",
+		value : '<p>Test main page ui...</p>',
+
 		ui_opts : {
 		    root_classes : ["container-fluid"],
 		    child_classes : [],
@@ -822,8 +826,7 @@ var videocap_templates = {
 			type : 'html',
 			name : 'Construction',
 			value : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>"
-		    },
-		    value : '<p>Test main page ui...</p>'
+		    }
 		}
 	    },
 	    
@@ -832,8 +835,8 @@ var videocap_templates = {
 		
 		ui_opts : {
 		    fa_icon : "line-chart",
-		    root_classes : ["container-fluid"],
-		    child_classes : ['row'],
+		    //root_classes : ["row"],
+		    //child_classes : ['row'],
 		    item_classes : [],
 		    render_name : false,
 		    //child_view_type : 'divider',
@@ -844,135 +847,28 @@ var videocap_templates = {
 
 		elements : {
 		    left: {
-			name : "2D capture",
+			name : "2D Capture",
 			ui_opts : {
 			    root_classes : ["col-md-4 col-xs-12 vlimit"],
-			    child_classes : [""],
-			    save : "minispectro_setup",
+			    child_classes : ["container-fluid"],
+			    //save : "minispectro_setup",
 			    child_view_type : 'tabbed',
 			    fa_icon : "camera",//fa_icon : 'cogs',
+			    default_child : 'none'
 			    // sliding : true,
 			    // slided : true
 			},
-			//toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
+			toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
 			
 			elements : {
-			    
-			    // setup : {
-			    // 	name : "Setup",
-			    // 	//intro : "<p>Configure camera and spectrum sampling</p>",
-			    // 	ui_opts : {
-			    // 	    //root_classes : ["col-xs-12"],
-			    // 	    fa_icon : "cogs",
 
-				    
-			    // 	    //name_classes : ["well"]
-			    // 	    //name_node : 'h2',
-			    // 	    //render_name : false
-
-				    
-			    // 	},
-			    // 	toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
-			    // 	elements : {
-				    camview : {
-					//name : "Video monitor", 
-					ui_opts : {
-					    in_root : 'prepend',
-					    //root_classes : ["col-xs-12"],
-					    fa_icon : 'play'
-					    //root_classes : ["container-fluid"]
-					},
-					elements : {
-					    
-					    butts : {
-						name : "Start/Stop capture :",
-						intro : "<h4>Start/stop capturing frames from the webcam and computing one-dimensional spectrum</p><p>You might be prompted to accept webcam capture from your browser</h4>",
-						ui_opts :  {
-						    //fa_icon : "play",
-						    child_classes : ["btn-group text-center"],
-						    root_classes : ["container-fluid"],
-						    label : true
-						},
-						elements : {
-						    start : {
-							name : "",
-							type : "action",
-							ui_opts :  {
-							    fa_icon : "play",item_classes : ["btn btn-primary btn-sm"],
-							}
-						    },
-						    stop : {
-							name : "",
-							type : "action",
-							ui_opts :  {
-							    fa_icon : "stop",item_classes : ["btn btn-default btn-sm"],
-							}
-						    }
-						}
-					    },
-					    
-					    camwindow : {
-						
-					    }
-					},
-					widget_builder : function(ui_opts, camview){
-					}
-				    },
-			    
-			}
-			
-		    },
-		    // right : {
-		    // 	name : "Right !",
-		    // 	ui_opts : {
-			    
-		    // 	    //child_view_type : 'tabbed',
-		    // 	    render_name : false
-		    // 	},
-		    // 	elements : {
-			    // view_main : {
-
-			    // 	name : "Real-time spectrum",
-			    // 	subtitle : "One dimensional raw spectra (R,G,B, Sum/3)",
-			    // 	ui_opts : {
-			    // 	    fa_icon : "line-chart",
-			    // 	    //name_node : "h3",
-			    // 	    render_name : false
-			    // 	},
-
-			    // 	elements : {
-				    specview : {
-					name : "Live 1D spectra",
-					type : "spectrum",
-					//intro:  "One dimensional raw spectra (R,G,B, Sum/3)",
-					y_range : [0, 255],
-					ui_opts : {
-					    name_edit : false,
-					    intro_stick: true,
-					    fa_icon : "line-chart",
-					    root_classes : ['col-md-8 col-xs-12 container-fluid'],
-					    child_classes : ["vlimit"],
-					    //item_classes : ["list-group-item"],
-					    //  label : true,
-					  //  enable_range : false,
-					    //  enable_selection : false,
-					    //root_classes : ['col-md-12'],
-					    
-					    //render_name : false
-					},
-					elements : {
-					    lines : {
-						name : "Features",
-						ui_opts : { fa_icon : 'magnet'}
-					    },
-					    
 					    video : {
 						name : "Device",
 						subtitle : "Setup your webcam device",
 						intro : "<strong>Warning</strong><ul><li>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</li><li>Resolution selection is only available on few browsers</li></ul>",
 						ui_opts : {
 						    root_classes : [""],
-						    child_classes : ["list-group"],
+						    child_classes : ["col-sm-offset-3 col-sm-6 list-group col-md-12 col-md-offset-0"],
 						    fa_icon : 'camera-retro',
 						    //render_name : false,
 						    //intro_stick : true
@@ -1025,9 +921,9 @@ var videocap_templates = {
 						    integrate : {
 							name  : "Average frames",
  							ui_opts : {
-							    name_classes : ["col-sm-3"],
+							    //name_classes : ["col-sm-3"],
 							    root_classes : ["list-group-item vertical_margin col-xs-12"],
-							    child_classes : ["col-sm-9 container-fluid"],
+							    child_classes : ["col-sm-12 container-fluid"],
 							    //child_view_type : 'table',
 							    fa_icon : 'plus'
 							},
@@ -1036,10 +932,10 @@ var videocap_templates = {
 							    enable : {
 								name : "Enable",
 								ui_opts : {
-								    //label : true,
-								    root_classes : ["col-sm-2 col-xs-6"],
-								    name_classes : ["col-sm-6 col-xs-6"],
-								    item_classes : ["col-sm-6 col-xs-6"],
+								    label : true,
+								    //root_classes : ["col-sm-6 col-xs-6"],
+								    //name_classes : ["col-sm-6 col-xs-6"],
+								    //item_classes : ["col-sm-6 col-xs-6"],
 								    type : "edit" },
 								type : "bool",
 								value : false
@@ -1049,10 +945,10 @@ var videocap_templates = {
 								name : "Number of images",
 								ui_opts : {
 								    type : "edit",
-								    //label : true,
-								    root_classes : ["col-sm-10 col-xs-6 text-right"],
-								    name_classes : ["col-xs-6"],
-								    item_classes : ["col-xs-6"]
+								    label : true,
+								    //root_classes : ["col-sm-6 col-xs-6"],
+								    //name_classes : ["col-xs-6"],
+								    //item_classes : ["col-xs-6"]
 								    //root_classes : ["list-group-item"]
 								},
 								step : 1,
@@ -1176,6 +1072,121 @@ var videocap_templates = {
 						    
 						}
 					    },
+
+			    
+			    // setup : {
+			    // 	name : "Setup",
+			    // 	//intro : "<p>Configure camera and spectrum sampling</p>",
+			    // 	ui_opts : {
+			    // 	    //root_classes : ["col-xs-12"],
+			    // 	    fa_icon : "cogs",
+
+				    
+			    // 	    //name_classes : ["well"]
+			    // 	    //name_node : 'h2',
+			    // 	    //render_name : false
+
+				    
+			    // 	},
+			    // 	toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
+			    // 	elements : {
+				    camview : {
+					//name : "Video monitor", 
+					ui_opts : {
+					    in_root : true, //'prepend',
+					    //root_classes : ["row"],
+					    fa_icon : 'play'
+					    //root_classes : ["container-fluid"]
+					},
+					elements : {
+					    
+					    butts : {
+						name : "Start/Stop capture :",
+						intro : "<p>Start/stop capturing frames from the webcam and computing one-dimensional spectrum</p><p>You might be prompted to accept webcam capture from your browser</p>",
+						ui_opts :  {
+						    fa_icon : "play",
+						    child_classes : ["btn-group text-center"],
+						    root_classes : ["container-fluid"],
+						    label : true
+						},
+						elements : {
+						    start : {
+							name : "",
+							type : "action",
+							ui_opts :  {
+							    fa_icon : "play",item_classes : ["btn btn-primary btn-sm"],
+							}
+						    },
+						    stop : {
+							name : "",
+							type : "action",
+							ui_opts :  {
+							    fa_icon : "stop",item_classes : ["btn btn-default btn-sm"],
+							}
+						    }
+						}
+					    },
+					    
+					    camwindow : {
+						
+					    }
+					},
+					widget_builder : function(ui_opts, camview){
+					}
+				    },
+			    
+			}
+			
+		    },
+		    // right : {
+		    // 	name : "Right !",
+		    // 	ui_opts : {
+			    
+		    // 	    //child_view_type : 'tabbed',
+		    // 	    render_name : false
+		    // 	},
+		    // 	elements : {
+			    // view_main : {
+
+			    // 	name : "Real-time spectrum",
+			    // 	subtitle : "One dimensional raw spectra (R,G,B, Sum/3)",
+			    // 	ui_opts : {
+			    // 	    fa_icon : "line-chart",
+			    // 	    //name_node : "h3",
+			    // 	    render_name : false
+			    // 	},
+
+			    // 	elements : {
+				    specview : {
+					name : "Live 1D spectra",
+					type : "spectrum",
+					//intro:  "One dimensional raw spectra (R,G,B, Sum/3)",
+					y_range : [0, 255],
+					ui_opts : {
+					    name_edit : false,
+					    intro_stick: true,
+					    fa_icon : "line-chart",
+					    root_classes : ['col-md-8 col-xs-12 container-fluid vlimit'],
+					    child_classes : ["container-fluid"],
+					    //item_classes : ["row"],
+					    //  label : true,
+					  //  enable_range : false,
+					    //  enable_selection : false,
+					    //root_classes : ['col-md-12'],
+					    
+					    //render_name : false
+					},
+					elements : {
+					    view : {
+						ui_opts : {
+						    //root_classes : ["row"]
+						}
+					    },
+					    lines : {
+						name : "Features",
+						ui_opts : { fa_icon : 'magnet'}
+					    },
+					    
 					    fileops : {
 						name : "Save spectrum",
 						intro : "<p>Save visible spectrum on browser webstorage</p>",
@@ -1184,7 +1195,7 @@ var videocap_templates = {
 						    fa_icon : "save",
 						    //render_name : false,
 						    //intro_stick : true,
-						    root_classes : ["col-xs-12 panel panel-default"],
+						    root_classes : ["col-xs-12  panel panel-default"],
 						    child_node_type : "form",
 						    child_classes : ["inline form-inline vertical_margin"]
 						    
