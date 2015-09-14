@@ -323,7 +323,7 @@ var videocap_templates = {
 		toolbar : { ui_opts : { toolbar_classes : ["navbar-default"] }},
 		elements : {
 		    new_line : {
-			name : "Add a new Hg spectral feature",
+			name : "Hg line",
 			intro : "<p>Add a mercury emission line from the list of strong emission lines :</p>",
 			ui_opts : {
 			    fa_icon : "plus",
@@ -367,7 +367,7 @@ var videocap_templates = {
 		    },
 		    new_custom_line : {
 			
-		    	name : "Add a custom spectral feature",
+		    	name : "Custom feature",
 			intro : "<ul><li>Edit feature's name.</li><li> Setup the wavelength in Å and eventually the pixel position of the new spectral feature, pixel position can also be changed by dragging the feature line in the spectrum's plot.</li> <li>Click 'Add feature' button to add the feature to the list</li></ul>",
 			ui_opts : {
 			    //intro_stick : true,
@@ -779,23 +779,21 @@ var videocap_templates = {
     videocap : {
 	
 	name : "WebSpectro",
-	
-	//intro : "<h1>A web/home experiment to discover spectroscopy</h1><p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>",
+	//type : "html",
+
 	ui_opts : {
 	    root_classes : ["container-fluid"],
 	    child_classes : [],
 	    name_classes : [],
+	    //hide_item : true,
+	    child_item : 'doc',
+	    default_child : 'doc',
 	    icon : "/minispectro/ico/minispectro_white.svg",
 	    //child_toolbar : true,
 	    child_view_type : 'tabbed',
 	    toolbar_brand : true,
 	    //name_node : "h4"
 	},
-
-	// type : 'html',
-	// url : '/minispectro/',
-	//value : "Helloooo !",
-
 	toolbar : {
 	    ui_opts : {
 		toolbar_classes : ["navbar-fixed-top navbar-inverse"]
@@ -803,32 +801,6 @@ var videocap_templates = {
 	},
 	
 	elements : {
-
-	    intro : {
-		type : 'html',
-		name : "WebSpectro",
-		subtitle : "<strong>A javascript application to discover spectroscopy at home or at school !</strong>",
-		value : '<p>Test main page ui...</p>',
-
-		ui_opts : {
-		    root_classes : ["container-fluid"],
-		    child_classes : [],
-		    name_classes : [],
-		    icon : "/minispectro/ico/minispectro.svg",
-		    intro_stick : true
-		},
-		elements : {
-		    soft_manual : {
-			type : 'html',
-			name : 'Spectro application'
-		    },
-		    building : {
-			type : 'html',
-			name : 'Construction',
-			value : "<p>Instructions to build the inexpensive spectrograph can not be found <a href=''>here</a> yet, sorry!</p>"
-		    }
-		}
-	    },
 	    
 	    spectro : {
 		name : "Spectrograph",
@@ -982,6 +954,7 @@ var videocap_templates = {
 						    name_classes : ["title_margin"],
 						    //child_classes : ["list-group"],
 						    child_view_type : 'tabbed',
+						    save : 'region'
 						    //name_node : "h3"
 						    //intro_stick : true
 						},
@@ -1185,13 +1158,13 @@ var videocap_templates = {
 					    },
 					    lines : {
 						name : "Spectral features",
-						intro : "<p>Add the spectral features you want to appear in the live spectrum display.</p>",
+						subtitle : "Add the spectral features you want to appear in the live spectrum display",
 						ui_opts : { fa_icon : 'magnet'}
 					    },
 					    
 					    fileops : {
 						name : "Save spectrum",
-						intro : "<p>Save visible spectrum on browser's webstorage</p>",
+						subtitle : "Save visible spectrum on browser's webstorage",
 						ui_opts : {
 						    //label : true,
 						    fa_icon : "save",
@@ -1305,7 +1278,48 @@ var videocap_templates = {
 			name : "Flux calibration"
 		    }
 		}
+	    },
+	    
+	    doc : {
+		name : "Documentation",
+		ui_opts : {
+		    fa_icon : 'info',
+		    render_name : false,
+		    child_view_type : "pills",
+		    //hide_item : true,
+		    //name_after : true,
+		    default_child : 'intro'
+		},
+		//toolbar : {},
+		elements : {
+		    intro : {
+			name : "Welcome",
+			type : "html",
+			url : "/minispectro/intro.html",
+			ui_opts : {
+			    render_name : false,
+			    item_classes : ["container-fluid vertical_margin"],
+			    fa_icon : 'info'
+			}
+
+		    },
+		    building : {
+			name : "Building the spectrograph",
+			ui_opts : {
+			    fa_icon : 'cut'
+			}
+			
+		    },
+		    soft : {
+			name : "Web software manual",
+			ui_opts : {
+			    fa_icon : 'book'
+			}
+		    }
+
+		}
 	    }
+
 	}
     }
     
@@ -1315,7 +1329,7 @@ var videocap_templates = {
 
 template_ui_builders.spectrum=function(ui_opts, spectrum){
 
-    console.log("spectrum ui_builders : Building spectrum : " + spectrum.name);
+//    console.log("spectrum ui_builders : Building spectrum : " + spectrum.name);
     //template_ui_builders.vector(ui_opts, spectrum);
     var view=spectrum.get('view');
     
@@ -1347,6 +1361,7 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
     
     var flist=spectrum.get('feature_list');
     var new_line=spectrum.get('new_line');
+    var lines=spectrum.get('lines');
     
     var add_custom_feature=spectrum.get('add_custom_feature');
     
@@ -1367,7 +1382,7 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
 	for(var f in flist.elements){
 	    
 	    if(flist.elements[f].val('wl')==l){
-		spectrum.debug("The wavelength " + l + " is already in the table !");
+		lines.debug("The wavelength " + l + " is already in the table !");
 		return false;
 	    }
 	}
@@ -1383,7 +1398,7 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
 	console.log("Selected line : " + JSON.stringify(sel_line));
 	
 	if(check_line(lambda)){
-	    var fe=create_widget('spectrum_feature');
+	    var fe=create_widget('spectrum_feature', flist);
 	    fe.set('wl',lambda);
 	    fe.set_title(ion + ", "+lambda+ 'Å');
 	    flist.add_child(fe);
@@ -1401,7 +1416,7 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
 	
 	if(check_line(lambda)){
 	    
-	    var fe=create_widget('spectrum_feature');
+	    var fe=create_widget('spectrum_feature', flist);
 	    fe.set('wl',lambda);
 	    fe.set('pixel',specfec.val('pixel'));
 	    fe.set_title(specfec.name);
