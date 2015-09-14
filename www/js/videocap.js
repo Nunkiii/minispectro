@@ -1183,21 +1183,22 @@ var videocap_templates = {
 						}
 					    },
 					    lines : {
-						name : "Features",
+						name : "Spectral features",
+						intro : "<p>Add the spectral features you want to appear in the live spectrum display.</p>",
 						ui_opts : { fa_icon : 'magnet'}
 					    },
 					    
 					    fileops : {
 						name : "Save spectrum",
-						intro : "<p>Save visible spectrum on browser webstorage</p>",
+						intro : "<p>Save visible spectrum on browser's webstorage</p>",
 						ui_opts : {
 						    //label : true,
 						    fa_icon : "save",
 						    //render_name : false,
 						    //intro_stick : true,
-						    root_classes : ["col-xs-12  panel panel-default"],
-						    child_node_type : "form",
-						    child_classes : ["inline form-inline vertical_margin"]
+						    root_classes : ["col-sm-12 panel panel-default vertical_padding"],
+						    //child_node_type : "form",
+						    //child_classes : ["vertical_padding"]
 						    
 						},
 						
@@ -1208,11 +1209,12 @@ var videocap_templates = {
 							name : "Name :",
 							holder_value : "Auto (Date)",
 							ui_opts : {
-							    root_classes : ["input-group"],
+							    root_classes : ["col-sm-5"],
+							    label : true,
 							    //wrap : true,
 							    //wrap_classes : ["col-sm-4 nopadding"],
-							    name_classes : ["input-group-addon"],
-							    name_node : "div",
+							    //name_classes : ["input-group-addon"],
+							    //name_node : "div",
 							    type : "edit"
 							}
 							
@@ -1223,12 +1225,13 @@ var videocap_templates = {
 							name : "Target :",
 							holder_value : "An interesting light source",
 							ui_opts : {
-							    root_element : "specname",
-							    //root_classes : ["input-group"],
+							    
+							    //root_element : "specname",
+							    root_classes : ["col-sm-5"],
 							    label : true,
 							    //wrap_classes : ["col-sm-4 nopadding"],
-							    name_classes : ["input-group-addon"],
-							    name_node : "div",
+							    //name_classes : ["input-group-addon"],
+							    //name_node : "div",
 							    type : "edit"
 							}
 							
@@ -1237,11 +1240,12 @@ var videocap_templates = {
 							name:  "Save",
 							type : "action",
 							ui_opts:{
-							    root_element : "specname",
+							    //root_element : "specname",
 							    fa_icon : "save",
+							    root_classes : ["col-sm-2 vertical_margin"],
 							    wrap : true,
-							    wrap_classes : ["input-group-btn"],
-							    item_classes : ["btn btn-warning"]
+							    wrap_classes : ["input-group-btn text-left"],
+							    item_classes : ["btn btn-primary"]
 							    
 							}
 						    }
@@ -1641,10 +1645,11 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	if(specname.value && specname.value!==""){
 	    new_spec.name=specname.value;
 	}else
-	    new_spec.name=date_obs.toLocaleString();
-
-	console.log("Specname is " +  new_spec.name + " DATE " + date_obs );
+	    new_spec.name="Spectrum @ "+date_obs.toLocaleString();
 	
+	//console.log("Specname is " +  new_spec.name + " DATE " + date_obs );
+	new_spec.parent=spectra;
+
 	specname.set_value("");
 	create_ui({},new_spec);
 
@@ -1667,7 +1672,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
     });
 
     spectra.listen('load', function(){
-
 	console.log("Spectra load event !!!!!");
 	wlc.trigger('update_spectra', spectra.elements);
     });
@@ -1926,7 +1930,7 @@ template_ui_builders.videocap=function(ui_opts, vc){
     function slice_arrays(){
 	var box=get_box();
 	
-	var ddim= dir.value=="Vertical" ? box[3] : box[2];
+	var ddim= dir.value==0 ? box[3] : box[2];
 	//console.log("Slicing [" + bx + ","+ by+ "," + bw+ "," + bh + "]to ddim="+ddim + " dir = " + dir.value);
 	if(ddim < spec_data.r.length){
 	    pr.data=spec_data.r=spec_data.r.slice(0, ddim);
@@ -1939,6 +1943,10 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	}
 	if(seq==0)
 	    set_box_size();
+	
+	process_spectrum();
+	spectro_view.config_range(true, true);
+	
     }
     
     function set_box_size(){
@@ -1959,8 +1967,9 @@ template_ui_builders.videocap=function(ui_opts, vc){
     for(var be in spectro_box){
 	spectro_box[be].listen("change",function(){
 	    //draw_spectrum_box();
-	    slice_arrays();
 	    set_box_size();
+	    slice_arrays();
+	    //process_spectrum();
 	    spectro_view.config_range();	    
 	});
     };
@@ -1975,7 +1984,10 @@ template_ui_builders.videocap=function(ui_opts, vc){
     video_container.appendChild(spectro_win.widget_div);
     set_box_size();
     
-    dir.listen("change",function(){slice_arrays();});
+    dir.listen("change",function(){
+	//console.log("Dir changed !");
+	slice_arrays();
+    });
     
     spectro_win.listen("resize", function(sz){
 	//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
@@ -2048,42 +2060,15 @@ template_ui_builders.videocap=function(ui_opts, vc){
     var buf_data=[];
     var seq=0;
 
-    function process_frame(){
-	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf_data.length);
-
-	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
-	ctx.drawImage(video_node, 0, 0);
-	
-	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
-	var inf=integ_nf.value*1.0;
-	var box=get_box();
-	var bx=box[0]*1.0,by=box[1]*1.0,bw=box[2]*1.0,bh=box[3]*1.0;
-	//console.log("process frame in " + JSON.stringify(box));
-	
-	if(integ.value>0){
-	    
-	    if(seq>=inf){
-		for(var i=0;i<buf_data.length;i++) buf_data[i]/=inf;
-		seq=0;
-	    }else{
-		if(seq===0){
-		    buf_data=[];
-		    for(var i=0;i<buf.data.length;i++) buf_data[i]=buf.data[i];
-		}else
-		    for(var i=0;i<buf.data.length;i++) buf_data[i]+=buf.data[i];
-		//console.log("Integ " + seq + "/" + integ_nf.value);
-		seq++;
-		//draw_spectrum_box();
-		return;
-	    }
-	}else{
-	    buf_data=buf.data;
-	}
+    function process_spectrum(){
 
 //	draw_spectrum_box();
+	
+	var box=get_box();
+	var bx=box[0]*1.0,by=box[1]*1.0,bw=box[2]*1.0,bh=box[3]*1.0;
 
-	var ddir=dir.value=='Vertical' ? false : true; //dir.ui.selectedIndex;
-
+	var ddir=dir.value==0 ? false : true; //dir.ui.selectedIndex;
+	//console.log("process spectrum ddir = " + ddir + " dv = " + dir.value);
 	if(ddir){
 	    for(var i=0;i<bw;i++){
 		spec_data.r[i]=0;
@@ -2143,8 +2128,41 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	
 	frid++;
     }
+    
+    function process_frame(){
+	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf_data.length);
 
+	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
+	ctx.drawImage(video_node, 0, 0);
+	
+	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
+	var inf=integ_nf.value*1.0;
+	//console.log("process frame in " + JSON.stringify(box));
+	
+	if(integ.value>0){
+	    
+	    if(seq>=inf){
+		for(var i=0;i<buf_data.length;i++) buf_data[i]/=inf;
+		seq=0;
+	    }else{
+		if(seq===0){
+		    buf_data=[];
+		    for(var i=0;i<buf.data.length;i++) buf_data[i]=buf.data[i];
+		}else
+		    for(var i=0;i<buf.data.length;i++) buf_data[i]+=buf.data[i];
+		//console.log("Integ " + seq + "/" + integ_nf.value);
+		seq++;
+		//draw_spectrum_box();
+		return;
+	    }
+	}else{
+	    buf_data=buf.data;
+	}
+	
+	process_spectrum();
+    }
 
+    
     return vc.ui;
 };
 
