@@ -779,20 +779,19 @@ var videocap_templates = {
     videocap : {
 	
 	name : "WebSpectro",
-	//type : "html",
+	type : "html",
+	url : "/minispectro/intro.html",
 
 	ui_opts : {
 	    root_classes : ["container-fluid"],
 	    child_classes : [],
 	    name_classes : [],
-	    //hide_item : true,
-	    child_item : 'doc',
-	    default_child : 'doc',
+	    hide_item : true,
+	    //child_item : 'doc',
+	    default_child : 'none',
 	    icon : "/minispectro/ico/minispectro_white.svg",
-	    //child_toolbar : true,
 	    child_view_type : 'tabbed',
 	    toolbar_brand : true,
-	    //name_node : "h4"
 	},
 	toolbar : {
 	    ui_opts : {
@@ -1070,7 +1069,7 @@ var videocap_templates = {
 					    in_root : true, //'prepend',
 					    //root_classes : ["row"],
 					    fa_icon : 'play'
-					    //root_classes : ["container-fluid"]
+					
 					},
 					elements : {
 					    
@@ -1102,7 +1101,9 @@ var videocap_templates = {
 					    },
 					    
 					    camwindow : {
-						
+						ui_opts : {
+						    root_classes : ["camwindow"]
+						}
 					    }
 					},
 					widget_builder : function(ui_opts, camview){
@@ -1288,30 +1289,30 @@ var videocap_templates = {
 		    child_view_type : "pills",
 		    //hide_item : true,
 		    //name_after : true,
-		    default_child : 'intro'
+		    //default_child : 'intro'
 		},
 		//toolbar : {},
 		elements : {
-		    intro : {
-			name : "Welcome",
-			type : "html",
-			url : "/minispectro/intro.html",
-			ui_opts : {
-			    render_name : false,
-			    item_classes : ["container-fluid vertical_margin"],
-			    fa_icon : 'info'
-			}
+		    // intro : {
+		    // 	name : "Welcome",
+		    // 	type : "html",
+		    // 	url : "/minispectro/intro.html",
+		    // 	ui_opts : {
+		    // 	    render_name : false,
+		    // 	    item_classes : ["container-fluid vertical_margin"],
+		    // 	    fa_icon : 'info'
+		    // 	}
 
-		    },
+		    // },
 		    building : {
-			name : "Building the spectrograph",
+			name : "Building the DVD spectrograph",
 			ui_opts : {
 			    fa_icon : 'cut'
 			}
 			
 		    },
 		    soft : {
-			name : "Web software manual",
+			name : "Software manual",
 			ui_opts : {
 			    fa_icon : 'book'
 			}
@@ -1320,16 +1321,562 @@ var videocap_templates = {
 		}
 	    }
 
+	},
+//	template_ui_builders.videocap=function(ui_opts, vc){
+	widget_builder : function(ui_opts, vc){
+	    
+	    console.log("Videocap constructor !");
+	    //var main_node=vc.ui=ce("div"); main_node.class_name="container-fluid";
+	    //var video=vc.get("video");
+	    
+	    var camview=vc.get("camview");
+	    var camwin=vc.get("camwindow");
+	    var spectrum=vc.get("spectro");
+	    var spectro_view=vc.get("specview").elements.view;//spectrum;
+	    
+	    //var options=vc.get('setup');
+
+	    var spectro_opts=vc.get('box').elements;
+	    var controls=vc.get('left');
+	    var spectro_box=vc.get('region').elements;
+
+	    var dir=vc.get("dir");
+
+	    var butts=vc.get('butts').elements;
+	    var start=butts.start;
+	    var stop=butts.stop;
+
+	    var video_options=vc.get('video');
+	    var processing_options=vc.get('processing').elements;
+	    var device=video_options.get('device');
+
+	    var resolution=video_options.elements.resolution;
+	    var sampling=processing_options.sampling;
+
+	    var integ=processing_options.integrate.elements.enable;
+	    var integ_nf=processing_options.integrate.elements.nframes;
+
+	    var save_spec=spectrum.get("save");
+	    var specname=spectrum.get("specname");
+
+	    
+	    var spectra=vc.get("spectra");
+	    //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
+
+	    var video_container=cc("div",camwin.ui_root);
+	    var spectro_win;
+
+	    var wlc=vc.get('wlc');
+	    
+	    //wlc.set_sv(spectro_view);
+	    
+	    var have_wlc = wlc.get('calib_func').elements.params.value.length>0;
+	    
+	    save_spec.listen("click",function(){
+		var new_spec=tmaster.build_template('spectrum');
+		var date_obs=new Date();
+		
+		
+		if(specname.value && specname.value!==""){
+		    new_spec.name=specname.value;
+		}else
+		    new_spec.name="Spectrum @ "+date_obs.toLocaleString();
+		
+		//console.log("Specname is " +  new_spec.name + " DATE " + date_obs );
+		new_spec.parent=spectra;
+
+		specname.set_value("");
+		create_ui({},new_spec);
+
+		var view=new_spec.get('view');
+
+		new_spec.set('target',spectrum.val('target'));
+		new_spec.set('date_obs',date_obs);
+
+		
+		new_spec.update_plot(spec_data);
+		spectra.add_child(new_spec, new_spec.name);
+
+		//new_spec.elements.keys.elements.target.item_ui.innerHTML="BEN QUOIIII";//.set_value("TOTOTOTOOT");
+		//new_spec.elements.keys.elements.target.set_value("TOTOTOTOOT");
+		//ui.innerHTML="BEN QUOIIII";//
+
+		wlc.trigger('update_spectra', spectra.elements);
+		
+		
+	    });
+
+	    spectra.listen('load', function(){
+		console.log("Spectra load event !!!!!");
+		wlc.trigger('update_spectra', spectra.elements);
+	    });
+	    
+	    
+	    video_container.style.position="relative";
+	    video_container.style.marginTop="1em";
+
+	    video_container.className="panel panel-default";
+
+	    var video_node=cc("video",camview.ui_root);
+	    video_node.setAttribute("autoplay",true);
+	    video_node.style.display="none";
+	    var canvas=cc("canvas",video_container);
+
+	    
+	    var stream = null;
+
+	    var ctx = canvas.getContext('2d');
+
+	    var per=null;
+
+	    function video_error(title,msg){
+		if(!per) per=ce("p");controls.ui_root.appendChild(per);
+		per.innerHTML='<p class="alert alert-danger"> <strong>'+title+'</strong>'+msg+'</p>';
+		
+	    }
+	    
+	    
+	    var errorCallback = function(e) {
+		camview.debug('Capture error : ' + e);
+	    };
+	    
+	    video_node.addEventListener("loadeddata", function(){
+		
+		var iv=setInterval(function(){
+		    if(video_node.videoWidth!==0){
+			canvas.width= video_node.videoWidth;
+			canvas.height=video_node.videoHeight;
+			if(!spectro_win.moving)
+			    set_box_size();
+
+
+			//console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
+			clearInterval(iv);
+		    }
+		    
+		}, 100);
+
+	    });
+
+	    wlc.trigger('update_spectra', spectra.elements);
+
+	    var videoSource = null;
+	    var iv_cap;
+	    var iv_video;
+
+	    stop.disable(true);
+	    start.disable(true);
+
+	    
+	    stop.listen("click",function(){
+		
+		if(iv_cap){
+		    clearInterval(iv_cap);
+		    clearInterval(iv_video);
+		}
+		
+		if (stream) {
+		    stream.stop();
+		    stream=null;
+		}
+		//camview.hide(true);
+		video_options.disable(false);
+
+		start.disable(false);
+		stop.disable(true);
+
+		// var types={};
+		// for(var b in template_ui_builders){
+		//     if(ù(tmaster.templates[b])){
+		// 	types[b]={}
+		//     }
+		// }
+		//console.log(JSON.stringify(types));
+
+	    });
+
+	    
+	    if (!navigator.getUserMedia) {
+		controls.debug("Oh No! It seems your browser doesn't support HTML5 getUserMedia.");
+		video_options.disable();
+	    }else{
+
+		if (typeof MediaStreamTrack === 'undefined' ||
+		    typeof MediaStreamTrack.getSources === 'undefined') {
+		    controls.debug("This browser does not support MediaStreamTrack. You cannot choose the input device. Try Chrome.");
+		    video_options.disable();
+		    start.disable(false);
+		} else {
+		    start.disable(false);
+		    
+		    MediaStreamTrack.getSources(function(sourceInfos) {
+			var audioSource = null;
+			
+
+			var source_options=[];
+			var vi=0;
+			for (var i = 0; i != sourceInfos.length; ++i) {
+			    var sourceInfo = sourceInfos[i];
+			    if (sourceInfo.kind === 'audio') {
+				//console.log(sourceInfo.id, sourceInfo.label || 'microphone');
+				//audioSource = sourceInfo.id;
+			    } else if (sourceInfo.kind === 'video') {
+				vi++;
+				//console.log("VIDEO : " + JSON.stringify(sourceInfo));
+				//console.log(sourceInfo.id, sourceInfo.label || 'camera');
+				source_options.push({ label : sourceInfo.label || ('Camera ' +vi) , value : sourceInfo.id});
+				if(vi===1)videoSource = sourceInfo.id;
+				
+			    } else {
+				console.log('Some other kind of source: ', sourceInfo);
+			    }
+			}
+			//console.log("Set dev options   "  + JSON.stringify(source_options));
+			device.set_options(source_options);
+			//sourceSelected(audioSource, videoSource);
+
+			device.listen("change", function(id){
+			    videoSource=device.value;
+			});
+			
+		    });
+		}
+	    }
+
+	    
+	    function iv_freq(f, freq){
+		console.log("Setting frame iv to : " + 1000.0/freq + " ms");
+		return setInterval(f, 1000.0/freq);
+	    }
+	    
+	    function setup_buffer_loop(){
+		if(è(iv_cap))clearInterval(iv_cap);
+		iv_cap=iv_freq(function(){
+		    process_frame();
+		}, sampling.value );
+	    }
+	    
+	    sampling.listen("change", function(v){
+		if(stream!=null)
+		    setup_buffer_loop();
+	    });
+	    
+	    start.listen("click",function(){
+		
+		//camview.hide(false);
+		var hd_constraints = {
+		    audio: false,
+		    video: {
+			optional: [{
+			    sourceId: videoSource
+			}],
+			mandatory: {
+			    minWidth: 1280,
+			    minHeight: 720,
+			}
+		    }
+		};
+
+		var vga_constraints = {
+		    audio: false,
+		    video: {
+			optional: [{
+			    sourceId: videoSource
+			}],
+			mandatory: {
+			    minWidth: 640,
+			    minHeight: 480,
+			}
+		    }
+		};
+
+		var constraints = resolution.value==="HD" ? hd_constraints : vga_constraints;
+		
+		console.log("Start video source... ("+resolution.value+")" + JSON.stringify(constraints));
+
+		
+		navigator.getUserMedia(constraints, function(stream_in) {
+		    video_node.src = window.URL.createObjectURL(stream_in);
+		    stream=stream_in;
+		    
+		    //console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
+		    var iv_delay=200; //integ.value? 100 : 100;
+
+		    if (stream) {
+			setup_buffer_loop();
+		    }
+		    video_options.disable(true);
+		    start.disable(true);
+		    stop.disable(false);
+		    
+		}, errorCallback);
+	    });
+	    
+	    function get_box(){
+		return [
+		    spectro_box.x.value,
+		    spectro_box.y.value,
+		    spectro_box.w.value,
+		    spectro_box.h.value
+		];
+	    }
+	    
+	    function slice_arrays(){
+		var box=get_box();
+		
+		var ddim= dir.value==0 ? box[3] : box[2];
+		//console.log("Slicing [" + bx + ","+ by+ "," + bw+ "," + bh + "]to ddim="+ddim + " dir = " + dir.value);
+		if(ddim < spec_data.r.length){
+		    pr.data=spec_data.r=spec_data.r.slice(0, ddim);
+		    pg.data=spec_data.g=spec_data.g.slice(0, ddim);
+		    pb.data=spec_data.b=spec_data.b.slice(0, ddim);
+		    pt.data=spec_data.t=spec_data.t.slice(0, ddim);
+
+		    //spectro_view.config_range(true, true);
+		    //console.log("Resized !! ddim=" + ddim + " SL " + spec_data.r.length + " bh " + bh );
+		}
+		if(seq==0)
+		    set_box_size();
+		
+		process_spectrum();
+		spectro_view.config_range(true, true);
+		
+	    }
+	    
+	    function set_box_size(){
+		var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
+		var box=get_box();
+		//console.log("Canvas  " + canvas.clientWidth);
+
+		//w.widget_div.style.transform="scale("+scale[0]+","+scale[1]+")";
+
+		spectro_win.widget_div.style.left=scale[0]*box[0]+"px";
+		spectro_win.widget_div.style.top=scale[1]*box[1]+"px";
+		spectro_win.widget_div.style.width=scale[0]*box[2]+"px";
+		spectro_win.widget_div.style.height=scale[1]*box[3]+"px";
+		
+	    }
+
+	    
+	    for(var be in spectro_box){
+		spectro_box[be].listen("change",function(){
+		    //draw_spectrum_box();
+		    set_box_size();
+		    slice_arrays();
+		    //process_spectrum();
+		    spectro_view.config_range();	    
+		});
+	    };
+	    
+	    // function draw_spectrum_box(){
+	    
+
+	    // 	if(ù(w)){
+	    var c5=canvas.width/5.0;
+	    spectro_win=new widget({ x: 2*c5, y: 5, w : c5, h : canvas.height-5});
+	    spectro_win.widget_div.style.position="absolute";
+	    video_container.appendChild(spectro_win.widget_div);
+	    set_box_size();
+	    
+	    dir.listen("change",function(){
+		//console.log("Dir changed !");
+
+		var b=get_box();
+		
+		spectro_box.w.set_value(b[3]);
+		spectro_box.h.set_value(b[2]);
+		
+		slice_arrays();
+	    });
+	    
+	    spectro_win.listen("resize", function(sz){
+		//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
+		
+		//buf_data=[];
+		//spec_data={r : [], g: [], b : [], t : [] };
+		var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
+		
+		spectro_box.x.set_value(Math.ceil(sz.x/scale[0]));
+		spectro_box.y.set_value(Math.ceil(sz.y/scale[1]));
+		spectro_box.w.set_value(Math.ceil(sz.w/scale[0]));
+		spectro_box.h.set_value(Math.ceil(sz.h/scale[1]));
+		
+		slice_arrays();
+		//create_plots();
+		
+	    });
+	    //	}
+
+	    //console.log("Spectrum box %d %d %d %d",bx,by,bw,bh );
+
+	    /*
+	      ctx.beginPath();
+	      ctx.strokeStyle="orange";
+	      ctx.rect(bx,by,bw,bh);
+	      ctx.stroke();
+	      ctx.closePath();
+	    */
+
+	    //    }
+
+	    var spec_data={r : [], g: [], b : [], t : [] };
+	    var pr,pg,pb,pt;
+	    
+	    function create_plots(){
+		spectro_view.value=[];
+
+		if(have_wlc){
+		    pr=spectro_view.add_plot(spec_data.r, global_wlc.calib_func);
+		    pg=spectro_view.add_plot(spec_data.g, global_wlc.calib_func);
+		    pb=spectro_view.add_plot(spec_data.b, global_wlc.calib_func);
+		    pt=spectro_view.add_plot(spec_data.t, global_wlc.calib_func);
+
+		    spectro_view.xlabel="Wavelength (Å)";
+		}else{
+    		    pr=spectro_view.add_plot_linear(spec_data.r,0,1);
+		    pg=spectro_view.add_plot_linear(spec_data.g,0,1);
+		    pb=spectro_view.add_plot_linear(spec_data.b,0,1);
+		    pt=spectro_view.add_plot_linear(spec_data.t,0,1);
+
+		    spectro_view.xlabel="Wavelength (pixels)";
+		}
+
+		spectro_view.ylabel="Intensity (ADU)";
+		
+		pr.set_opts({ stroke : "#ff0000", stroke_width : ".5px", label : "Red"});
+		pg.set_opts({ stroke : "#10ee08", stroke_width : ".5px", label : "Green"});
+		pb.set_opts({ stroke : "#0000ff", stroke_width : ".5px", label : "Blue"});
+		pt.set_opts({ stroke : "#aa08dd", stroke_width : "1px", label : "Mean"});
+		
+
+		
+	    }	
+	    //vc.ui_root.style.position="relative";
+	    //slice_arrays();
+	    create_plots();
+	    //set_box_size();    
+	    
+	    var frid=0;
+	    var buf_data=[];
+	    var seq=0;
+
+	    function process_spectrum(){
+
+		//	draw_spectrum_box();
+		
+		var box=get_box();
+		var bx=box[0]*1.0,by=box[1]*1.0,bw=box[2]*1.0,bh=box[3]*1.0;
+
+		var ddir=dir.value==0 ? false : true; //dir.ui.selectedIndex;
+		//console.log("process spectrum ddir = " + ddir + " dv = " + dir.value);
+		if(ddir){
+		    for(var i=0;i<bw;i++){
+			spec_data.r[i]=0;
+			spec_data.g[i]=0;
+			spec_data.b[i]=0;
+			for(var j=0;j<bh;j++){
+			    var idx=((j+by)*canvas.width + (i+bx))*4;
+			    spec_data.r[i]+= buf_data[ idx ];
+			    spec_data.g[i]+= buf_data[ idx+1 ];
+			    spec_data.b[i]+= buf_data[ idx+2 ];
+			    // if(i===0 && j===0)
+			    //     console.log(buf_data[ idx ] + ", " + buf_data[ idx+1 ]+ ", " +buf_data[ idx+2 ]);
+			}
+			spec_data.r[i]/=bh*1.0;
+			spec_data.g[i]/=bh*1.0;
+			spec_data.b[i]/=bh*1.0;
+			
+			spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
+		    }
+		}else{
+		    for(var i=0;i<bh;i++){
+			spec_data.r[i]=0;
+			spec_data.g[i]=0;
+			spec_data.b[i]=0;
+
+			for(var j=0;j<bw;j++){
+			    var idx=Math.floor(((i+by)*canvas.width + (j+bx))*4);
+			    spec_data.r[i]+= buf_data[idx];
+			    spec_data.g[i]+= buf_data[idx+1];
+			    spec_data.b[i]+= buf_data[idx+2];
+			    // if(i===0 && j===0)
+			    //     console.log(buf_data[ idx ] + ", " + buf_data[ idx+1 ]+ ", " +buf_data[ idx+2 ]);
+			}
+			spec_data.r[i]/=bw*1.0;
+			spec_data.g[i]/=bw*1.0;
+			spec_data.b[i]/=bw*1.0;
+			
+			spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
+		    }
+		    
+		    //console.log("SPEC["+JSON.stringify(spec_data.r)+"]");
+		    
+		}
+
+		spectro_view.value[0].data=spec_data.r.slice();
+		spectro_view.value[1].data=spec_data.g.slice();
+		spectro_view.value[2].data=spec_data.b.slice();
+		spectro_view.value[3].data=spec_data.t.slice();
+
+		
+		if(frid===0)
+		    spectro_view.config_range(true, true);
+		else{
+		    spectro_view.config_range(false, true);
+		    //spectro_view.redraw();
+		}
+		
+		frid++;
+	    }
+	    
+	    function process_frame(){
+		//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf_data.length);
+
+		ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
+		ctx.drawImage(video_node, 0, 0);
+		
+		var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
+		var inf=integ_nf.value*1.0;
+		//console.log("process frame in " + JSON.stringify(box));
+		
+		if(integ.value>0){
+		    
+		    if(seq>=inf){
+			for(var i=0;i<buf_data.length;i++) buf_data[i]/=inf;
+			seq=0;
+		    }else{
+			if(seq===0){
+			    buf_data=[];
+			    for(var i=0;i<buf.data.length;i++) buf_data[i]=buf.data[i];
+			}else
+			    for(var i=0;i<buf.data.length;i++) buf_data[i]+=buf.data[i];
+			//console.log("Integ " + seq + "/" + integ_nf.value);
+			seq++;
+			//draw_spectrum_box();
+			return;
+		    }
+		}else{
+		    buf_data=buf.data;
+		}
+		
+		process_spectrum();
+	    }
+
+	    return vc.ui;
 	}
+
+	
     }
     
 };
 
 
 
+
+
 template_ui_builders.spectrum=function(ui_opts, spectrum){
 
-//    console.log("spectrum ui_builders : Building spectrum : " + spectrum.name);
+    //    console.log("spectrum ui_builders : Building spectrum : " + spectrum.name);
     //template_ui_builders.vector(ui_opts, spectrum);
     var view=spectrum.get('view');
     
@@ -1450,18 +1997,23 @@ template_ui_builders.spectrum=function(ui_opts, spectrum){
     
     
     //spectrum.update_plot();
-}
+};
 
 var global_wlc;
 
 template_ui_builders.wlc=function(ui_opts, wlc){
 
+    if(wlc===undefined){
+	console.log("WLC is undefned !");
+	return;
+    }
+    
     global_wlc=wlc;
     console.log("Building wlc : " + wlc.name);
     
     var specsel=wlc.get('specsel');
     //var specview=wlc.get('specview');
-//    var color=wlc.get('color');
+    //    var color=wlc.get('color');
     
     
     new_event(wlc,"update_spectra");
@@ -1481,19 +2033,19 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 
     
     // function setup_selspec(){
-	
-	
+    
+    
 
     // 	//console.log("Length ====================== color " + color.value + " label " + color.options[color.value].label );
     // 	// console.log("Setup selspec ... " );
     // 	// var sd=get_template_data(s);
     // 	// set_template_data(specview, sd);
-	
+    
     // 	// if(specview.value.length>0){
     // 	//     specview.value[0].data=s.elements.view.value[color.value].data;
     // 	// }else
     // 	//     specview.add_plot_linear(s.elements.view.value[color.value].data,0,1);
-	
+    
     // 	// if(color.value<3)
     // 	//     specview.value[0].set_opts({ stroke : color.options[color.value].label, stroke_width : ".5px", label : color.options[color.value].label});
     // 	// else
@@ -1601,591 +2153,6 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 
     });
     
-}
-
-
-template_ui_builders.videocap=function(ui_opts, vc){
-
-    console.log("Videocap constructor !");
-    //var main_node=vc.ui=ce("div"); main_node.class_name="container-fluid";
-    //var video=vc.get("video");
-
-    var camview=vc.get("camview");
-    var camwin=vc.get("camwindow");
-    var spectrum=vc.get("spectro");
-    var spectro_view=vc.get("specview").elements.view;//spectrum;
-
-    //var options=vc.get('setup');
-
-    var spectro_opts=vc.get('box').elements;
-    var controls=vc.get('left');
-    var spectro_box=vc.get('region').elements;
-
-    var dir=vc.get("dir");
-
-    var butts=vc.get('butts').elements;
-    var start=butts.start;
-    var stop=butts.stop;
-
-    var video_options=vc.get('video');
-    var processing_options=vc.get('processing').elements;
-    var device=video_options.get('device');
-
-    var resolution=video_options.elements.resolution;
-    var sampling=processing_options.sampling;
-
-    var integ=processing_options.integrate.elements.enable;
-    var integ_nf=processing_options.integrate.elements.nframes;
-
-    var save_spec=spectrum.get("save");
-    var specname=spectrum.get("specname");
-
-    
-    var spectra=vc.get("spectra");
-    //var btns=cc("div",video.ui_root); btns.className="btn-group btn-group-lg";    
-
-    var video_container=cc("div",camwin.ui_root);
-    var spectro_win;
-
-    var wlc=vc.get('wlc');
-    
-    //wlc.set_sv(spectro_view);
-    
-    var have_wlc = wlc.get('calib_func').elements.params.value.length>0;
-    
-    save_spec.listen("click",function(){
-	var new_spec=tmaster.build_template('spectrum');
-	var date_obs=new Date();
-	
-	
-	if(specname.value && specname.value!==""){
-	    new_spec.name=specname.value;
-	}else
-	    new_spec.name="Spectrum @ "+date_obs.toLocaleString();
-	
-	//console.log("Specname is " +  new_spec.name + " DATE " + date_obs );
-	new_spec.parent=spectra;
-
-	specname.set_value("");
-	create_ui({},new_spec);
-
-	var view=new_spec.get('view');
-
-	new_spec.set('target',spectrum.val('target'));
-	new_spec.set('date_obs',date_obs);
-
-	
-	new_spec.update_plot(spec_data);
-	spectra.add_child(new_spec, new_spec.name);
-
-	//new_spec.elements.keys.elements.target.item_ui.innerHTML="BEN QUOIIII";//.set_value("TOTOTOTOOT");
-	//new_spec.elements.keys.elements.target.set_value("TOTOTOTOOT");
-	    //ui.innerHTML="BEN QUOIIII";//
-
-	wlc.trigger('update_spectra', spectra.elements);
-	
-	
-    });
-
-    spectra.listen('load', function(){
-	console.log("Spectra load event !!!!!");
-	wlc.trigger('update_spectra', spectra.elements);
-    });
-    
-    
-    video_container.style.position="relative";
-    video_container.style.marginTop="1em";
-
-    video_container.className="panel panel-default";
-
-    var video_node=cc("video",camview.ui_root);
-    video_node.setAttribute("autoplay",true);
-    video_node.style.display="none";
-    var canvas=cc("canvas",video_container);
-
-    
-    var stream = null;
-
-    var ctx = canvas.getContext('2d');
-
-    var per=null;
-
-    function video_error(title,msg){
-	if(!per) per=ce("p");controls.ui_root.appendChild(per);
-	per.innerHTML='<p class="alert alert-danger"> <strong>'+title+'</strong>'+msg+'</p>';
-	
-    }
-    
-    
-    var errorCallback = function(e) {
-	camview.debug('Capture error : ' + e);
-    };
-    
-    video_node.addEventListener("loadeddata", function(){
-	
-	var iv=setInterval(function(){
-	    if(video_node.videoWidth!==0){
-		canvas.width= video_node.videoWidth;
-		canvas.height=video_node.videoHeight;
-		if(!spectro_win.moving)
-		    set_box_size();
-
-
-		//console.log("LOADED ! canvas w = %d video w = %d",canvas.width,video_node.videoWidth);
-		clearInterval(iv);
-	    }
-	    
-	}, 100);
-
-    });
-
-    wlc.trigger('update_spectra', spectra.elements);
-
-    var videoSource = null;
-    var iv_cap;
-    var iv_video;
-
-    stop.disable(true);
-    start.disable(true);
-
-    
-    stop.listen("click",function(){
-	
-	if(iv_cap){
-	    clearInterval(iv_cap);
-	    clearInterval(iv_video);
-	}
-	
-	if (stream) {
-	    stream.stop();
-	    stream=null;
-	}
-	//camview.hide(true);
-	video_options.disable(false);
-
-	start.disable(false);
-	stop.disable(true);
-
-	// var types={};
-	// for(var b in template_ui_builders){
-	//     if(ù(tmaster.templates[b])){
-	// 	types[b]={}
-	//     }
-	// }
-	//console.log(JSON.stringify(types));
-
-    });
-
-    
-    if (!navigator.getUserMedia) {
-	controls.debug("Oh No! It seems your browser doesn't support HTML5 getUserMedia.");
-	video_options.disable();
-    }else{
-
-	if (typeof MediaStreamTrack === 'undefined' ||
-	    typeof MediaStreamTrack.getSources === 'undefined') {
-	    controls.debug("This browser does not support MediaStreamTrack. You cannot choose the input device. Try Chrome.");
-	    video_options.disable();
-	    start.disable(false);
-	} else {
-	    start.disable(false);
-	    
-	    MediaStreamTrack.getSources(function(sourceInfos) {
-		var audioSource = null;
-		
-
-		var source_options=[];
-		var vi=0;
-		for (var i = 0; i != sourceInfos.length; ++i) {
-		    var sourceInfo = sourceInfos[i];
-		    if (sourceInfo.kind === 'audio') {
-			//console.log(sourceInfo.id, sourceInfo.label || 'microphone');
-			//audioSource = sourceInfo.id;
-		    } else if (sourceInfo.kind === 'video') {
-			vi++;
-			//console.log("VIDEO : " + JSON.stringify(sourceInfo));
-			//console.log(sourceInfo.id, sourceInfo.label || 'camera');
-			source_options.push({ label : sourceInfo.label || ('Camera ' +vi) , value : sourceInfo.id});
-			if(vi===1)videoSource = sourceInfo.id;
-			
-		    } else {
-			console.log('Some other kind of source: ', sourceInfo);
-		    }
-		}
-		//console.log("Set dev options   "  + JSON.stringify(source_options));
-		device.set_options(source_options);
-		//sourceSelected(audioSource, videoSource);
-
-		device.listen("change", function(id){
-		    videoSource=device.value;
-		});
-		
-	    });
-	}
-    }
-
-
-
-
-	
-	// var svgns = "http://www.w3.org/2000/svg";
-	// var svgt= //ce("svg");
-	//     document.createElementNS(svgns, "svg"); //
-	// svgt.setAttribute("width","120");
-	// svgt.setAttribute("height","120");
-	// svgt.setAttribute("viewPort","0 0 120 120");
-	// //svgt.setAttribute("version","1.1");
-	// //svgt.setAttribute("xmlns","http://www.w3.org/2000/svg");
-	
-	// var spec_svgroot=    spectro_view.svg_node;
-	
-	// //svgt.innerHTML='<line x1="20" y1="100" x2="100" y2="20" stroke="black"  stroke-width="2"/>' ;//'<circle r="50" cx="50" cy="50" fill="green"/>';
-	
-	// var spectrum_line= document.createElementNS(svgns, "line"); //ce("line");
-	
-	// spec_svgroot.style.border="2px solid purple";
-	
-	// spectrum_line.setAttribute('x1',0);
-	// spectrum_line.setAttribute('y1',0);
-	// spectrum_line.setAttribute('x2',0);
-	// spectrum_line.setAttribute('y2',100);
-	
-	// spectrum_line.setAttribute('stroke','black');
-	// //spectrum_line.setAttribute('fill','black');
-	// spectrum_line.setAttribute('stroke-width','2');
-	
-	// context.appendChild(spectrum_line);
-	// //    window.addEventListener("load", function(){
-	// //    vc.ui_root.appendChild(svgt);
-	// //  });
-	
-	
-	// spectrum_line.addEventListener('click', function(){
-	//     alert("Coucou !");
-	// });
-	
-	
-	
-	function iv_freq(f, freq){
-	console.log("Setting frame iv to : " + 1000.0/freq + " ms");
-	return setInterval(f, 1000.0/freq);
-    }
-    
-    function setup_buffer_loop(){
-	if(è(iv_cap))clearInterval(iv_cap);
-	iv_cap=iv_freq(function(){
-	    process_frame();
-	}, sampling.value );
-    }
-    
-    sampling.listen("change", function(v){
-	if(stream!=null)
-	    setup_buffer_loop();
-    });
-    
-    start.listen("click",function(){
-	
-	//camview.hide(false);
-	var hd_constraints = {
-	    audio: false,
-	    video: {
-		optional: [{
-		    sourceId: videoSource
-		}],
-		mandatory: {
-		    minWidth: 1280,
-		    minHeight: 720,
-		}
-	    }
-	};
-
-	var vga_constraints = {
-	    audio: false,
-	    video: {
-		optional: [{
-		    sourceId: videoSource
-		}],
-		mandatory: {
-		    minWidth: 640,
-		    minHeight: 480,
-		}
-	    }
-	};
-
-	var constraints = resolution.value==="HD" ? hd_constraints : vga_constraints;
-	
-	console.log("Start video source... ("+resolution.value+")" + JSON.stringify(constraints));
-
-	
-	navigator.getUserMedia(constraints, function(stream_in) {
-	    video_node.src = window.URL.createObjectURL(stream_in);
-	    stream=stream_in;
-	    
-	    //console.log("cavas w = %d video w = %d",canvas.width,video_node.innerWidth);
-	    var iv_delay=200; //integ.value? 100 : 100;
-
-	    if (stream) {
-		setup_buffer_loop();
-	    }
-	    video_options.disable(true);
-	    start.disable(true);
-	    stop.disable(false);
-		
-	}, errorCallback);
-    });
-    
-    function get_box(){
-	return [
-	    spectro_box.x.value,
-	    spectro_box.y.value,
-	    spectro_box.w.value,
-	    spectro_box.h.value
-	];
-    }
-    
-    function slice_arrays(){
-	var box=get_box();
-	
-	var ddim= dir.value==0 ? box[3] : box[2];
-	//console.log("Slicing [" + bx + ","+ by+ "," + bw+ "," + bh + "]to ddim="+ddim + " dir = " + dir.value);
-	if(ddim < spec_data.r.length){
-	    pr.data=spec_data.r=spec_data.r.slice(0, ddim);
-	    pg.data=spec_data.g=spec_data.g.slice(0, ddim);
-	    pb.data=spec_data.b=spec_data.b.slice(0, ddim);
-	    pt.data=spec_data.t=spec_data.t.slice(0, ddim);
-
-	    //spectro_view.config_range(true, true);
-	    //console.log("Resized !! ddim=" + ddim + " SL " + spec_data.r.length + " bh " + bh );
-	}
-	if(seq==0)
-	    set_box_size();
-	
-	process_spectrum();
-	spectro_view.config_range(true, true);
-	
-    }
-    
-    function set_box_size(){
-	var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
-	var box=get_box();
-	//console.log("Canvas  " + canvas.clientWidth);
-
-	//w.widget_div.style.transform="scale("+scale[0]+","+scale[1]+")";
-
-	spectro_win.widget_div.style.left=scale[0]*box[0]+"px";
-	spectro_win.widget_div.style.top=scale[1]*box[1]+"px";
-	spectro_win.widget_div.style.width=scale[0]*box[2]+"px";
-	spectro_win.widget_div.style.height=scale[1]*box[3]+"px";
-	
-    }
-
-    
-    for(var be in spectro_box){
-	spectro_box[be].listen("change",function(){
-	    //draw_spectrum_box();
-	    set_box_size();
-	    slice_arrays();
-	    //process_spectrum();
-	    spectro_view.config_range();	    
-	});
-    };
-    
-    // function draw_spectrum_box(){
-	
-
-    // 	if(ù(w)){
-    var c5=canvas.width/5.0;
-    spectro_win=new widget({ x: 2*c5, y: 5, w : c5, h : canvas.height-5});
-    spectro_win.widget_div.style.position="absolute";
-    video_container.appendChild(spectro_win.widget_div);
-    set_box_size();
-    
-    dir.listen("change",function(){
-	//console.log("Dir changed !");
-
-	var b=get_box();
-	
-	spectro_box.w.set_value(b[3]);
-	spectro_box.h.set_value(b[2]);
-	
-	slice_arrays();
-    });
-    
-    spectro_win.listen("resize", function(sz){
-	//console.log("Resize [" +dir.value+"] !! " + JSON.stringify(sz) + " SL " + spec_data.r.length + " bh " + bh);
-	
-	//buf_data=[];
-	//spec_data={r : [], g: [], b : [], t : [] };
-	var scale=[canvas.clientWidth/canvas.width,canvas.clientHeight/canvas.height];
-	
-	spectro_box.x.set_value(Math.ceil(sz.x/scale[0]));
-	spectro_box.y.set_value(Math.ceil(sz.y/scale[1]));
-	spectro_box.w.set_value(Math.ceil(sz.w/scale[0]));
-	spectro_box.h.set_value(Math.ceil(sz.h/scale[1]));
-	
-	slice_arrays();
-	//create_plots();
-	
-    });
-    //	}
-
-	//console.log("Spectrum box %d %d %d %d",bx,by,bw,bh );
-
-	/*
-	ctx.beginPath();
-	ctx.strokeStyle="orange";
-	ctx.rect(bx,by,bw,bh);
-	ctx.stroke();
-	ctx.closePath();
-*/
-
-//    }
-
-    var spec_data={r : [], g: [], b : [], t : [] };
-    var pr,pg,pb,pt;
-    
-    function create_plots(){
-	spectro_view.value=[];
-
-	if(have_wlc){
-	    pr=spectro_view.add_plot(spec_data.r, global_wlc.calib_func);
-	    pg=spectro_view.add_plot(spec_data.g, global_wlc.calib_func);
-	    pb=spectro_view.add_plot(spec_data.b, global_wlc.calib_func);
-	    pt=spectro_view.add_plot(spec_data.t, global_wlc.calib_func);
-
-	    spectro_view.xlabel="Wavelength (Å)";
-	}else{
-    	    pr=spectro_view.add_plot_linear(spec_data.r,0,1);
-	    pg=spectro_view.add_plot_linear(spec_data.g,0,1);
-	    pb=spectro_view.add_plot_linear(spec_data.b,0,1);
-	    pt=spectro_view.add_plot_linear(spec_data.t,0,1);
-
-	    spectro_view.xlabel="Wavelength (pixels)";
-	}
-
-	spectro_view.ylabel="Intensity (ADU)";
-	
-	pr.set_opts({ stroke : "#ff0000", stroke_width : ".5px", label : "Red"});
-	pg.set_opts({ stroke : "#10ee08", stroke_width : ".5px", label : "Green"});
-	pb.set_opts({ stroke : "#0000ff", stroke_width : ".5px", label : "Blue"});
-	pt.set_opts({ stroke : "#aa08dd", stroke_width : "1px", label : "Mean"});
-	
-
-	
-    }	
-    //vc.ui_root.style.position="relative";
-    //slice_arrays();
-    create_plots();
-    //set_box_size();    
-    
-    var frid=0;
-    var buf_data=[];
-    var seq=0;
-
-    function process_spectrum(){
-
-//	draw_spectrum_box();
-	
-	var box=get_box();
-	var bx=box[0]*1.0,by=box[1]*1.0,bw=box[2]*1.0,bh=box[3]*1.0;
-
-	var ddir=dir.value==0 ? false : true; //dir.ui.selectedIndex;
-	//console.log("process spectrum ddir = " + ddir + " dv = " + dir.value);
-	if(ddir){
-	    for(var i=0;i<bw;i++){
-		spec_data.r[i]=0;
-		spec_data.g[i]=0;
-		spec_data.b[i]=0;
-		for(var j=0;j<bh;j++){
-		    var idx=((j+by)*canvas.width + (i+bx))*4;
-		    spec_data.r[i]+= buf_data[ idx ];
-		    spec_data.g[i]+= buf_data[ idx+1 ];
-		    spec_data.b[i]+= buf_data[ idx+2 ];
-		    // if(i===0 && j===0)
-		    //     console.log(buf_data[ idx ] + ", " + buf_data[ idx+1 ]+ ", " +buf_data[ idx+2 ]);
-		}
-		spec_data.r[i]/=bh*1.0;
-		spec_data.g[i]/=bh*1.0;
-		spec_data.b[i]/=bh*1.0;
-		
-		spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
-	    }
-	}else{
-	    for(var i=0;i<bh;i++){
-		spec_data.r[i]=0;
-		spec_data.g[i]=0;
-		spec_data.b[i]=0;
-
-		for(var j=0;j<bw;j++){
-		    var idx=Math.floor(((i+by)*canvas.width + (j+bx))*4);
-		    spec_data.r[i]+= buf_data[idx];
-		    spec_data.g[i]+= buf_data[idx+1];
-		    spec_data.b[i]+= buf_data[idx+2];
-		    // if(i===0 && j===0)
-		    //     console.log(buf_data[ idx ] + ", " + buf_data[ idx+1 ]+ ", " +buf_data[ idx+2 ]);
-		}
-		spec_data.r[i]/=bw*1.0;
-		spec_data.g[i]/=bw*1.0;
-		spec_data.b[i]/=bw*1.0;
-		
-		spec_data.t[i]=(spec_data.r[i]+spec_data.g[i]+spec_data.b[i])/3.0;
-	    }
-	    
-	    //console.log("SPEC["+JSON.stringify(spec_data.r)+"]");
-	    
-	}
-
-	spectro_view.value[0].data=spec_data.r.slice();
-	spectro_view.value[1].data=spec_data.g.slice();
-	spectro_view.value[2].data=spec_data.b.slice();
-	spectro_view.value[3].data=spec_data.t.slice();
-
-	
-	if(frid===0)
-	    spectro_view.config_range(true, true);
-	else{
-	    spectro_view.config_range(false, true);
-	    //spectro_view.redraw();
-	}
-	
-	frid++;
-    }
-    
-    function process_frame(){
-	//console.log("draw spectrum Canvas w,h %d %d bufferL=%d" ,canvas.width,canvas.height,buf_data.length);
-
-	ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
-	ctx.drawImage(video_node, 0, 0);
-	
-	var buf = ctx.getImageData(0,0,canvas.width,canvas.height);
-	var inf=integ_nf.value*1.0;
-	//console.log("process frame in " + JSON.stringify(box));
-	
-	if(integ.value>0){
-	    
-	    if(seq>=inf){
-		for(var i=0;i<buf_data.length;i++) buf_data[i]/=inf;
-		seq=0;
-	    }else{
-		if(seq===0){
-		    buf_data=[];
-		    for(var i=0;i<buf.data.length;i++) buf_data[i]=buf.data[i];
-		}else
-		    for(var i=0;i<buf.data.length;i++) buf_data[i]+=buf.data[i];
-		//console.log("Integ " + seq + "/" + integ_nf.value);
-		seq++;
-		//draw_spectrum_box();
-		return;
-	    }
-	}else{
-	    buf_data=buf.data;
-	}
-	
-	process_spectrum();
-    }
-
-    
-    return vc.ui;
 };
 
 (function(){
@@ -2193,6 +2160,6 @@ template_ui_builders.videocap=function(ui_opts, vc){
 	console.log("adding videocap templates");
 	//    window.addEventListener("load",function(){
 	tmaster.add_templates(videocap_templates);
-
+	
     });
 })();
