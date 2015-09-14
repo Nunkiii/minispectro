@@ -980,8 +980,8 @@ var videocap_templates = {
 						    //render_name: false,
 						    fa_icon : 'retweet',
 						    name_classes : ["title_margin"],
-						    child_classes : ["list-group"],
-						    child_view_type : 'div',
+						    //child_classes : ["list-group"],
+						    child_view_type : 'tabbed',
 						    //name_node : "h3"
 						    //intro_stick : true
 						},
@@ -994,12 +994,14 @@ var videocap_templates = {
 							
 							options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
 							ui_opts : {
-							    root_classes : ["list-group-item vertical_margin"],
+							    //root_classes : ["vertical_margin"],
 							    wrap_classes : ["col-xs-12"],
 							    type : "edit",
 							    //label : true,
 							    fa_icon : "exchange",
-							    intro_stick : true
+							    intro_stick : true,
+							    render_name : false
+							    
 							    //name_node : "h4"
 							    
 							},
@@ -1009,12 +1011,11 @@ var videocap_templates = {
 							name : "Spectrum box",
 							intro : "<strong>Adjust the spectrum box coordinates</strong><p> (x,y) is the top left pixel corner</p><p>The box can also be resized interactively by resizing the box rectangle overlayed on the camera view window.</p>",
 							ui_opts :  {
-							    root_classes : ["list-group-item"],
+							    //root_classes : ["vertical_margin"],
 							    child_classes : ["form-inline container-fluid"],
 							    fa_icon : 'crop',
-							    //child_view_type : 'table'
-							    //label : true,
-							    //intro_stick : true
+							    intro_stick : true,
+							    render_name : false
 							},
 							elements : {
 							    x : {
@@ -1024,7 +1025,7 @@ var videocap_templates = {
 								ui_opts : {
 								    type : "edit",
 								    //label : true,
-								    root_classes : ["col-sm-6 col-xs-12 vertical_margin"],
+								    root_classes : ["col-sm-6 col-xs-12"],
 								    name_classes : ["col-sm-3 col-xs-6"],
 								    item_classes : ["col-sm-3 col-xs-6"]
 								    //root_classes : ["form-group"]
@@ -1986,6 +1987,12 @@ template_ui_builders.videocap=function(ui_opts, vc){
     
     dir.listen("change",function(){
 	//console.log("Dir changed !");
+
+	var b=get_box();
+	
+	spectro_box.w.set_value(b[3]);
+	spectro_box.h.set_value(b[2]);
+	
 	slice_arrays();
     });
     
