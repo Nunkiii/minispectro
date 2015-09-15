@@ -309,8 +309,9 @@ var videocap_templates = {
 	    keys : {
 		name : "Meta-data",
 		ui_opts : {
-		    child_view_type : "div",
-		    //name_node : "h3"
+		    root_classes : ["panel panel-default"],
+		    child_classes : ["container-fluid"],
+		    render_name : false
 		},
 		elements : {
 		    target : {
@@ -327,7 +328,8 @@ var videocap_templates = {
 			name : "Observation time",
 			type : "date",
 			ui_opts : {
-			    label : true
+			    label : true,
+			    editable : true
 			}
 		    }
 		}
@@ -337,7 +339,7 @@ var videocap_templates = {
 		name : "Spectral features",
 
 		ui_opts : {
-		    //fa_icon : "save",
+		    fa_icon : "magnet",
 		    //root_classes : ["container-fluid"],
 		    child_view_type : "tabbed",
 		    child_node_type : "form",
@@ -479,6 +481,30 @@ var videocap_templates = {
 			    //name_node : 'h3',
 			    child_view_type : "table",
 			    fa_icon : "reorder"
+			}
+		    }
+		}
+	    },
+
+	    calib : {
+		name : "Calibration",
+		ui_opts : {
+		    root_classes : ["panel panel-default"],
+		    child_classes : ["container-fluid"],
+		    fa_icon : "calculator"
+		},
+		elements : {
+		    status : {
+			//name : "Enable wavelength calibration",
+			type : 'bool',
+			value : false,
+			name : "No calibration available",
+			ui_opts : {
+			    label : true,
+			    type : "edit"
+			},
+			widget_builder : function(uio, status){
+			    status.disable();
 			}
 		    }
 		}
@@ -704,14 +730,46 @@ var videocap_templates = {
 				    item_classes : ["col-sm-offset-3 col-sm-6  btn btn-primary btn-lg vertical_margin"]
 				}
 			    },
-			    view : {
+		    
+		    calib_func : {
+			type : 'polynomial',
+			name : "Calibration polynomial function",
+			intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the polynomial fit into your browser's webstorage. It will be restored automatically when you visit the page again.</p>",
+			ui_opts : {
+			    root_classes : ["panel panel-default"],
+			    intro_stick : true,
+			    //name_node : 'div',
+			    save : "wlc"
+			    
+			}
+		    },
+
+
+			    // fit_params : {
+			    // 	name : "Fit parameters",
+			    // 	ui_opts:{
+			    // 	    label : true,
+			    // 	    root_classes : ["col-xs-12"],
+			    // 	    child_view_type : 'table',
+			    // 	    editable : true
+			    // 	},
+			    // 	elements : {
+				    
+			    // 	}
+
+
+			    // }
+			    
+		}
+	    },
+	    			    view : {
 				name : "Fit result",
 				type : 'vector',
 				ui_opts : {
 				    fa_icon : 'trophy',
 				    enable_range : false,
 				    enable_selection : false,
-				    root_classes : ['container-fluid panel panel-default vertical_margin'],
+				    root_classes : ['col-md-6 panel panel-default'],
 				    //child_classes : ['container-fluid'],
 				    //root_classes : ['container-fluid col-md-6 col-xs-12'],
 				    //item_classes : ['container-fluid']
@@ -731,36 +789,6 @@ var videocap_templates = {
 
 				}
 			    }
-
-			    // fit_params : {
-			    // 	name : "Fit parameters",
-			    // 	ui_opts:{
-			    // 	    label : true,
-			    // 	    root_classes : ["col-xs-12"],
-			    // 	    child_view_type : 'table',
-			    // 	    editable : true
-			    // 	},
-			    // 	elements : {
-				    
-			    // 	}
-
-
-			    // }
-			    
-			}
-		    },
-		    calib_func : {
-			type : 'polynomial',
-			name : "Calibration polynomial function",
-			intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the polynomial fit into your browser's webstorage. It will be restored automatically when you visit the page again.</p>",
-			ui_opts : {
-			    root_classes : ["col-md-6 panel panel-default"],
-			    intro_stick : true,
-			    //name_node : 'div',
-			    save : "wlc"
-			    
-			}
-		    },
 
 		    
 
@@ -1082,7 +1110,7 @@ var videocap_templates = {
 						intro : "<p>Start/stop capturing frames from the webcam and computing one-dimensional spectrum</p><p>You might be prompted to accept webcam capture from your browser</p>",
 						ui_opts :  {
 						    fa_icon : "play",
-						    child_classes : ["btn-group text-center"],
+						    child_classes : ["btn-group"],
 						    root_classes : ["container-fluid"],
 						    label : true
 						},
@@ -1091,14 +1119,14 @@ var videocap_templates = {
 							name : "",
 							type : "action",
 							ui_opts :  {
-							    fa_icon : "play",item_classes : ["btn btn-primary btn-sm"],
+							    fa_icon : "play",item_classes : ["btn btn-primary btn-lg"],
 							}
 						    },
 						    stop : {
 							name : "",
 							type : "action",
 							ui_opts :  {
-							    fa_icon : "stop",item_classes : ["btn btn-default btn-sm"],
+							    fa_icon : "stop",item_classes : ["btn btn-default btn-lg"],
 							}
 						    }
 						}
@@ -1188,7 +1216,7 @@ var videocap_templates = {
 							name : "Name :",
 							holder_value : "Auto (Date)",
 							ui_opts : {
-							    root_classes : ["col-sm-5"],
+							    root_classes : ["col-sm-4"],
 							    label : true,
 							    //wrap : true,
 							    //wrap_classes : ["col-sm-4 nopadding"],
@@ -1206,7 +1234,7 @@ var videocap_templates = {
 							ui_opts : {
 							    
 							    //root_element : "specname",
-							    root_classes : ["col-sm-5"],
+							    root_classes : ["col-sm-4"],
 							    label : true,
 							    //wrap_classes : ["col-sm-4 nopadding"],
 							    //name_classes : ["input-group-addon"],
@@ -1221,11 +1249,17 @@ var videocap_templates = {
 							ui_opts:{
 							    //root_element : "specname",
 							    fa_icon : "save",
-							    root_classes : ["col-sm-2 vertical_margin"],
+							    root_classes : ["col-sm-2"],
 							    wrap : true,
-							    wrap_classes : ["input-group-btn text-left"],
+							    wrap_classes : ["input-group-btn text-center"],
 							    item_classes : ["btn btn-primary"]
 							    
+							}
+						    },
+						    save_status : {
+							name : "",
+							ui_opts : {
+							    root_classes : ["col-sm-2"]
 							}
 						    }
 						}
@@ -1250,15 +1284,15 @@ var videocap_templates = {
 		    child_view_type : "tabbed",
 		    root_classes : ["container-fluid"],
 		    //name_classes : ["well"],
-		    child_classes : ["container-fluid"],
+		    //child_classes : ["container-fluid"],
 		    fa_icon : "folder",
-		    tabs_mode : "left",
+		    //tabs_mode : "left",
 		    //render_name : false,
 		    save : "spectra",
-		    container : {
-			type : 'spectrum',
-			del : true,
-		    }
+		    // container : {
+		    // 	type : 'spectrum',
+		    // 	del : true,
+		    // }
 		}
 
 	    },
@@ -1362,6 +1396,7 @@ var videocap_templates = {
 	    var integ_nf=processing_options.integrate.elements.nframes;
 
 	    var save_spec=spectrum.get("save");
+	    var save_status=spectrum.get("save_status");
 	    var specname=spectrum.get("specname");
 
 	    
@@ -1378,9 +1413,11 @@ var videocap_templates = {
 	    var have_wlc = wlc.get('calib_func').elements.params.value.length>0;
 	    
 	    save_spec.listen("click",function(){
+
+		save_spec.disable();
+		save_status.set_title("Saving spectrum ...");
 		var new_spec=tmaster.build_template('spectrum');
 		var date_obs=new Date();
-		
 		
 		if(specname.value && specname.value!==""){
 		    new_spec.name=specname.value;
@@ -1397,7 +1434,6 @@ var videocap_templates = {
 
 		new_spec.set('target',spectrum.val('target'));
 		new_spec.set('date_obs',date_obs);
-
 		
 		new_spec.update_plot(spec_data);
 		spectra.add_child(new_spec, new_spec.name);
@@ -1407,7 +1443,14 @@ var videocap_templates = {
 		//ui.innerHTML="BEN QUOIIII";//
 
 		wlc.trigger('update_spectra', spectra.elements);
+
+		setTimeout(function(){
+		    save_status.set_title("Spectrum saved !");
+		    save_spec.disable(false);
+		    
+		}, 1000);
 		
+
 		
 	    });
 
