@@ -664,7 +664,7 @@ var videocap_templates = {
 	    control : {
 		name : "Fit computation",
 		ui_opts : {
-		    root_classes : ["col-md-6"],
+		    root_classes : ["col-md-6 panel panel-default container-fluid"],
 		    //name_classes : ['panel-heading'],
 		    // name_node : 'div',
 		    //child_view_type : 'table',
@@ -679,7 +679,7 @@ var videocap_templates = {
 				    //label : true,
 				    type : 'edit',
 				    name_classes : ['col-sm-6'],
-				    root_classes : ['col-sm-12  panel panel-default'],
+				    root_classes : ['col-sm-12'],
 				    item_classes : ['col-sm-6']
 				}
 			    },
@@ -701,7 +701,7 @@ var videocap_templates = {
 				    //wrap : true,
 				    root_classes : ["container-fluid "],
 				    fa_icon : "cogs",
-				    item_classes : ["col-sm-offset-3 col-sm-6  btn btn-primary vertical_margin"]
+				    item_classes : ["col-sm-offset-3 col-sm-6  btn btn-primary btn-lg vertical_margin"]
 				}
 			    },
 			    view : {
@@ -711,7 +711,7 @@ var videocap_templates = {
 				    fa_icon : 'trophy',
 				    enable_range : false,
 				    enable_selection : false,
-				    //root_classes : ['container-fluid'],
+				    root_classes : ['container-fluid panel panel-default vertical_margin'],
 				    //child_classes : ['container-fluid'],
 				    //root_classes : ['container-fluid col-md-6 col-xs-12'],
 				    //item_classes : ['container-fluid']
@@ -755,7 +755,7 @@ var videocap_templates = {
 			intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the polynomial fit into your browser's webstorage. It will be restored automatically when you visit the page again.</p>",
 			ui_opts : {
 			    root_classes : ["col-md-6 panel panel-default"],
-			    
+			    intro_stick : true,
 			    //name_node : 'div',
 			    save : "wlc"
 			    
@@ -1249,7 +1249,7 @@ var videocap_templates = {
 		ui_opts : {
 		    child_view_type : "tabbed",
 		    root_classes : ["container-fluid"],
-		    name_classes : ["well"],
+		    //name_classes : ["well"],
 		    child_classes : ["container-fluid"],
 		    fa_icon : "folder",
 		    tabs_mode : "left",
