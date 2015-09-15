@@ -89,7 +89,29 @@ var wl2rgb=function(Gamma, IntensityMax){
 
 var videocap_templates = {
 
+    lvtest : {
+	name : "LV TEST",
+	elements : {
+	    lv : {
+		name : "LabVec Test : ",
+		type : 'labelled_vector',
+		ui_opts : { editable : true, label : true },
+		//value_labels : ["x","y","z"],
+		label_prefix : 'X'
+	    }
+	},
+	widget_builder : function (uio, lvt){
+	    var lv=lvt.get('lv');
+	    lv.listen('change', function(){
+		lvt.debug("LV changed : " + JSON.stringify(this.value));
+	    });
 
+	    lv.set_value([3,4,5]);
+	}
+	
+    },
+
+    
     data_table : {
 
 	widget_builder : function(ui_opts, dt){
@@ -538,10 +560,10 @@ var videocap_templates = {
     polynomial : {
 	name : "Polynomial function",
 	ui_opts:{
-	    root_classes : ['panel panel-success'],
-	    name_classes : ['panel-heading'],
+	    // root_classes : ['panel panel-success'],
+	    // name_classes : ['panel-heading'],
 	    //name_node : 'div',
-	    child_classes : ['container-fluid panel-content'],
+	    child_classes : ['container-fluid'],
 	    fa_icon : 'superscript',
 	    child_view_type : 'table'
 	},
@@ -583,7 +605,6 @@ var videocap_templates = {
 	    p.reset=function(value){
 		
 		var d=pdeg.value*1.0+1.0;
-		
 				    
 		if(value===undefined) value=params.value;
 
@@ -596,38 +617,8 @@ var videocap_templates = {
 			
 		    }
 
-		console.log("Reset d="+d + " vl " + value.length );
-		/*
-		  params.value_labels=[];
-		  for(var di=0;di<d;di++){
-		    params.value_labels.push('x<sup>'+(di)+'</sup>');
-		    }
-		    params.rebuild();
-		*/
 		params.set_value(value);
-		
-		return;
-		
-		if(params.value===undefined)
-		    params.value=[];
-		if(params.value_labels===undefined)
-		    params.value_labels=[];
-		var pvl=params.value.length;
-		if(pvl < d){
-		    for(var di=pvl;di<d;di++){
-			params.value.push(0);
-			params.value_labels.push('x<sup>'+(di+1.0)+'</sup>');
-			params.rebuild();
-		    }
-		}
-		else if(d<pvl){
-		    params.value.slice(0,d);
-		    params.value_labels.slice(0,d);
-		    params.rebuild();
-		}
-		if(value!==undefined)
-		    for(var i=0;i<value.length && i<params.value.length; i++)
-			params.inputs[i].set_value(value[i]);
+		console.log("Reset d="+d + " vl " + value.length );
 		
 	    };
 	    p.func=function(x){
@@ -644,7 +635,7 @@ var videocap_templates = {
 		return r;
 	    };
 	    
-	    //p.reset();
+	    p.reset();
 	}
     },
     
@@ -653,50 +644,43 @@ var videocap_templates = {
 	name : "Wavelength calibration",
 	intro : "<strong>Introduction</strong> <p> The webcam CCD records the spectra as a 2D image. The spectrograph should be setup to assure that the color direction of the spectrum image is projected parallel to a CCD direction to simplify image processing. Along that direction, each pixel correspond to a different physical colour, hence a different light's wavelength.</p> <strong>Calibration</strong> <p>To be able to associate a pixel index with a physical wavelength, a <em>calibration spectrum</em> must be used to identify the pixel-space position of a certain number of spectral features whose wavelength is known, and use these points to build a model, in this case a polynomial function, to interpolate the colour for every pixel position.</p>",
 	ui_opts : {
-	    render_name : true, child_view_type : 'div', name_node : 'h2',
+	    //render_name : true,
+	    //child_view_type : 'div',
+	    //name_node : 'h2',
 	    root_classes : ["container-fluid"],
-	    child_classes : ["row"],
+	    //child_classes : ["row"],
 	    //intro_stick : true
 	},
 	elements : {
-	    fit : {
-		name : "Polynomial calibration model",
-		intro : "Explain what we do here ...",
+	    // fit : {
+	    // 	name : "Polynomial calibration model",
+	    // 	//intro : "Explain what we do here ...",
+	    // 	ui_opts : {
+	    // 	    //name_node : 'h3',
+	    // 	    //root_classes : ['col-md-6'],
+	    // 	    child_classes : ['container-fluid'],
+	    // 	},
+	    // 	elements : {
+	    control : {
+		name : "Fit computation",
 		ui_opts : {
-		    //name_node : 'h3',
-		    root_classes : ['col-md-6 col-xs-12'],
-		    child_classes : ['container-fluid'],
+		    root_classes : ["col-md-6"],
+		    //name_classes : ['panel-heading'],
+		    // name_node : 'div',
+		    //child_view_type : 'table',
+		    fa_icon : 'cogs'
 		},
 		elements : {
-		    calib_func : {
-			type : 'polynomial',
-			name : "Calibration polynomial function",
-			ui_opts : {
-			    name_node : 'div',
-			    save : "wlc"
-			}
-		    },
-
-		    
-		    control : {
-			name : "Fit computation",
-			ui_opts : {
-			    root_classes : ['panel panel-default'],
-			    name_classes : ['panel-heading'],
-			    name_node : 'div',
-			    child_classes : ['panel-content container-fluid'],
-			    fa_icon : 'cogs'
-			},
-			elements : {
 			    specsel : {
 				name : "Select spectrum",
 				type : "combo",
-				//intro : "<p>Choose a spectrum to use for wavelength calibration fit</p>",
+				subtitle : "Choose one of the saved spectra with enough identified features to be used for the wavelength calibration fit",
 				ui_opts : {
-				    label : true,
+				    //label : true,
 				    type : 'edit',
-				    root_classes : ['col-sm-6'],
-				    item_classes : []
+				    name_classes : ['col-sm-6'],
+				    root_classes : ['col-sm-12  panel panel-default'],
+				    item_classes : ['col-sm-6']
 				}
 			    },
 			    // pdeg : {
@@ -717,19 +701,37 @@ var videocap_templates = {
 				    //wrap : true,
 				    root_classes : ["container-fluid "],
 				    fa_icon : "cogs",
-				    item_classes : ["col-sm-6  btn btn-warning vertical_margin"]
+				    item_classes : ["col-sm-offset-3 col-sm-6  btn btn-primary vertical_margin"]
 				}
 			    },
-			    fit_eq : {
-				name : "Equation",
-				type : "string",
-				default_value : "No equation",
+			    view : {
+				name : "Fit result",
+				type : 'vector',
 				ui_opts : {
-				    label : true,
-				    root_classes : ["col-sm-12"]
+				    fa_icon : 'trophy',
+				    enable_range : false,
+				    enable_selection : false,
+				    //root_classes : ['container-fluid'],
+				    //child_classes : ['container-fluid'],
+				    //root_classes : ['container-fluid col-md-6 col-xs-12'],
+				    //item_classes : ['container-fluid']
+				    
+				},
+				elements : {
+				    fit_eq : {
+					name : "Equation: ",
+					type : "string",
+					default_value : "No equation",
+					ui_opts : {
+					    label : true,
+					    root_classes : ["col-sm-12"]
+					}
+					
+				    },
+
 				}
-				
-			    },
+			    }
+
 			    // fit_params : {
 			    // 	name : "Fit parameters",
 			    // 	ui_opts:{
@@ -746,7 +748,22 @@ var videocap_templates = {
 			    // }
 			    
 			}
-		    }
+		    },
+		    calib_func : {
+			type : 'polynomial',
+			name : "Calibration polynomial function",
+			intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the polynomial fit into your browser's webstorage. It will be restored automatically when you visit the page again.</p>",
+			ui_opts : {
+			    root_classes : ["col-md-6 panel panel-default"],
+			    
+			    //name_node : 'div',
+			    save : "wlc"
+			    
+			}
+		    },
+
+		    
+
 		    
 		},
 		widget_builder : function(ui_opts, fit){
@@ -755,25 +772,11 @@ var videocap_templates = {
 			
 		    });
 		}
-	    },
-
-	    view : {
-		name : "Fit result",
-		type : 'vector',
-		ui_opts : {
-		    fa_icon : 'trophy',
-		    enable_range : false,
-		    enable_selection : false,
-		    //root_classes : ['container-fluid'],
-		    child_classes : ['container-fluid'],
-		    root_classes : ['container-fluid col-md-6 col-xs-12'],
-		    //item_classes : ['container-fluid']
-		    
-		}
-	    }
+	//     },
 
 
-	}
+
+	// }
     },
 
     videocap : {
@@ -947,6 +950,7 @@ var videocap_templates = {
 					    box : {
 						name : "Region",
 						subtitle : "Setup the orientation and dimensions of the spectrum area within the image",
+						intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the region parameters in your browser's webstorage. Your configuration will be restored automatically when you visit the page again</p>",
 						ui_opts :  {
 						    //render_name: false,
 						    fa_icon : 'retweet',
@@ -1259,26 +1263,27 @@ var videocap_templates = {
 
 	    },
 	    
-	    options : {
-		name : "Calibration",
-		subtitle : "Setup wavelength and flux calibration",
+	    calibration : {
+		name : "Wavelength calibration",
+		//subtitle : "",
+		type : 'wlc',
 		ui_opts : {
-		    child_view_type : "tabbed",
-		    root_classes : ["container-fluid left"],
+		    //child_view_type : "tabbed",
+		    //root_classes : ["container-fluid left"],
 		    render_name : true,
-		    name_classes : ["title_margin"],
+		    //name_classes : ["title_margin"],
 		    fa_icon : "calculator",
-		    intro_stick : true
+		    //intro_stick : true
 		},
 		//toolbar : { ui_opts : { toolbar_classes : ""} },
-		elements : {
-		    wlc : {
-			type : 'wlc'
-		    },
-		    flxc : {
-			name : "Flux calibration"
-		    }
-		}
+		// elements : {
+		//     wlc : {
+		// 	type : 'wlc'
+		//     },
+		//     flxc : {
+		// 	name : "Flux calibration"
+		//     }
+		// }
 	    },
 	    
 	    doc : {
@@ -1366,7 +1371,7 @@ var videocap_templates = {
 	    var video_container=cc("div",camwin.ui_root);
 	    var spectro_win;
 
-	    var wlc=vc.get('wlc');
+	    var wlc=vc.get('calibration');
 	    
 	    //wlc.set_sv(spectro_view);
 	    
@@ -1437,7 +1442,7 @@ var videocap_templates = {
 	    
 	    
 	    var errorCallback = function(e) {
-		camview.debug('Capture error : ' + e);
+		camview.debug('Capture error : ' + dump_error(e));
 	    };
 	    
 	    video_node.addEventListener("loadeddata", function(){
@@ -2084,6 +2089,7 @@ template_ui_builders.wlc=function(ui_opts, wlc){
     var exec=wlc.get('exec');
     var view=wlc.get('view');
     var fit_eq=wlc.get('fit_eq');
+    var fit_params=wlc.get('params');
     var calib_func=wlc.get('calib_func');
     var control=wlc.get('control');
     
@@ -2151,6 +2157,11 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 	// }
 	
 
+    });
+
+    fit_params.listen('change',function(){
+	console.log("FP changed ! " + this.value);
+	view.redraw();
     });
     
 };
