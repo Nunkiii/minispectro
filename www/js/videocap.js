@@ -697,39 +697,53 @@ var videocap_templates = {
 		    fa_icon : 'cogs'
 		},
 		elements : {
-			    specsel : {
-				name : "Select spectrum",
-				type : "combo",
-				subtitle : "Choose one of the saved spectra with enough identified features to be used for the wavelength calibration fit",
-				ui_opts : {
-				    //label : true,
-				    type : 'edit',
-				    name_classes : ['col-sm-6'],
-				    root_classes : ['col-sm-12'],
-				    item_classes : ['col-sm-6']
-				}
-			    },
-			    // pdeg : {
-			    // 	name : "Polynomial degree",
-			    // 	type : "double",
-			    // 	min : 0, max : 10, step : 1,
-			    // 	ui_opts : {
-			    // 	    type : 'edit',
-			    // 	    label : true,
-			    // 	    root_classes : ["col-xs-6"]},
-			    // 	default_value : 2
-			    // },
+		    specsel : {
+			name : "Select spectrum",
+			type : "combo",
+			subtitle : "Choose one of the saved spectra with enough identified features to be used for the wavelength calibration fit",
+			ui_opts : {
+			    //label : true,
+			    type : 'edit',
+			    name_classes : ['col-sm-6'],
+			    root_classes : ['col-sm-12'],
+			    item_classes : ['col-sm-6']
+			}
+		    },
+		    // pdeg : {
+		    // 	name : "Polynomial degree",
+		    // 	type : "double",
+		    // 	min : 0, max : 10, step : 1,
+		    // 	ui_opts : {
+		    // 	    type : 'edit',
+		    // 	    label : true,
+		    // 	    root_classes : ["col-xs-6"]},
+		    // 	default_value : 2
+		    // },
+		    exec_box : {
+			ui_opts : {
+			    child_classes : ["container-fluid vertical_margin"],
+			},
+			elements : {
 			    exec :  {
 				type : 'action',
 				name : 'Fit datapoints',
 				ui_opts:{
 				    //item_root : false,
 				    //wrap : true,
-				    root_classes : ["container-fluid "],
+				    //root_classes : ["container-fluid "],
 				    fa_icon : "cogs",
-				    item_classes : ["col-sm-offset-3 col-sm-6  btn btn-primary btn-lg vertical_margin"]
+				    item_classes : ["col-sm-6  btn btn-primary btn-lg"]
 				}
 			    },
+			    exec_status : {
+				name : "Waiting for fit result...",
+				ui_opts : {
+				    root_classes : ["col-sm-6"],
+				},
+
+			    }
+			}
+		    },
 		    
 		    calib_func : {
 			type : 'polynomial',
@@ -737,17 +751,19 @@ var videocap_templates = {
 			intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the polynomial fit into your browser's webstorage. It will be restored automatically when you visit the page again.</p>",
 			ui_opts : {
 			    root_classes : ["panel panel-default"],
+			    name_classes : ["panel-heading"],
+			    child_classes : ["panel-content"],
 			    intro_stick : true,
-			    //name_node : 'div',
+			    name_node : 'div',
 			    save : "wlc"
 			    
 			}
 		    },
 
-
+		    
 			    // fit_params : {
 			    // 	name : "Fit parameters",
-			    // 	ui_opts:{
+		    // 	ui_opts:{
 			    // 	    label : true,
 			    // 	    root_classes : ["col-xs-12"],
 			    // 	    child_view_type : 'table',
@@ -762,14 +778,14 @@ var videocap_templates = {
 			    
 		}
 	    },
-	    			    view : {
-				name : "Fit result",
-				type : 'vector',
-				ui_opts : {
-				    fa_icon : 'trophy',
-				    enable_range : false,
-				    enable_selection : false,
-				    root_classes : ['col-md-6 panel panel-default'],
+	    view : {
+		name : "Fit result",
+		type : 'vector',
+		ui_opts : {
+		    fa_icon : 'trophy',
+		    enable_range : false,
+		    enable_selection : false,
+				    root_classes : ['col-md-6'],
 				    //child_classes : ['container-fluid'],
 				    //root_classes : ['container-fluid col-md-6 col-xs-12'],
 				    //item_classes : ['container-fluid']
@@ -1119,14 +1135,14 @@ var videocap_templates = {
 							name : "",
 							type : "action",
 							ui_opts :  {
-							    fa_icon : "play",item_classes : ["btn btn-primary btn-lg"],
+							    fa_icon : "play",item_classes : ["btn btn-primary"],
 							}
 						    },
 						    stop : {
 							name : "",
 							type : "action",
 							ui_opts :  {
-							    fa_icon : "stop",item_classes : ["btn btn-default btn-lg"],
+							    fa_icon : "stop",item_classes : ["btn btn-default"],
 							}
 						    }
 						}
@@ -1299,7 +1315,7 @@ var videocap_templates = {
 	    
 	    calibration : {
 		name : "Wavelength calibration",
-		//subtitle : "",
+		subtitle : "From pixel scale to physical wavelength...",
 		type : 'wlc',
 		ui_opts : {
 		    //child_view_type : "tabbed",
@@ -2079,30 +2095,6 @@ template_ui_builders.wlc=function(ui_opts, wlc){
     });
 
 
-    
-    // function setup_selspec(){
-    
-    
-
-    // 	//console.log("Length ====================== color " + color.value + " label " + color.options[color.value].label );
-    // 	// console.log("Setup selspec ... " );
-    // 	// var sd=get_template_data(s);
-    // 	// set_template_data(specview, sd);
-    
-    // 	// if(specview.value.length>0){
-    // 	//     specview.value[0].data=s.elements.view.value[color.value].data;
-    // 	// }else
-    // 	//     specview.add_plot_linear(s.elements.view.value[color.value].data,0,1);
-    
-    // 	// if(color.value<3)
-    // 	//     specview.value[0].set_opts({ stroke : color.options[color.value].label, stroke_width : ".5px", label : color.options[color.value].label});
-    // 	// else
-    // 	//     specview.value[0].set_opts({ stroke : 'black', stroke_width : ".5px", label : "Average"});
-	
-    // 	//specview.config_range();
-    // }
-
-    //var ss;
     specsel.listen('change', function(sin){
 	
 	if(sin!=this.ss){
@@ -2115,13 +2107,6 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 	//specview.redraw();
     });
     
-    // color.listen('change', function(selspec){
-    // 	setup_selspec();
-    // 	//specview.redraw();
-    // });
-
-
-
     
 
     wlc.set_sv=function(sv){
@@ -2130,22 +2115,13 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 
     var pdeg=wlc.get('pdeg');
     var exec=wlc.get('exec');
+    var exec_status=wlc.get('exec_status');
     var view=wlc.get('view');
     var fit_eq=wlc.get('fit_eq');
     var fit_params=wlc.get('params');
     var calib_func=wlc.get('calib_func');
     var control=wlc.get('control');
     
-    // var fitp=wlc.fitp=[];
-
-    // wlc.read_fitp=function(){
-    // 	for(var fpe in fit_params.elements){
-    // 	    fitp.push(fit_params.elements[fpe].value);
-    // 	}
-    // 	console.log("FP deserialize !" + JSON.stringify(fitp));
-    // }
-    
-    // wlc.read_fitp();
     
     wlc.calib_func=function(x){
 	return calib_func.func(x);
@@ -2168,8 +2144,6 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 		fit_points.push([f.val('pixel'),f.val('wl')]);
 	    }
 	}
-
-	
 	
 	console.log("Fitting pdeg=" + pdeg.value);
 
@@ -2203,7 +2177,7 @@ template_ui_builders.wlc=function(ui_opts, wlc){
     });
 
     fit_params.listen('change',function(){
-	console.log("FP changed ! " + this.value);
+	//console.log("FP changed ! " + this.value);
 	view.redraw();
     });
     

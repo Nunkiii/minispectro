@@ -6,37 +6,34 @@
 
 
   <script src="/sadira/js/community/bson.js"></script>
+  <script src="/sadira/js/community/async.js"></script>
+  <script src="/sadira/js/community/numeric-1.2.6.js"></script>
+  <script src="/sadira/js/community/d3-zoom-pan-extent.js"></script>
+  
+  <script src="/sadira/js/community/sha1.js"></script>
+  <script src="/sadira/js/community/radixsort.min.js"></script>
+  <script src="/sadira/js/community/owasp-password-strength-test.js"></script>
 
   <script src="/sadira/js/utils.js"></script>
   <script src="/sadira/js/datagram.js"></script> 
   <script src="/sadira/js/serializer.js"></script> 
   <script src="/sadira/js/dialog.js"></script>
-  <script src="/sadira/js/window.js"></script> 
-  <script src="/sadira/js/db.js"></script>
-  <script src="/sadira/js/base_templates.js"></script> 
+  <script src="/sadira/js/window.js"></script>
   <script src="/sadira/js/tpl_mgr.js"></script>
-  
+  <script src="/sadira/js/db.js"></script>
+  <script src="/sadira/js/chat.js"></script>
+  <script src="/sadira/js/base_templates.js"></script> 
   <script src="/sadira/js/sadira.js"></script> 
-
-  <script src="/sadira/js/community/async.js"></script>
-  <script src="/sadira/js/community/numeric-1.2.6.js"></script>
-  <script src="/sadira/js/community/d3.v3.min.js"></script>
-  <script src="/sadira/js/community/sha1.js"></script>
-  <script src="/sadira/js/community/radixsort.min.js"></script>
-  <script src="/sadira/js/community/owasp-password-strength-test.js"></script>
-
-  
   <script src="/sadira/js/db_basetypes.js"></script>
   <script src="/sadira/js/db_utils.js"></script>
 
+  
   <script src="/minispectro/js/videocap.js"></script>
 
-
-  
-
   <link rel="stylesheet" href="/sadira/js/community/bootstrap/css/bootstrap.min.css"> <!-- load bootstrap css -->
-  <link rel="stylesheet" href="/sadira/js/community/bootstrap/css/bootstrap-theme.min.css"> <!-- load bootstrap css -->  
+  <link rel="stylesheet" href="/sadira/js/community/bootstrap/css/bootstrap-theme.min.css"> 
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+
   <style type="text/css"> @import url("/sadira/css/db.css"); </style>  
 
   <title>Minispectro</title>
@@ -57,10 +54,7 @@
 
   <script>
    window.addEventListener("load", function(){
-  
-     var xd1_tpl=tmaster.build_template("videocap");
-     create_ui({},xd1_tpl);
-     attach_ui(xd1_tpl, document.getElementById("cnt"));
+       attach_ui(create_widget("videocap"), document.getElementById("cnt"));
    });
   </script>
 
