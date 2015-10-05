@@ -872,18 +872,19 @@ var videocap_templates = {
 			    //save : "minispectro_setup",
 			    child_view_type : 'tabbed',
 			    fa_icon : "camera",//fa_icon : 'cogs',
-			    default_child : 'none'
+			    default_child : 'none',
+			    toolbar_brand : true
 			    // sliding : true,
 			    // slided : true
 			},
 			toolbar : { ui_opts : { toolbar_classes : ['navbar navbar-default']} },
 			
 			elements : {
-
-					    video : {
-						name : "Device",
-						subtitle : "Setup your webcam device",
-						intro : "<strong>Warning</strong><ul><li>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</li><li>Resolution selection is only available on few browsers</li></ul>",
+			    
+			    video : {
+				name : "Device",
+				subtitle : "Setup your webcam device",
+				intro : "<strong>Warning</strong><ul><li>On some browser this function is not available and the choice of device can only be made interactively at browser prompt when starting capture.</li><li>Resolution selection is only available on few browsers</li></ul>",
 						ui_opts : {
 						    root_classes : [""],
 						    child_classes : ["col-sm-offset-3 col-sm-6 list-group col-md-12 col-md-offset-0"],
@@ -895,10 +896,11 @@ var videocap_templates = {
 						    device : {
 							ui_opts : {
 							    label : true,
-							    name_classes : ["col-sm-6 control-label"],
-							    //wrap : true,
-							    //wrap_classes : ["col-sm-4"],
-							    root_classes : ["form-group list-group-item vertical_margin"],
+							    name_classes : ["col-xs-6 control-label"],
+							    item_classes : ["col-xs-6"],
+							    wrap : true,
+							    wrap_classes : ["input-group"],
+							    root_classes : ["col-xs-12 form-group list-group-item vertical_margin"],
 							    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
 							    fa_icon : "camera-retro", type : "edit"
 							},
@@ -909,11 +911,10 @@ var videocap_templates = {
 							name : "Resolution",
 							ui_opts : {
 							    label : true,
-							    name_classes : ["col-sm-6 control-label"],
-							    //wrap : true,
-							    //wrap_classes : ["col-sm-4"],
-							    root_classes : ["form-group list-group-item"],
-							    //root_classes : ["col-md-6 col-sm-6 col-xs-12"],
+							    name_classes : ["col-xs-6 control-label"],
+							    wrap : true,
+							    wrap_classes : ["input-group"],
+							    root_classes : ["col-xs-12 form-group list-group-item"],
 							    fa_icon : "qrcode", type : "edit"
 							},
 							type : "combo",
@@ -941,7 +942,7 @@ var videocap_templates = {
  							ui_opts : {
 							    //name_classes : ["col-sm-3"],
 							    root_classes : ["list-group-item vertical_margin col-xs-12"],
-							    child_classes : ["col-sm-12 container-fluid"],
+							    child_classes : ["col-sm-12"],
 							    //child_view_type : 'table',
 							    fa_icon : 'plus'
 							},
@@ -951,7 +952,7 @@ var videocap_templates = {
 								name : "Enable",
 								ui_opts : {
 								    label : true,
-								    //root_classes : ["col-sm-6 col-xs-6"],
+								    root_classes : ["col-sm-6 col-xs-12"],
 								    //name_classes : ["col-sm-6 col-xs-6"],
 								    //item_classes : ["col-sm-6 col-xs-6"],
 								    type : "edit" },
@@ -960,13 +961,15 @@ var videocap_templates = {
 							    },
 							    nframes : {
 								type : "double",
-								name : "Number of images",
+								name : "N. images",
 								ui_opts : {
 								    type : "edit",
 								    label : true,
-								    //root_classes : ["col-sm-6 col-xs-6"],
-								    //name_classes : ["col-xs-6"],
-								    //item_classes : ["col-xs-6"]
+								    wrap : true,
+								    wrap_classes : ["input-group"],
+								    root_classes : ["col-sm-6 col-xs-12"],
+								    name_classes : ["col-xs-6"],
+								    item_classes : ["col-xs-6 input-sm"]
 								    //root_classes : ["list-group-item"]
 								},
 								step : 1,
@@ -981,9 +984,11 @@ var videocap_templates = {
 							name : "Buffer sampling rate (Hz)", intro : "<p>Setting this to a value higher than the actual camera sampling rate is not usefull and consumes CPU.</p>",
 							type : "double", min : .1, max : 50, step : 1, default_value : 2,
 							ui_opts : {
+							    wrap : true,
+							    wrap_classes : ["input-group"],
 							    //label : true,
-							    name_classes : ["col-xs-6"],
-							    item_classes : ['col-xs-6'],
+							    name_classes : ["col-sm-6"],
+							    item_classes : ['col-sm-6'],
 							    root_classes : ["list-group-item col-xs-12"],
 							    fa_icon : "dashboard", type : "edit"
 							}
@@ -993,14 +998,15 @@ var videocap_templates = {
 					    },
 					    box : {
 						name : "Region",
-						subtitle : "Setup the orientation and dimensions of the spectrum area within the image",
-						intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the region parameters in your browser's webstorage. Your configuration will be restored automatically when you visit the page again</p>",
+						//subtitle : "
+						intro : "<strong>>Setup the orientation and dimensions of the spectrum area within the image</strong><p>Click the floppy icon <span class='fa fa-save'> </span> to save the region parameters in your browser's webstorage. Your configuration will be restored automatically when you visit the page again</p>",
 						ui_opts :  {
 						    //render_name: false,
+						    
 						    fa_icon : 'retweet',
 						    name_classes : ["title_margin"],
 						    //child_classes : ["list-group"],
-						    child_view_type : 'tabbed',
+						    //child_view_type : 'tabbed',
 						    save : 'region'
 						    //name_node : "h3"
 						    //intro_stick : true
@@ -1014,13 +1020,16 @@ var videocap_templates = {
 							
 							options : [{ label : "Vertical", value : 0},{ label :  "Horizontal", value : 1}],
 							ui_opts : {
-							    //root_classes : ["vertical_margin"],
-							    wrap_classes : ["col-xs-12"],
+							    name_classes : ["col-xs-8"],
+							    item_classes : ["col-xs-4"],
+							    root_classes : ["list-group-item col-xs-12"],
+							    wrap : true,
+							    wrap_classes : ["input-group"],
 							    type : "edit",
 							    //label : true,
 							    fa_icon : "exchange",
-							    intro_stick : true,
-							    render_name : false
+							    //intro_stick : true,
+							    //render_name : false
 							    
 							    //name_node : "h4"
 							    
@@ -1031,64 +1040,85 @@ var videocap_templates = {
 							name : "Spectrum box",
 							intro : "<strong>Adjust the spectrum box coordinates</strong><p> (x,y) is the top left pixel corner</p><p>The box can also be resized interactively by resizing the box rectangle overlayed on the camera view window.</p>",
 							ui_opts :  {
-							    //root_classes : ["vertical_margin"],
-							    child_classes : ["form-inline container-fluid"],
+							    root_classes : ["list-group-item col-xs-12 vertical_margin"],
+							    name_classes : ["col-xs-8"],
+							    child_classes : ["col-xs-12 form-inline"],
 							    fa_icon : 'crop',
-							    intro_stick : true,
-							    render_name : false
+							    //intro_stick : true,
+							    //render_name : false
 							},
 							elements : {
-							    x : {
-								name: "x",
-								type: "double",
-								default_value : 300, step : 1, min : 0,
+							    pos : {
 								ui_opts : {
-								    type : "edit",
-								    //label : true,
-								    root_classes : ["col-sm-6 col-xs-12"],
-								    name_classes : ["col-sm-3 col-xs-6"],
-								    item_classes : ["col-sm-3 col-xs-6"]
-								    //root_classes : ["form-group"]
-								}
-							    },
-							    y : {
-								name: "y",
-								type: "double",
-								default_value : 50, step : 1, min : 0,
-								ui_opts : {
-								    type : "edit",
-								    //label : true,
-
-								    root_classes : ["col-sm-6 col-xs-12 vertical_margin"],
-								    name_classes : ["col-sm-3 col-xs-6"],
-								    item_classes : ["col-sm-3 col-xs-6"]
-								}
-							    },
-							    w : {
-								name: "width",
-								type: "double",
-								default_value : 30, step : 1, min : 1,
-								ui_opts : { type : "edit", //label : true,
-									    root_classes : ["col-sm-6 vertical_margin col-xs-12"],
-									    name_classes : ["col-sm-3 col-xs-6"],
-									    item_classes : ["col-sm-3 col-xs-6"]
-
-									  }
-							    },
-							    h : {
-								name: "height",
-								type: "double",
-								default_value : 300, step : 1, min : 1,
-								ui_opts : { type : "edit", //label : true,
-									    root_classes : ["col-sm-6 col-xs-12 vertical_margin"],
-									    name_classes : ["col-sm-3 col-xs-6"],
-									    item_classes : ["col-sm-3 col-xs-6"]
+								    root_classes : ["col-sm-12"],child_classes : ["row"]
+								},
+								elements : {
+								    x : {
+									name: "x",
+									type: "double",
+									default_value : 300, step : 1, min : 0,
+									ui_opts : {
+									    type : "edit",
+									    label : true,
+									    wrap : true, wrap_classes : ["input-group"],
+									    root_classes : ["col-sm-6 col-xs-12"],
+									    name_classes : ["col-xs-3"],
+									    item_classes : ["col-xs-9 input-sm"]
+									    //root_classes : ["form-group"]
+									}
+								    },
+								    y : {
+									name: "y",
+									type: "double",
+									default_value : 50, step : 1, min : 0,
+									ui_opts : {
+									    type : "edit",
+									    wrap : true, wrap_classes : ["input-group"],
+									    label : true,
 									    
-									  }
+									    root_classes : ["col-sm-6 col-xs-12"],
+									    name_classes : ["col-xs-3"],
+									    item_classes : ["col-xs-9 input-sm"]
+									}
+								    }
+								}
+							    },
+							    dims : {
+								ui_opts : {
+								    root_classes : ["col-sm-12 vertical_margin"],child_classes : ["row"]
+								},
+								elements : {
+								    w : {
+									name: "width",
+									type: "double",
+									default_value : 30, step : 1, min : 1,
+									ui_opts : { type : "edit",
+										    wrap : true, wrap_classes : ["input-group"],
+										    label : true,
+										    root_classes : ["col-sm-6 col-xs-12"],
+										    name_classes : ["col-xs-3"],
+										    item_classes : ["col-xs-9 input-sm"]
+										    
+										  }
+								    },
+								    h : {
+									name: "height",
+									type: "double",
+									default_value : 300, step : 1, min : 1,
+									ui_opts : { type : "edit",
+										    wrap : true, wrap_classes : ["input-group"],
+										    label : true,
+										    root_classes : ["col-sm-6 col-xs-12"],
+										    name_classes : ["col-xs-3"],
+										    item_classes : ["col-xs-9 input-sm"]
+										    
+										  }
+								    }
+								}
 							    }
 							}
 						    }
-							
+						    
 						    
 						    
 						}
@@ -1191,6 +1221,7 @@ var videocap_templates = {
 					    fa_icon : "line-chart",
 					    root_classes : ['col-md-8 col-xs-12 container-fluid vlimit'],
 					    child_classes : ["container-fluid"],
+					    toolbar_brand : true
 					    //item_classes : ["row"],
 					    //  label : true,
 					  //  enable_range : false,
@@ -1393,7 +1424,13 @@ var videocap_templates = {
 
 	    var spectro_opts=vc.get('box').elements;
 	    var controls=vc.get('left');
-	    var spectro_box=vc.get('region').elements;
+
+	    var spectro_box={
+		x : vc.get('pos').elements.x,
+		y : vc.get('pos').elements.y,
+		w : vc.get('dims').elements.w,
+		h : vc.get('dims').elements.h
+	    };
 
 	    var dir=vc.get("dir");
 
@@ -2161,7 +2198,7 @@ template_ui_builders.wlc=function(ui_opts, wlc){
 	// fit_params.elements={};
 
 	if(view.value===undefined){
-	    var pp=view.add_plot_points(fit_points, 'Data points',{ stroke : "purple", stroke_width : "1px", label : "Data points"});
+	    var pp=view.add_plot_points(fit_points, { stroke : "purple", stroke_width : "1px", label : "Data points"});
 	    var pf=view.add_plot_func(calib_func.func ,{ label : "Fit func", stroke : "springgreen", stroke_width : "1px"});
 	}else view.redraw();
 	
