@@ -565,9 +565,13 @@ var videocap_templates = {
 	    var lines=spectrum.get('lines');
 	    
 	    var add_custom_feature=spectrum.get('add_custom_feature');
-
-
 	    var calib_params=calib_func.get('params');
+
+
+	    view.get('btns').add_child(calib_enable, 'calib_enable');
+	    calib_enable.ui_root.add_class('inline');
+	    //calib_enable.set_title("λ calibration");
+
 	    // vec.serialize=function(){
 	    // 	var v=[];
 	    // 	vec.value.forEach(function(p){
@@ -871,8 +875,10 @@ var videocap_templates = {
     
     wlc : {
 	name : "λ calibration",
-	intro : "<blockquote> <p> The webcam CCD records the spectra as a 2D image. The spectrograph should be setup to assure that the color direction of the spectrum image is projected parallel to a CCD direction to simplify image processing. Along that direction, each pixel correspond to a different physical colour, hence a different light's wavelength.</p></blockquote> <h3>Calibration</h3> <p>To be able to associate a pixel index with a physical wavelength, a <em>calibration spectrum</em> must be used to identify the pixel-space position of a certain number of spectral features whose wavelength is known, and use these points to build a model, in this case a polynomial function, to interpolate the colour for every pixel position.</p>",
+	intro : "<p>The webcam CCD records the spectra as a 2D image. The spectrograph should be constructed to assure that the color direction of the spectrum image is projected parallel to a CCD direction to simplify image processing. Along that direction, each pixel correspond to a different physical colour, hence a different light's wavelength.</p><p>To be able to associate a pixel index with a physical wavelength, a <em>calibration spectrum</em> must be used to identify the pixel-space position of a certain number of spectral features whose wavelength is known, and use these points to build a model, in this case a polynomial function, to interpolate the colour for every pixel position.</p>",
+	subtitle : "From pixel scale to physical wavelength",
 	ui_opts : {
+	    intro_title : "Wavelength calibration",
 	    //render_name : true,
 	    //child_view_type : 'div',
 	    //name_node : 'h2',
@@ -1008,19 +1014,15 @@ var videocap_templates = {
 
 	    var wlc=this;
 
-	    console.log("Building wlc : " + wlc.name);
-
 	    var pdeg=wlc.get('pdeg');
 	    var exec=wlc.get('exec');
-	    var exec_status=wlc.get('exec_status');
-	    
 	    var fit_eq=wlc.get('fit_eq');
 	    var fit_params=wlc.get('params');
 	    var calib_func=wlc.get('calib_func');
 	    var control=wlc.get('control');
 	    var view=wlc.get('view');
 	    //var exec_box=wlc.get('exec_box');
-
+	    
 	    var fit_points=[];
 
 	    function get_fit_points(spectrum){
@@ -1049,7 +1051,7 @@ var videocap_templates = {
 		    
 		    exec.disable(false);
 		}else{
-		    this.elements.name.message("Not enough features,  Need at least " + (pdeg.value*1.0+1) , { type : 'danger', title : fit_points.length + " features"});
+		    this.elements.name.message("Not enough features,  Need at least " + (pdeg.value*1.0+1) , { type : 'danger', title : fit_points.length + " features", last : 4000});
 		    exec.disable();
 		}
 		
@@ -1068,12 +1070,12 @@ var videocap_templates = {
 	    
 	    exec.listen('click', function(){
 		
-		console.log("Fitting pdeg=" + pdeg.value);
+		exec.parent.message("Fitting pdeg=" + pdeg.value);
 		
 		var result = regression('polynomial', fit_points, pdeg.value*1.0);
-		console.log("Fit result : " + JSON.stringify(result));
-
+		console.log("Fit result : " + JSON.stringify(result), { wait : true});
 		
+		exec.parent.message("Fitting done " , { title : 'Done', type : 'success'});
 		
 		calib_func.elements.params.set_value(result.equation);
 		
@@ -1594,7 +1596,8 @@ var videocap_templates = {
 						holder_value : "An interesting light source",
 						ui_opts : {
 						    root_classes : ["col-xs-12 col-sm-6"],
-						    wrap : true,wrap_classes : ["col-xs-8 input-group"],
+						    wrap : true,
+						    wrap_classes : ["col-xs-8 input-group"],
 						    //name_node : "strong",
 						    name_classes : ["col-xs-4"],
 						    type : "edit"
@@ -1608,7 +1611,9 @@ var videocap_templates = {
 			    
 			},
 			widget_builder : function(ui_opts, sv){
-			    console.log(sv.name + " Specview BUILDER !!");
+			    //console.log(sv.name + " Specview BUILDER !!");
+			    this.deserialize=function(d){
+			    }
 			    //sv.ui_childs.remove_child(sv.elements.keys);
 			}
 			
@@ -1652,7 +1657,7 @@ var videocap_templates = {
 	    
 	    calibration : {
 		//name : "Wavelength calibration",
-		subtitle : "From pixel scale to physical wavelength...",
+		
 		type : 'wlc',
 		ui_opts : {
 		    //child_view_type : "tabbed",
