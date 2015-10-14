@@ -158,14 +158,14 @@ var videocap_templates = {
     spectrum_feature : {
 	name : "Spectrum feature",
 	//subtitle : "Emission or absorption line",
-	
+	plot_type : 'pixel',
 	ui_opts : {
 	    fa_icon : "magnet",
 	    name_edit : true,
 	    //editable : true, edited : false,
 	    //name_node : "h4",
 	    child_classes : ['container-fluid'],
-	    child_view_type : 'table',
+	    //child_view_type : 'table',
 	    
 	    //sliding : true, slided : false
 	},
@@ -183,7 +183,7 @@ var videocap_templates = {
 		max : 30000,
 		value : 0,
 		ui_opts : {
-		    item_classes : ["full_width"],
+		    //item_classes : ["full_width"],
 		    editable: true, label : true
 		}
 	    },
@@ -198,19 +198,19 @@ var videocap_templates = {
 	},
 
 	widget_builder : function (ui_opts, feature){
-	    var pixel=feature.get('pixel');
 	    var deltatext=20;
 
 	    feature.draw=function(context, view){
 		var lineg = context.append('g');
 		var label_text=feature.name; 
 
+		var lineval=feature.get(feature.plot_type);
 			//var sv=this; //spectro_view;
 		var r=view.xr;
 		var w=view.width;
 		//var ar=view.vw/r[1];
-		var m=pixel.value===undefined? w/2.0 : // pixel.value/r[1]*w; //(r[1]-r[0])/2.0*w;
-		    view.xscale(pixel.value);
+		var m=lineval.value===undefined? w/2.0 : // pixel.value/r[1]*w; //(r[1]-r[0])/2.0*w;
+		    view.xscale(lineval.value);
 		//console.log("Range is " + r[0] + ", " + r[1] + " pos is " + m );
 		var y1=5;//view.ui_opts.margin.bottom;
 		var y2=view.height;
@@ -251,7 +251,7 @@ var videocap_templates = {
 		    var cw=svgn.clientWidth || svgn.parentNode.clientWidth;
 		    var ar= cw/view.vw ;
 
-		    console.log("DRAG BEGIN " + last + " xlast " + xlast +  " ar " + ar + " vw " + view.vw + " cw = " + cw );
+		    //console.log("DRAG BEGIN " + last + " xlast " + xlast +  " ar " + ar + " vw " + view.vw + " cw = " + cw );
 
 		    document.documentElement.add_class('dragging');
 		    document.documentElement.addEventListener('mousemove', on_move, true);
@@ -274,7 +274,7 @@ var videocap_templates = {
 			spectrum_line.attr('x2',newp);
 			label.attr('x',newp-deltatext);
 			
-			pixel.set_value(r[0]+newp/w*(r[1]-r[0]));
+			lineval.set_value(r[0]+newp/w*(r[1]-r[0]));
 			//delta -= last;
 			
 		    }
@@ -305,7 +305,9 @@ var videocap_templates = {
 	    show_cursor : true,
 	    name_edit : true,
 	    child_view_type : 'tabbed',
-	    toolbar_brand : true
+	    toolbar_brand : true,
+	    default_child : 'none',
+	    //debug : true
 	    //root_classes : ['container-fluid'],
 	    //toolbar_brand : true
 	    //save : "spectrum"
@@ -351,6 +353,7 @@ var videocap_templates = {
 		    //root_classes : ["container-fluid"],
 		    child_view_type : "tabbed",
 		    child_node_type : "form",
+		    default_child : 'none'
 		},
 		toolbar : { ui_opts : { toolbar_classes : ["navbar-default"] }},
 		elements : {
@@ -424,18 +427,19 @@ var videocap_templates = {
 				    //intro_stick : true
 				},
 				name : 'A spectrum feature ...',
-				type : 'spectrum_feature'
-			    },
-			    
-			    add_custom_feature :   {
-				name:  "Add feature", type : "action",
-				ui_opts:{
-				    //root_element : "select_line",
-				    wrap : true,
-				    wrap_classes : ["input-group-btn text-right"],
-				    item_classes : ["btn btn-info"],
-				    fa_icon : "plus"
-				    
+				type : 'spectrum_feature',
+				elements : {
+				    add_custom_feature :   {
+					name:  "Add feature", type : "action",
+					ui_opts:{
+					    root_classes : "inline",
+					    wrap : true,
+					    wrap_classes : ["text-right"],
+					    item_classes : ["btn btn-info"],
+					    fa_icon : "plus"
+					    
+					}
+				    }
 				}
 			    }
 			}
@@ -495,7 +499,7 @@ var videocap_templates = {
 	    calib : {
 		name : "Calibration",
 		ui_opts : {
-		    root_classes : ["col-xs-12 panel panel-default"],
+		    root_classes : ["col-xs-12"],
 		    child_classes : ["container-fluid"],
 		    fa_icon : "calculator"
 		},
@@ -504,7 +508,7 @@ var videocap_templates = {
 			name : "Enable calibration",
 			type : 'bool',
 			value : false,
-			ui_opts : { label : true, type : 'edit', root_classes : 'panel panel-default vertical_margin full_padding' }
+			ui_opts : { label : true, type : 'edit', root_classes : "vertical_margin full_padding" }
 		    },
 		    calib_func : {
 			//name : "Enable wavelength calibration",
@@ -530,6 +534,7 @@ var videocap_templates = {
 		type : "vector",
 		ui_opts : {
 		    in_root : 'append',
+		    cursor_shape : 'vertical',
 		    //name_node : "h3",
 		    //name_node : "strong",
 		    show_cursor : true,
@@ -552,8 +557,17 @@ var videocap_templates = {
 	    var view=spectrum.get('view');
 	    var calib_func=spectrum.get('calib_func');
 	    var calib_enable=spectrum.get('calib_enable');
-
 	    
+	    var select_line=spectrum.get('select_line');
+	    var add_line=spectrum.get('add_line');
+	    var flist=spectrum.get('feature_list');
+	    var new_line=spectrum.get('new_line');
+	    var lines=spectrum.get('lines');
+	    
+	    var add_custom_feature=spectrum.get('add_custom_feature');
+
+
+	    var calib_params=calib_func.get('params');
 	    // vec.serialize=function(){
 	    // 	var v=[];
 	    // 	vec.value.forEach(function(p){
@@ -564,7 +578,9 @@ var videocap_templates = {
 	    
 	    spectrum.deserialize=function(v){
 	    	//console.log("Spectrum deserialize " + JSON.stringify(v));
-	    	spectrum.value=v;
+		flist.clear_childs();
+		spectrum.value=v;
+		
 	    	spectrum.update_plot(v);
 	    }
 	    
@@ -572,6 +588,8 @@ var videocap_templates = {
 		console.log("Calib enable set to " + calib_enable.value);
 		spectrum.update_plot();
 	    });
+
+	    
 	    
 	    spectrum.update_plot=function(spec_data_in){
 		if(spec_data_in!==undefined)
@@ -586,9 +604,14 @@ var videocap_templates = {
 		view.plots=[];
 		var pr,pg,pb,pt;
 
+		
+		
 		view.ylabel="Intensity (ADU)";
 		
 		if(calib_enable.value===true){
+
+		    for(var f in flist.elements) flist.elements[f].plot_type='wl';
+		    
 		    pr=view.add_plot(spec_data.r,calib_func.func);
 		    pg=view.add_plot(spec_data.g,calib_func.func);
 		    pb=view.add_plot(spec_data.b,calib_func.func);
@@ -601,6 +624,8 @@ var videocap_templates = {
 			view.cursor.rebuild();
 		    }
 		}else{
+		    for(var f in flist.elements) flist.elements[f].plot_type='pixel';
+		    
 		    pr=view.add_plot_linear(spec_data.r,0,1);
 		    pg=view.add_plot_linear(spec_data.g,0,1);
 		    pb=view.add_plot_linear(spec_data.b,0,1);
@@ -622,15 +647,8 @@ var videocap_templates = {
 	    }
 	    
 	    
-	    var select_line=spectrum.get('select_line');
-	    var add_line=spectrum.get('add_line');
-	    
-	    var flist=spectrum.get('feature_list');
-	    var new_line=spectrum.get('new_line');
-	    var lines=spectrum.get('lines');
-	    
-	    var add_custom_feature=spectrum.get('add_custom_feature');
-	    
+	    calib_params.listen('change', function() { spectrum.update_plot();});
+
 	    
 	    select_line.options=[];
 	    hg_lines.forEach( function( line, i ){
@@ -638,6 +656,11 @@ var videocap_templates = {
 		select_line.options.push( { value : i, label : line[2] + " : " + line[1] + " Å" });
 		//line[0]
 	    });
+
+
+	    // console.log("prop in " + select_line.name);
+	    // for(var p in select_line)
+	    // 	console.log("prop " + p);
 	    
 	    select_line.set_options();
 	    
@@ -697,18 +720,8 @@ var videocap_templates = {
 	    
 	    
 	    view.listen('redraw',function(context){
-		//console.log("Spec redraw !!! context " + context);
-		
-		
-		//var line_table=wlc.get('feature_list').value;
-		
-		//if( line_table===undefined) return;
-		
-		//console.log("Spectro redraw !" + r + ", " + w + ", " + m + " Number of lines : " + line_table.length);
 		var i=0;
 		for(var fe in flist.elements ){
-		    console.log("Draw specfeat " + fe );
-		    
 		    var feature=flist.elements[fe];
 		    feature.draw(context, view);
 		}
@@ -792,7 +805,7 @@ var videocap_templates = {
 		    //type : 'edit',
 		    label : true,
 		    //item_classes : 'inline',
-		    root_classes : ["col-sm-6"]
+		    root_classes : ["list-group-item"]
 		},
 		default_value : 1
 	    },
@@ -803,10 +816,10 @@ var videocap_templates = {
 		    editable : true,
 		    //type : 'edit',
 		    label : true,
-		    root_classes : ["col-sm-6"],
+		    root_classes : ["list-group-item vertical_margin"],
 		    child_classes : 'inline'
 		},
-		//default_value : [0,1],
+		value : [0,1],
 		name : 'Parameters',
 		type : 'labelled_vector',
 		label_prefix : 'x'
@@ -871,7 +884,7 @@ var videocap_templates = {
 	    input : {
 		ui_opts : {
 		    //root_classes : ["col-sm-6 vertical_margin"],
-		    root_classes : ["container-fluid panel panel-default"],
+		    root_classes : ["container-fluid"],
 		    child_classes : ["row"]
 		},
 		elements : {
@@ -905,80 +918,84 @@ var videocap_templates = {
 			}
 		    },
 		    specsel : {
-			name : "2 - Select spectrum",
+			name : "2 - Select spectrum and fit",
 			type : "object_loader",
 			intro : "<p><strong>Choose a spectrum.</strong> <p>The selected spectrum should contain at least as many identified features as the polynome degree + 1.</p>",
 			collection : "spectra",
 			ui_opts : {
-			    intro_stick : true,
+			    
 			    item_classes : ['big_vertical_margin'],
 			    root_classes : ['col-sm-6'],
 			    child_classes : ['container-fluid vertical_margin']
+			},
+			elements : {
+			    name : {
+				
+				ui_opts : {
+				    root_classes : ["container-fluid big_vertical_margin"],
+				    intro_stick : true,
+				},
+				
+			    },
+			    exec :  {
+				type : 'action',
+				name : 'Fit datapoints',
+				ui_opts:{
+				    fa_icon : "cogs",
+				    wrap: true, wrap_classes : "text-center",
+				    root_classes : ["well container-fluid"],
+				    item_classes : ["btn btn-primary"]
+				}
+			    },
+			    view : {
+				name : "Fit plot",
+				type : 'vector',
+				ui_opts : {
+				    fa_icon : 'trophy',
+				    enable_range : false,
+				    enable_selection : false,
+				    root_classes : [' container-fluid'],
+				    child_classes : ['container-fluid'],
+				    //root_classes : ['container-fluid col-md-6 col-xs-12'],
+				    //item_classes : ['container-fluid']
+			    
+				},
+				elements : {
+				    fit_eq : {
+					name : "Equation: ",
+					type : "string",
+					default_value : "No equation",
+					ui_opts : {
+					    label : true,
+					    root_classes : ["col-sm-12"]
+					}
+					
+				    },
+				    
+				}
+			    }
+			    
 			}
 		    },
 		    
 		}
 	    },
 
-	    exec_box : {
-		ui_opts : {
-		    //root_classes : ["col-sm-6 vertical_margin"],
-		    root_classes : ["container-fluid panel panel-default"],
-		    child_classes : ["container-fluid"],
-		    fa_icon : "cogs"
-		},
-		name : "3 - Fit calibration function",
+	    // exec_box : {
+	    // 	ui_opts : {
+	    // 	    //root_classes : ["col-sm-6 vertical_margin"],
+	    // 	    root_classes : ["container-fluid"],
+	    // 	    child_classes : ["container-fluid"],
+	    // 	    fa_icon : "cogs"
+	    // 	},
+	    // 	name : "3 - Compute fit",
 		
-		elements : {
-		    exec :  {
-			type : 'action',
-			name : 'Fit datapoints',
-			ui_opts:{
-			    fa_icon : "cogs",
-			    root_classes : ["col-sm-2 big_vertical_margin"],
-			    item_classes : ["btn btn-primary"]
-			}
-		    },
-		    exec_status : {
-			name : "Waiting for fit result...",
-			ui_opts : {
-			    root_classes : ["col-sm-10"],
-				    name_node : 'div'
-			},
-			
-		    },
-		    view : {
-			name : "Fit plot",
-			type : 'vector',
-			ui_opts : {
-			    fa_icon : 'trophy',
-			    enable_range : false,
-			    enable_selection : false,
-			    root_classes : [' container-fluid panel panel-default'],
-			    child_classes : ['container-fluid'],
-			    //root_classes : ['container-fluid col-md-6 col-xs-12'],
-			    //item_classes : ['container-fluid']
-			    
-			},
-			elements : {
-			    fit_eq : {
-				name : "Equation: ",
-				type : "string",
-				default_value : "No equation",
-				ui_opts : {
-				    label : true,
-				    root_classes : ["col-sm-12"]
-				}
-				
-			    },
-			    
-			}
-		    }
+	    // 	elements : {
 		    
 		    
 		    
-		}
-	    },
+	    // 	}
+	    // },
 	    
 	    
 	    
@@ -998,7 +1015,7 @@ var videocap_templates = {
 	    var calib_func=wlc.get('calib_func');
 	    var control=wlc.get('control');
 	    var view=wlc.get('view');
-	    var exec_box=wlc.get('exec_box');
+	    //var exec_box=wlc.get('exec_box');
 
 	    var fit_points=[];
 
@@ -1014,17 +1031,22 @@ var videocap_templates = {
 		return fit_points;
 	    }
 	    
+	    exec.disable();
+	    view.hide(true);
+	    
 	    wlc.get('specsel').listen('load_doc', function(doc){
 		spectrum=create_widget('spectrum');
 		doc.store_deserialize({ object : spectrum });
 		get_fit_points(spectrum);
-
+		//this.message("Loaded spectrum [" + spectrum.name + "]", { type : 'success', title : 'Done', last : 2000});
+		
 		if(pdeg.value<fit_points.length){
-		    this.message("Loaded spectrum [" + spectrum.name + "] : " + fit_points.length + " features.", { type : 'success'});
-		    //exec_box.disable(false);
+		    this.elements.name.message("Spectrum has " + fit_points.length + " features.", { type : 'success', title : "Ok"});
+		    
+		    exec.disable(false);
 		}else{
-		    this.message("Loaded spectrum [" + spectrum.name + "] : " + fit_points.length + " features.<p>Not enough features,  Need at least " + (pdeg.value*1.0+1) +"</p>", { type : 'warning'});
-		    //exec_box.disable();
+		    this.elements.name.message("Not enough features,  Need at least " + (pdeg.value*1.0+1) , { type : 'danger', title : fit_points.length + " features"});
+		    exec.disable();
 		}
 		
 	    });
@@ -1046,6 +1068,8 @@ var videocap_templates = {
 		
 		var result = regression('polynomial', fit_points, pdeg.value*1.0);
 		console.log("Fit result : " + JSON.stringify(result));
+
+		
 		
 		calib_func.elements.params.set_value(result.equation);
 		
@@ -1056,11 +1080,14 @@ var videocap_templates = {
 		// 	fit_params.ui_childs.div.innerHTML="";
 		// }
 		// fit_params.elements={};
+		view.hide(false);
 		
 		if(view.value===undefined){
-		    var pp=view.add_plot_points(fit_points, { stroke : "purple", stroke_width : "1px", label : "Data points"});
-		    var pf=view.add_plot_func(calib_func.func ,{ label : "Fit func", stroke : "springgreen", stroke_width : "1px"});
-		}else view.redraw();
+		    var pp=view.add_plot_points(fit_points, { stroke : "#ee2020", stroke_width : "1px", label : "Data points"});
+		    var pf=view.add_plot_func(calib_func.func ,{ label : "Fit func", stroke : "#3030dd", stroke_width : "1px"});
+		}
+
+		view.redraw();
 		
 		
 		// for(var i=0;i<fitp.length;i++){
@@ -1131,15 +1158,18 @@ var videocap_templates = {
 
 		elements : {
 		    left: {
-			name : "2D Capture",
+			name : "Video",
+			intro : "<p>Click the floppy icon <span class='fa fa-save text-success'> </span> to save the video parameters of your spectrograph in your browser's webstorage.</p> <p>Your configuration will be restored automatically when you visit the page again</p>",
 			ui_opts : {
-			    root_classes : ["col-md-4 col-xs-12"],
+			    intro_title : 'Save your setup',
+			    root_classes : ["col-md-5 col-xs-12"],
 			    child_classes : ["container-fluid"],
 			    //save : "minispectro_setup",
 			    child_view_type : 'tabbed',
 			    fa_icon : "camera",//fa_icon : 'cogs',
 			    default_child : 'none',
-			    toolbar_brand : true
+			    toolbar_brand : true,
+			    save : "Video setup"
 			    // sliding : true,
 			    // slided : true
 			},
@@ -1262,9 +1292,9 @@ var videocap_templates = {
 				}
 			    },
 			    box : {
-				name : "Spectrum geometry",
-				subtitle : "Setup the orientation and dimensions of the spectrum area within the image",
-				intro : "<p>Click the floppy icon <span class='fa fa-save'> </span> to save the region parameters in your browser's webstorage. Your configuration will be restored automatically when you visit the page again</p>",
+				name : "Geometry",
+				
+				intro : "Setup the orientation and dimensions of the spectrum area within the image",
 				ui_opts :  {
 				    //render_name: false,
 				    
@@ -1272,7 +1302,7 @@ var videocap_templates = {
 				    name_classes : ["title_margin"],
 				    //child_classes : ["list-group"],
 				    //child_view_type : 'tabbed',
-				    save : 'Spectrum geometry'
+				    //save : 'Spectrum geometry'
 				    //name_node : "h3"
 				    //intro_stick : true
 				},
@@ -1417,12 +1447,14 @@ var videocap_templates = {
 				    
 				    butts : {
 					name : "Start/Stop capture",
-					intro : "<p>Start/stop capturing frames from the webcam and computing one-dimensional spectrum</p><p>You might be prompted to accept webcam capture from your browser</p>",
+					intro : "<p>You might be prompted to accept webcam capture from your browser</p>",
 					ui_opts :  {
+					    intro_title : "Start/stop capturing frames from the webcam and computing one-dimensional spectrum",
 					    fa_icon : "play",
 					    root_classes : ["container-fluid vertical_margin"],
-					    child_classes : ["btn-group col-xs-6"],
-					    name_classes : ["col-xs-6 text-right"]
+					    child_classes : ["btn-group"],
+					    label: true
+					    //name_classes : ["col-xs-6 text-right"]
 					},
 					elements : {
 					    start : {
@@ -1475,7 +1507,7 @@ var videocap_templates = {
 		    
 		    // 	elements : {
 		    specview : {
-			name : "Live 1D spectra",
+			name : "Spectrograph",
 			type : "spectrum",
 			//intro:  "One dimensional raw spectra (R,G,B, Sum/3)",
 			y_range : [0, 255],
@@ -1483,10 +1515,10 @@ var videocap_templates = {
 			    name_edit : false,
 			    intro_stick: true,
 			    fa_icon : "line-chart",
-			    root_classes : ['col-md-8 col-xs-12 container-fluid'],
+			    root_classes : ['col-md-7 col-xs-12 container-fluid'],
 			    //child_classes : ["container-fluid"],
 			    toolbar_brand : true,
-			    // save : "Spectra"
+			    save : "Spectro view config",
 			    default_child : 'none',
 			    //item_classes : ["row"],
 			    //  label : true,
@@ -1521,7 +1553,7 @@ var videocap_templates = {
 				    fa_icon : "save",
 				    //render_name : false,
 				    //intro_stick : true,
-				    root_classes : ["col-sm-12 vertical_padding panel panel-default"],
+				    root_classes : ["col-sm-12 vertical_padding panel"],
 				    //child_node_type : "form",
 				    child_classes : ["row"]
 				    
@@ -1585,8 +1617,10 @@ var videocap_templates = {
 	    
 	    spectra : {
 		name : "Saved spectra",
+		intro : "Use the <i class='fa fa-download text-info'></i> and  <i class='fa fa-save text-success'></i> buttons on the spectrum widget below to load and save your spectra",
 		//type : 'spectrum',
 		ui_opts : {
+		    intro_title : "Edit your saved spectra",
 		    //child_view_type : "tabbed",
 		    root_classes : ["container-fluid"],
 		    //name_classes : ["well"],
@@ -1601,6 +1635,7 @@ var videocap_templates = {
 		},
 		elements : {
 		    spec : {
+			name : "No spectrum loaded",
 			type : 'spectrum',
 			ui_opts : {
 			    save : "spectra"
@@ -1753,10 +1788,15 @@ var videocap_templates = {
 		    type : 'spectrum',
 		    name : (sn!==undefined && sn!=="") ? sn : "Spectrum "+date_obs.toLocaleString()
 		});
+
+
+		
+		var calib_data=get_template_data(specview.get('calib'));
 		
 		new_spec.set('target',save_spec.val('target'));
 		new_spec.set('date_obs',date_obs);
 		new_spec.value=spec_data;
+		set_template_data(new_spec.get('calib'), calib_data);
 		//new_spec.update_plot(spec_data);
 		
 		doc.store_serialize(new_spec);
@@ -1774,7 +1814,7 @@ var videocap_templates = {
 
 		setTimeout(function(){
 		    save_spec.message("Spectrum saved",
-				{ type : 'success', title : ""}
+				      { type : 'success', title : "Done", last : 2000 }
 			       );
 		    
 		}, 1000);
@@ -1880,7 +1920,8 @@ var videocap_templates = {
 
 		if (typeof MediaStreamTrack === 'undefined' ||
 		    typeof MediaStreamTrack.getSources === 'undefined') {
-		    controls.debug("This browser does not support MediaStreamTrack. You cannot choose the input device. Try Chrome.");
+		    video_options.message("This browser does not support MediaStreamTrack. You cannot choose the input device. Try Chrome.",
+					  { title : 'Note', type : 'warning' });
 		    video_options.disable();
 		    start.disable(false);
 		} else {
@@ -2005,10 +2046,10 @@ var videocap_templates = {
 		//console.log("Slicing [" + bx + ","+ by+ "," + bw+ "," + bh + "]to ddim="+ddim + " dir = " + dir.value);
 		if(ddim < spec_data.r.length){
 		    
-		    spectro_view.plots[0].data=spec_data.r=spec_data.r.slice(0, ddim);
-		    spectro_view.plots[1].data=spec_data.g=spec_data.g.slice(0, ddim);
-		    spectro_view.plots[2].data=spec_data.b=spec_data.b.slice(0, ddim);
-		    spectro_view.plots[3].data=spec_data.t=spec_data.t.slice(0, ddim);
+		    spec_data.r=spec_data.r.slice(0, ddim);
+		    spec_data.g=spec_data.g.slice(0, ddim);
+		    spec_data.b=spec_data.b.slice(0, ddim);
+		    spec_data.t=spec_data.t.slice(0, ddim);
 
 		    //spectro_view.config_range(true, true);
 		    //console.log("Resized !! ddim=" + ddim + " SL " + spec_data.r.length + " bh " + bh );
@@ -2193,10 +2234,15 @@ var videocap_templates = {
 		    
 		}
 
-		spectro_view.value[0].data=spec_data.r.slice();
-		spectro_view.value[1].data=spec_data.g.slice();
-		spectro_view.value[2].data=spec_data.b.slice();
-		spectro_view.value[3].data=spec_data.t.slice();
+		if(spectro_view.value!==undefined){
+
+		    if(spectro_view.value.length>=4){
+			spectro_view.value[0].data=spec_data.r.slice();
+			spectro_view.value[1].data=spec_data.g.slice();
+			spectro_view.value[2].data=spec_data.b.slice();
+			spectro_view.value[3].data=spec_data.t.slice();
+		    }
+		}
 
 		
 		if(frid===0)
