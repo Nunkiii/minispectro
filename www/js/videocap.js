@@ -881,49 +881,53 @@ var videocap_templates = {
 	    //intro_stick : true
 	},
 	elements : {
-	    input : {
-		ui_opts : {
-		    //root_classes : ["col-sm-6 vertical_margin"],
-		    root_classes : ["container-fluid"],
-		    child_classes : ["row"]
-		},
-		elements : {
-		    config_poly : {
+	    // input : {
+	    // 	ui_opts : {
+	    // 	    //root_classes : ["col-sm-6 vertical_margin"],
+	    // 	    root_classes : ["container-fluid"],
+	    // 	    child_classes : ["row"]
+	    // 	},
+	    // 	elements : {
+		    // config_poly : {
+		    // 	ui_opts : {
+		    // 	    root_classes : ["col-sm-6"],
+		    // 	    intro_stick : true
+		    // 	},
+		    // 	name : "1 - Choose polynomial degree",
+			
+		    // 	elements : {
+		    calib_func : {
+			type : 'polynomial',
+			name : "Polynomial model",
+			intro : "<p><strong class='text-danger big'><it class='fa fa-exclamation-triangle'></it> - Save your fit result</strong><p> When you are satisfied with the fitted parameters, don't forget to save your model by clicking the <it class='fa fa-save text-success'></it> button </p></p>",
+			elements : {
+			    pdeg : {
+				ui_opts : {type: 'edit', intro_title : "Choose the degree of the model polynomial function", intro_stick : true },
+				intro : ""
+			    } 
+			},
 			ui_opts : {
 			    root_classes : ["col-sm-6"],
-			    intro_stick : true
-			},
-			name : "1 - Choose polynomial degree",
-			intro : "<p><strong>Choose the degree of the model polynomial function</strong>.<p> Edit the <strong>Polynomial degree</strong> field from the <strong>Polynomial function</strong> object.</p> </p>",
-			elements : {
-			    calib_func : {
-				type : 'polynomial',
-				name : "Fitted calibration polynomial",
-				intro : "<p><strong class='text-danger'>4 - Save your fit result</strong><p> When you are satisfied with the fitted parameters, don't forget to save your model by clicking the <it class='fa fa-save text-success'></it> button </p></p>",
-				elements : {
-				    pdeg : { ui_opts : {type: 'edit' } } 
-				},
-				ui_opts : {
-				    root_classes : ["container-fluid panel panel-default"],
-				    child_classes : ["container-fluid"],
-				    //name_classes : ["panel-heading"],
-				    //child_classes : ["panel-content"],
-				    intro_stick : true,
-				    //name_node : 'div',
-				    save : "Polynomials"
-				    
-				}
-			    }
+			    child_classes : ["container-fluid"],
+			    //name_classes : ["panel-heading"],
+			    //child_classes : ["panel-content"],
+			    intro_stick : true,
+			    //name_node : 'div',
+			    save : "Polynomials"
 			    
 			}
+			//     }
+			
+			// }
 		    },
 		    specsel : {
-			name : "2 - Select spectrum and fit",
+			name : "Select spectrum and fit",
 			type : "object_loader",
-			intro : "<p><strong>Choose a spectrum.</strong> <p>The selected spectrum should contain at least as many identified features as the polynome degree + 1.</p>",
+			intro : "The selected spectrum should contain at least as many identified features as the polynome degree + 1.",
 			collection : "spectra",
 			ui_opts : {
-			    
+			    intro_stick : true,
+			    intro_title : "Choose a spectrum",
 			    item_classes : ['big_vertical_margin'],
 			    root_classes : ['col-sm-6'],
 			    child_classes : ['container-fluid vertical_margin']
@@ -933,7 +937,7 @@ var videocap_templates = {
 				
 				ui_opts : {
 				    root_classes : ["container-fluid big_vertical_margin"],
-				    intro_stick : true,
+				    
 				},
 				
 			    },
@@ -975,9 +979,9 @@ var videocap_templates = {
 				}
 			    }
 			    
-			}
-		    },
-		    
+		    // 	}
+		    // },
+			    
 		}
 	    },
 
