@@ -486,7 +486,7 @@ var videocap_templates = {
 		    */
 		    feature_list : {
 			name : "Spectral features list", 
-			type : 'container',
+			//type : 'container',
 			ui_opts : {
 			    //name_node : 'h3',
 			    child_view_type : "table",
@@ -501,11 +501,11 @@ var videocap_templates = {
 		ui_opts : {
 		    root_classes : ["col-xs-12"],
 		    child_classes : ["container-fluid"],
-		    fa_icon : "calculator"
+		    fa_icon : "dashboard"
 		},
 		elements : {
 		    calib_enable : {
-			name : "Enable calibration",
+			name : "λ calibration",
 			type : 'bool',
 			value : false,
 			ui_opts : { label : true, type : 'edit', root_classes : "vertical_margin full_padding" }
@@ -570,6 +570,9 @@ var videocap_templates = {
 
 	    view.get('btns').add_child(calib_enable, 'calib_enable');
 	    calib_enable.ui_root.add_class('inline');
+
+	    view.hide(true);
+	   
 	    //calib_enable.set_title("λ calibration");
 
 	    // vec.serialize=function(){
@@ -596,6 +599,7 @@ var videocap_templates = {
 	    
 	    
 	    spectrum.update_plot=function(spec_data_in){
+
 		if(spec_data_in!==undefined)
 		    spectrum.value=spec_data_in;
 
@@ -607,9 +611,6 @@ var videocap_templates = {
 		
 		view.plots=[];
 		var pr,pg,pb,pt;
-
-		
-		
 		view.ylabel="Intensity (ADU)";
 		
 		if(calib_enable.value===true){
@@ -647,7 +648,8 @@ var videocap_templates = {
 		pb.set_opts({ stroke : "#0202ee", stroke_width : ".5px", label : "Blue"});
 		pt.set_opts({ stroke : "#6020cc", stroke_width : "1px", label : "Mean"});
 
-		view.config_range();	
+		view.config_range();
+		view.hide(false);
 	    }
 	    
 	    
@@ -1544,7 +1546,7 @@ var videocap_templates = {
 				}
 			    },
 			    lines : {
-				name : "Live spectral features",
+				name : "Display features",
 				subtitle : "Add spectral features to be displayed in the live spectrum.",
 				ui_opts : { fa_icon : 'magnet'}
 			    },
@@ -1635,6 +1637,8 @@ var videocap_templates = {
 		    //name_classes : ["well"],
 		    //child_classes : ["container-fluid"],
 		    fa_icon : "folder",
+		    intro_stick : true,
+		    
 		    //tabs_mode : "left",
 		    //reqnder_name : false,
 		    
