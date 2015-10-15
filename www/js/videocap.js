@@ -744,7 +744,7 @@ var videocap_templates = {
 	    toto2 : { name : "Xbase2", type : 'color', value : "#1213aa"}
 	},
 	ui_opts : {fa_icon : 'cogs', root_classes : ["container-fluid"]},
-	widget_builder : function(ui_opts, sspec){
+	widget_builder : function(){
 	    sspec.debug("Base constructor !");
 	}
     },
@@ -755,9 +755,8 @@ var videocap_templates = {
 	    //totochild : { name : "Xchild", type : 'double', value : 333, min : 330, max: 338, ui_opts : {type : 'edit', label : true}},
 	    lv : {name : "lvtest", type : "labelled_vector", label_prefix : "P", ui_opts : { } }
 	},
-	widget_builder : function(ui_opts, sspec){
+	widget_builder : function(){
 	    sspec.debug("Child constructor !");
-	    //sspec.set('totochild', 334);
 	    sspec.set('lv', [1,2,3,4,5]);
 	}
     },
@@ -779,6 +778,7 @@ var videocap_templates = {
 	    sspec.get('act').lv=sspec.get('lv');
 	}
     },
+
     sspec : {
 	type : 'spectrum',
 	name : 'stest',
@@ -786,6 +786,10 @@ var videocap_templates = {
 	    console.log("stest widget_builder : Hellooo stest");
 	}
     },
+
+    
+
+    
     
     polynomial : {
 	name : "Polynomial function",
@@ -849,11 +853,10 @@ var videocap_templates = {
 		else
 		    if(d<value.length){
 			value=value.slice(0,d);
-			
 		    }
 
 		params.set_value(value);
-		console.log("Reset d="+d + " vl " + value.length );
+		//console.log("Reset d="+d + " vl " + value.length );
 		
 	    };
 	    p.func=function(x){
@@ -1151,7 +1154,7 @@ var videocap_templates = {
 	elements : {
 	    
 	    spectro : {
-		name : "Spectrograph",
+		name : "Spectro",
 		
 		ui_opts : {
 		    fa_icon : "line-chart",
@@ -1703,19 +1706,26 @@ var videocap_templates = {
 		    // 	    item_classes : ["container-fluid vertical_margin"],
 		    // 	    fa_icon : 'info'
 		    // 	}
-
+		    
 		    // },
+		    start : {
+			type : 'getting_started'
+		    },
+		    soft : {
+			type : 'manual'
+		    },
 		    building : {
 			name : "Building the DVD spectrograph",
 			ui_opts : {
 			    fa_icon : 'cut'
 			}
-			
 		    },
-		    soft : {
-			name : "Software manual",
+		    about : {
+			name : "About WebSpectro",
+			type : 'html',
+			url : '/minispectro/gloria.html',
 			ui_opts : {
-			    fa_icon : 'book'
+			    icon : '/sadira/icons/gloria-logo-text-transp-light.svg'
 			}
 		    }
 
@@ -2092,19 +2102,16 @@ var videocap_templates = {
 	    
 	    for(var be in spectro_box){
 		spectro_box[be].listen("change",function(){
-		    //draw_spectrum_box();
 		    set_box_size();
 		    slice_arrays();
-		    //process_spectrum();
 		    spectro_view.config_range();	    
 		});
 	    };
 	    
 	    // function draw_spectrum_box(){
-	    
-
 	    // 	if(ù(w)){
 	    var c5=canvas.width/5.0;
+
 	    spectro_win=new widget({ x: 2*c5, y: 5, w : c5, h : canvas.height-5});
 	    spectro_win.widget_div.style.position="absolute";
 	    video_container.appendChild(spectro_win.widget_div);
@@ -2304,7 +2311,122 @@ var videocap_templates = {
 	}
 
 	
+    },
+
+
+    media : {
+	ui_opts : {
+	    root_classes : ['media'],
+	    child_view_type : 'root'
+	},
+	elements : {
+	    left : {
+		ui_opts : {
+		    root_classes : ['media-left'],
+		    child_view_type : 'root'
+		}
+	    },
+	    content : {
+		ui_opts : {
+		    root_classes : ['media-content'],
+		    child_view_type : 'root'
+		}
+	    },
+	}
+	
+    },
+    getting_started : {
+	type : 'html',
+	ui_opts : {
+	    root_classes : ["container-fluid jumbotron"],
+	    child_classes : 'container-fluid',
+	    //fa_icon : 'life-ring',
+	    icon : "/minispectro/ico/minispectro.svg",
+	    child_view_type : 'div',
+	    intro_stick : true,
+	    name_node : 'h2'
+	},
+	name : "Getting started",
+	intro : "First steps for using the WebSpectro application",
+	value :"<ol>\
+<li class='list-group-item' style='display : list-item'>Build a webcam based spectrograph and connect it to your computer.</li>\
+<li class='list-group-item' style='display : list-item'>Click the play <i class='fa fa-play text.primary'></i> button to start image capture.</li>\
+<li class='list-group-item' style='display : list-item'>Point your spectrograph to a light source. A spectrum image should appear on the video monitor. Make sure the dispersion direction is aligned with one of the camera's dimensions. </li>\
+<li class='list-group-item' style='display : list-item'>Setup the orientation and size of the capture frame to enclose the spectrum image. One dimensional spectra should appear on the right panel's plot. At this stage, you can save your WebsSpectro's video options in your browser's webstorage by clicking the toolbar's save icon <i class='fa fa-save'></i> of the left Video panel.</li>\
+<li class='list-group-item' style='display : list-item'>Save the spectra (to your browser's webstorage) in the <i><i class='fa fa-save'/> Save spectrum section</i> of the Spectro right panel.</li>\
+</ol>\
+",
+	elements : {
+	    calib : {
+		ui_opts : {intro_stick : true},
+		name : "Wavelength calibration",
+		type : 'html',
+		intro : 'To become a true scientifical instrument, your spectrograph must be able to measure the light colors accurately. Follow these steps to calibrate your instrument.',
+		value :"<ol>\
+<li class='list-group-item' style='display : list-item'>Save the spectrum of a known light source producing sufficently enough emission lines. Any house light bulb (with mercury vapor) is a good choice. This will be used as the calibration spectrum in the next steps.</li>\
+<li class='list-group-item' style='display : list-item'>Open your calibration spectrum on the <i>Saved spectra</i> main panel and open the <i>Spectral features</i> panel.</li>\
+<li class='list-group-item' style='display : list-item'>Add spectral features from the list of known features or enter custom features manually. Features can be positionned graphically by dragging them on the spectrum viewer.</li>\
+<li class='list-group-item' style='display : list-item'>When you are done with inserting and positionning features, save your calibration spectrum again to record the feature's list.</li>\
+<li class='list-group-item' style='display : list-item'>Go to the main <i>λ calibration</i> panel (<i class='fa fa-calculator'></i>) and follow the instructions to produce a calibration polynomial.</li>\
+<li class='list-group-item' style='display : list-item'>Go to the main <i>Spectrograph </i> <i class='fa fa-line-chart'></i> window and open the calibration's toolbar section <i class='fa fa-dashboard'></i>. Load your calibration polynomial on the <i>Polynomial function</i> widget.</li>\
+<li class='list-group-item' style='display : list-item'>Activate the <i>λ calibration</i> switch on the spectrum viewer to switch to calibrated mode.</li>\
+<li class='list-group-item' style='display : list-item'>Eventually save the Spectro settings by clicking the <i class='fa fa-save'></i> icon on the <i>Spectro</i> toolbar.</li>\
+</ol>"
+	    }
+	}
+	
+    },
+    manual : {
+	ui_opts : {
+	    root_classes : ["container-fluid"],
+	    fa_icon : 'book',
+	    child_view_type : 'tabbed',
+	    intro_stick : true
+	},
+	name : "Webspectro user manual",
+	intro : "<i class='fa fa-exclamation-triangle text-danger'></i> WebSpectro should be easy to use and intuitive! ",
+	elements : {
+	    spectro_win : {
+		name : "Spectrograph window", type : 'html',
+		ui_opts : { fa_icon : 'line-chart'},
+		value : "<p>The spectrograph window is composed of two main panels. The <strong>Video</strong> panel (left) controls the image acquisition and processing while the <strong>Spectro</strong> panel (on the right) is the monodimensional spectrum interface.</p>",
+		elements : {
+		    video : {
+			name : "Video panel",
+			intro : "The video panel",
+			ui_opts : { fa_icon : 'camera'},
+			elements : {
+			    device : {
+				ui_opts : { fa_icon : 'camera-retro'},
+				type : 'media',
+				name : "Device configuration",
+				elements : {
+				    
+				}
+			    }
+			}
+		    },
+		    spectro : {
+			name : "Spectro panel",
+			ui_opts : { fa_icon : 'line-chart'}
+		    }
+		}
+	    },
+	    editing : {
+		name : "Saved spectra window",
+		ui_opts : { fa_icon : 'folder'}
+	    },
+
+	    calibration : {
+		name : "Calibration window",
+		ui_opts : { fa_icon : 'calculator'}
+	    }
+	    
+	}
+	
     }
+    
+
     
 };
 
