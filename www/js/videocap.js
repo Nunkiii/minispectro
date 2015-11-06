@@ -19,7 +19,7 @@ var hg_lines = [
 
 /** Taken from Earl F. Glynn's web page:
 * <a href="http://www.efg2.com/Lab/ScienceAndEngineering/Spectra.htm">Spectra Lab Report</a>
-Converted to JS, 2015
+Converted to JS for WebSpectro, 2015
 * */
 
 var wl2rgb=function(Gamma, IntensityMax){
@@ -314,8 +314,10 @@ var videocap_templates = {
 	},
 	toolbar : { ui_opts : { toolbar_classes : ["navbar navbar-default"]} },
 	
-	elements : {
-	    keys : {
+    elements : {
+
+	
+	keys : {
 		name : "Meta-data",
 		ui_opts : {
 		    root_classes : ["container-fluid panel panel-default"],
@@ -323,7 +325,17 @@ var videocap_templates = {
 		    fa_icon : 'list'
 		    //render_name : false
 		},
-		elements : {
+	    elements : {
+		// sacha : {
+		//     name : "Test Truc Sacha",
+		//     type : "action",
+		//     widget_builder : function(){
+		// 	this.listen('click', function(){
+		//     alert("Bouton clické");
+		// 	});
+		//     }
+		// },
+		
 		    target : {
 			type : "string",
 			name : "Target",
@@ -1410,22 +1422,20 @@ var videocap_templates = {
 							name: "height",
 							type: "double",
 							default_value : 300, step : 1, min : 1,
-							ui_opts : { type : "edit",
-								    wrap : true, wrap_classes : ["col-xs-8 input-group"],
-								    name_node : "strong",
-								    root_classes : ["col-xs-6 "],
-								    name_classes : ["col-xs-4"],
-								    item_classes : ["input-sm"]
-								    
-								  }
+							ui_opts : {
+							    type : "edit",
+							    wrap : true, wrap_classes : ["col-xs-8 input-group"],
+							    name_node : "strong",
+							    root_classes : ["col-xs-6 "],
+							    name_classes : ["col-xs-4"],
+							    item_classes : ["input-sm"]
+							    
+							}
 						    }
 						}
 					    }
 					}
 				    }
-				    
-				    
-				    
 				}
 			    },
 
@@ -1715,10 +1725,18 @@ var videocap_templates = {
 			type : 'manual'
 		    },
 		    building : {
-			name : "Building the DVD spectrograph",
+			name : "Building a DVD spectrograph",
+			type : 'html',
+			url : '/minispectro/build.html',
 			ui_opts : {
 			    fa_icon : 'cut'
 			}
+		    },
+		    dvd_grating : {
+		    	name : 'DVD as a diffraction grating',
+		    	type : 'html',
+		    	url : '/minispectro/doc/dvd_reticolo_inv.svg',
+		    	ui_opts : { icon : '/minispectro/doc/dvd.png'}
 		    },
 		    about : {
 			name : "About WebSpectro",
@@ -2365,7 +2383,9 @@ var videocap_templates = {
 		value :"<ol>\
 <li class='list-group-item' style='display : list-item'>Save the spectrum of a known light source producing sufficently enough emission lines. Any house light bulb (with mercury vapor) is a good choice. This will be used as the calibration spectrum in the next steps.</li>\
 <li class='list-group-item' style='display : list-item'>Open your calibration spectrum on the <i>Saved spectra</i> main panel and open the <i>Spectral features</i> panel.</li>\
-<li class='list-group-item' style='display : list-item'>Add spectral features from the list of known features or enter custom features manually. Features can be positionned graphically by dragging them on the spectrum viewer.</li>\
+<li class='list-group-item' style='display : list-item'>Add spectral features from the list of known features or enter custom features manually. Features can be positionned graphically by dragging them on the spectrum viewer.\
+<center>Hg reference spectrum :<img src='/minispectro/doc/hgcalib.gif' alt='Hg reference spectrum' style='width: 100%;'/></center>\
+</li>\
 <li class='list-group-item' style='display : list-item'>When you are done with inserting and positionning features, save your calibration spectrum again to record the feature's list.</li>\
 <li class='list-group-item' style='display : list-item'>Go to the main <i>λ calibration</i> panel (<i class='fa fa-calculator'></i>) and follow the instructions to produce a calibration polynomial.</li>\
 <li class='list-group-item' style='display : list-item'>Go to the main <i>Spectrograph </i> <i class='fa fa-line-chart'></i> window and open the calibration's toolbar section <i class='fa fa-dashboard'></i>. Load your calibration polynomial on the <i>Polynomial function</i> widget.</li>\
