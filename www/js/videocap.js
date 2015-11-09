@@ -1143,7 +1143,7 @@ var videocap_templates = {
     videocap : {
 	
 	name : "WebSpectro",
-	type : "html",
+	//type : "html",
 	url : "/minispectro/intro.html",
 
 	ui_opts : {
@@ -1762,6 +1762,7 @@ var videocap_templates = {
 	    var camview=vc.get("camview");
 	    var camwin=vc.get("camwindow");
 	    var spectrum=vc.get("spectro");
+	    var doc=vc.get("doc");
 
 	    
 	    var specview=vc.get("specview");//spectrum;
@@ -1770,7 +1771,25 @@ var videocap_templates = {
 
 	    var spectro_opts=vc.get('box').elements;
 	    var controls=vc.get('left');
+	    
+	    var htmui=vc.ui=ce("div");
+	    if(vc.url){
+		download_url(vc.url,function(error, html_content){
+		    if(error){
+			vc.debug("Error downloading html content : "  + error);
+		    }else{
+			htmui.innerHTML=html_content;
+			document.getElementById("goto_app").addEventListener('click', function(){
+			    vc.ui_childs.select_frame(spectrum); 
+			});
 
+			document.getElementById("goto_doc").addEventListener('click', function(){
+			    vc.ui_childs.select_frame(doc); 
+			});
+		    }
+		});
+	    }
+	    
 	    var spectro_box={
 		x : vc.get('pos').elements.x,
 		y : vc.get('pos').elements.y,
